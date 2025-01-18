@@ -10,7 +10,9 @@ import mlflow.models.signature as mfs
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from datetime import datetime
-import itertools
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score
 
 # Clase ResidualBlock (sin cambios)
 class ResidualBlock(nn.Module):
@@ -255,12 +257,72 @@ class SequenceCollatorSignals:
 
         # return torch.tensor(sequences_idx, dtype=torch.long), torch.tensor(labels, dtype=torch.long), max_len
 
+# Callback de early stopping
+class EarlyStopping:
+    def __init__(self, patience=5, min_delta=0):
+        """
+        Callback para detener el entrenamiento si la pérdida de validación no mejora después de un número de épocas.
+        
+        Args:
+            patience (int): Número de épocas que espera antes de detenerse si no hay mejora.
+            min_delta (float): Mínima mejora requerida para considerar un cambio como una mejora.
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_loss = None
+        self.early_stop = False
+
+    def __call__(self, val_loss):
+        if self.best_loss is None:
+            self.best_loss = val_loss
+        elif self.best_loss - val_loss > self.min_delta:
+            self.best_loss = val_loss
+            self.counter = 0  # Reiniciar contador si hay mejora
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+
+
+# Función para guardar y registrar la matriz de confusión
+def log_confusion_matrix(model, loader, device, step):
+    all_preds, all_labels = [], []
+
+    model.eval()
+    with torch.no_grad():
+        for signals, sequences, labels in loader:
+            signals, sequences, labels = signals.to(device), sequences.to(device), labels.to(device)
+
+            # Crear el padding mask para las secuencias
+            padding_mask = (sequences == padding_idx)
+
+            outputs = model(signals, sequences, padding_mask)
+            _, preds = torch.max(outputs, 1)
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+    # Calcular la matriz de confusión
+    cm = confusion_matrix(all_labels, all_preds, labels=list(range(num_classes)))
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=range(num_classes), yticklabels=range(num_classes))
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.title("Confusion Matrix")
+
+    # Guardar la figura como un archivo temporal
+    plt.savefig("confusion_matrix.png")
+    plt.close()
+
+    # Registrar en MLflow
+    mlflow.log_artifact("confusion_matrix.png", f"confusion_matrix_step_{step}")
+
 
 vocab = {'A': 0, 'C': 1, 'T': 2, 'G': 3, '<pad>': 4}  # Añadimos el padding en un índice diferente (4)
 padding_idx = vocab['<pad>']
-min_seq_length = 150
-max_seq_length = 200
-num_samples = 15000
+min_seq_length = 100
+max_seq_length = 150
+num_samples = 1000
 num_classes = 5
 
 batch_size = 1024
@@ -294,6 +356,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=
 # Scheduler para reducir la tasa de aprendizaje
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
 
+# Instanciar early stopping
+early_stopping = EarlyStopping(patience=5, min_delta=1e-4)
+
+# Gradient clipping
+max_grad_norm = 1.0  # Configurar un valor límite
 
 # 6. Funciones de entrenamiento y validación
 def train_one_epoch(model, loader, criterion, optimizer, device):
@@ -312,6 +379,9 @@ def train_one_epoch(model, loader, criterion, optimizer, device):
 
         loss = criterion(outputs, labels)
         loss.backward()
+
+        # Gradient clipping para evitar gradientes demasiado grandes e inestables
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
         optimizer.step()
 
         running_loss += loss.item()
@@ -320,7 +390,12 @@ def train_one_epoch(model, loader, criterion, optimizer, device):
         all_labels.extend(labels.cpu().numpy())
 
     acc = accuracy_score(all_labels, all_preds)
-    return running_loss / len(loader), acc
+    precision = precision_score(all_labels, all_preds, average="weighted", zero_division=0)
+    recall = recall_score(all_labels, all_preds, average="weighted", zero_division=0)
+    f1 = f1_score(all_labels, all_preds, average="weighted", zero_division=0)
+    
+    return running_loss / len(loader), acc, precision, recall, f1
+
 
 def validate(model, loader, criterion, device):
     model.eval()
@@ -343,7 +418,12 @@ def validate(model, loader, criterion, device):
             all_labels.extend(labels.cpu().numpy())
 
     acc = accuracy_score(all_labels, all_preds)
-    return running_loss / len(loader), acc
+    precision = precision_score(all_labels, all_preds, average="weighted", zero_division=0)
+    recall = recall_score(all_labels, all_preds, average="weighted", zero_division=0)
+    f1 = f1_score(all_labels, all_preds, average="weighted", zero_division=0)
+
+    return running_loss / len(loader), acc, precision, recall, f1
+
 
 # 7. Registro con MLFlow
 timestamp = datetime.now().strftime("%d-%m-%Y__%H-%M-%S")
@@ -352,23 +432,50 @@ timestamp = datetime.now().strftime("%d-%m-%Y__%H-%M-%S")
 if mlflow.active_run():
     mlflow.end_run()
 
+# Configuración de la URI de MLflow (local o servidor remoto)
+mlflow.set_tracking_uri("http://localhost:5000")
+
 with mlflow.start_run(run_name=timestamp):
     mlflow.log_param("learning_rate", learning_rate)
     mlflow.log_param("batch_size", batch_size)
     mlflow.log_param("epochs", epochs)
+    mlflow.log_param("optimizer", optimizer.__class__.__name__)
+    mlflow.log_param("scheduler_step_size", scheduler.step_size)
+    mlflow.log_param("vocab_size", len(vocab))
+    mlflow.log_param("seed", 42)
 
     for epoch in range(epochs):
-        train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
-        val_loss, val_acc = validate(model, val_loader, criterion, device)
+        train_loss, train_acc, train_precision, train_recall, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, device)
+        val_loss, val_acc, val_precision, val_recall, val_f1 = validate(model, val_loader, criterion, device)
 
         mlflow.log_metric("train_loss", train_loss, step=epoch)
         mlflow.log_metric("train_acc", train_acc, step=epoch)
+        mlflow.log_metric("train_precision", train_precision, step=epoch)
+        mlflow.log_metric("train_recall", train_recall, step=epoch)
+        mlflow.log_metric("train_f1", train_f1, step=epoch)
         mlflow.log_metric("val_loss", val_loss, step=epoch)
         mlflow.log_metric("val_acc", val_acc, step=epoch)
+        mlflow.log_metric("val_precision", val_precision, step=epoch)
+        mlflow.log_metric("val_recall", val_recall, step=epoch)
+        mlflow.log_metric("val_f1", val_f1, step=epoch)
 
-        print(f"Epoch {epoch+1}: Train Loss={train_loss:.4f}, Train Acc={train_acc:.4f}, Val Loss={val_loss:.4f}, Val Acc={val_acc:.4f}")
+        print(f"Epoch {epoch+1}: Train Loss={train_loss:.4f}, Train Acc={train_acc:.4f}, Precision={train_precision:.4f}, Recall={train_recall:.4f}, F1={train_f1:.4f}")
+        print(f"              Val Loss={val_loss:.4f}, Val Acc={val_acc:.4f}, Precision={val_precision:.4f}, Recall={val_recall:.4f}, F1={val_f1:.4f}")
 
         # Ajuste de la tasa de aprendizaje
         scheduler.step()
 
+        # Verificar el early stopping
+        early_stopping(val_loss)
+        if early_stopping.early_stop:
+            print("Early stopping triggered")
+            break
+
+        # Registrar la matriz de confusión cada 10 épocas
+        if (epoch + 1) % 10 == 0 or early_stopping.early_stop:
+            log_confusion_matrix(model, val_loader, device, epoch + 1)
+
+    # Registrar el modelo final en MLflow
     mlflow.pytorch.log_model(model, "model")
+    # Registrar la matriz de confusión final
+    log_confusion_matrix(model, val_loader, device, "final")
