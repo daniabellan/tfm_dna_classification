@@ -13,210 +13,212 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, classification_report, precision_score, recall_score, f1_score
+from datasets.synthetic_dataset import SyntheticDataset
+from models.hybrid_model import HybridSequenceClassifier
 
 # Clase ResidualBlock (sin cambios)
-class ResidualBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1):
-        super(ResidualBlock, self).__init__()
-        self.conv1 = nn.Conv1d(in_channels, out_channels, kernel_size, stride=stride, padding=kernel_size // 2)
-        self.bn1 = nn.BatchNorm1d(out_channels)
-        self.conv2 = nn.Conv1d(out_channels, out_channels, kernel_size, stride=1, padding=kernel_size // 2)
-        self.bn2 = nn.BatchNorm1d(out_channels)
-        self.shortcut = nn.Sequential()
-        if stride != 1 or in_channels != out_channels:
-            self.shortcut = nn.Sequential(
-                nn.Conv1d(in_channels, out_channels, kernel_size=1, stride=stride),
-                nn.BatchNorm1d(out_channels)
-            )
+# class ResidualBlock(nn.Module):
+#     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1):
+#         super(ResidualBlock, self).__init__()
+#         self.conv1 = nn.Conv1d(in_channels, out_channels, kernel_size, stride=stride, padding=kernel_size // 2)
+#         self.bn1 = nn.BatchNorm1d(out_channels)
+#         self.conv2 = nn.Conv1d(out_channels, out_channels, kernel_size, stride=1, padding=kernel_size // 2)
+#         self.bn2 = nn.BatchNorm1d(out_channels)
+#         self.shortcut = nn.Sequential()
+#         if stride != 1 or in_channels != out_channels:
+#             self.shortcut = nn.Sequential(
+#                 nn.Conv1d(in_channels, out_channels, kernel_size=1, stride=stride),
+#                 nn.BatchNorm1d(out_channels)
+#             )
 
-    def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(out))
-        out += self.shortcut(x)
-        return F.relu(out)
+#     def forward(self, x):
+#         out = F.relu(self.bn1(self.conv1(x)))
+#         out = self.bn2(self.conv2(out))
+#         out += self.shortcut(x)
+#         return F.relu(out)
 
 
 # Modelo Híbrido con Transformer para secuencias
-class HybridSequenceClassifier(nn.Module):
-    def __init__(self, vocab_size, embed_dim, num_heads, num_classes, num_layers, max_seq_length):
-        super(HybridSequenceClassifier, self).__init__()
+# class HybridSequenceClassifier(nn.Module):
+#     def __init__(self, vocab_size, embed_dim, num_heads, num_classes, num_layers, max_seq_length):
+#         super(HybridSequenceClassifier, self).__init__()
 
-        # Rama para señales eléctricas
-        self.conv1 = nn.Conv1d(1, 32, kernel_size=19, stride=3)
-        self.pool1 = nn.MaxPool1d(kernel_size=3, stride=2)
-        self.layer1 = ResidualBlock(32, 64, stride=2)
-        self.layer2 = ResidualBlock(64, 128, stride=2)
-        self.layer3 = ResidualBlock(128, 256, stride=2)
-        self.layer4 = ResidualBlock(256, 512, stride=2)
-        self.global_pool_signals = nn.AdaptiveMaxPool1d(8)
+#         # Rama para señales eléctricas
+#         self.conv1 = nn.Conv1d(1, 32, kernel_size=19, stride=3)
+#         self.pool1 = nn.MaxPool1d(kernel_size=3, stride=2)
+#         self.layer1 = ResidualBlock(32, 64, stride=2)
+#         self.layer2 = ResidualBlock(64, 128, stride=2)
+#         self.layer3 = ResidualBlock(128, 256, stride=2)
+#         self.layer4 = ResidualBlock(256, 512, stride=2)
+#         self.global_pool_signals = nn.AdaptiveMaxPool1d(8)
 
-        # Clasificador conjunto
-        self.fc1 = nn.Linear(512 * 8 + embed_dim * 8, 2048)  # Combina ambas ramas
-        self.fc2 = nn.Linear(2048, 512)
-        self.fc3 = nn.Linear(512, num_classes)  # Para 5 clases
-        self.fc1_dropout = nn.Dropout(0.5)
-        self.fc2_dropout = nn.Dropout(0.5)
+#         # Clasificador conjunto
+#         self.fc1 = nn.Linear(512 * 8 + embed_dim * 8, 2048)  # Combina ambas ramas
+#         self.fc2 = nn.Linear(2048, 512)
+#         self.fc3 = nn.Linear(512, num_classes)  # Para 5 clases
+#         self.fc1_dropout = nn.Dropout(0.5)
+#         self.fc2_dropout = nn.Dropout(0.5)
 
-        # Rama para secuencias con Transformer
-        self.embedding = nn.Embedding(vocab_size, embed_dim)
-        self.positional_encoding = nn.Parameter(torch.zeros(1, max_seq_length, embed_dim))
+#         # Rama para secuencias con Transformer
+#         self.embedding = nn.Embedding(vocab_size, embed_dim)
+#         self.positional_encoding = nn.Parameter(torch.zeros(1, max_seq_length, embed_dim))
 
-        encoder_layer = nn.TransformerEncoderLayer(d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.3)
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+#         encoder_layer = nn.TransformerEncoderLayer(d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.3)
+#         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
-        self.fc_seq = nn.Linear(embed_dim, num_classes)
-        self.dropout = nn.Dropout(0.5)  # Añadido para regularización
+#         self.fc_seq = nn.Linear(embed_dim, num_classes)
+#         self.dropout = nn.Dropout(0.5)  # Añadido para regularización
 
 
-    def forward(self, signals, sequences, padding_mask=None):
-        # Procesamiento de señales
-        signals = signals.unsqueeze(1)  # Convertir a (batch_size, 1, signal_length) para Conv1d
-        x_signals = signals.view(signals.size(0), 1, -1)  # Reajustar las dimensiones
-        x_signals = F.relu(self.conv1(x_signals))
-        x_signals = self.pool1(x_signals)
-        x_signals = self.layer1(x_signals)
-        x_signals = self.layer2(x_signals)
-        x_signals = self.layer3(x_signals)
-        x_signals = self.layer4(x_signals)
-        x_signals = self.global_pool_signals(x_signals)
-        x_signals = x_signals.view(x_signals.size(0), -1)
+#     def forward(self, signals, sequences, padding_mask=None):
+#         # Procesamiento de señales
+#         signals = signals.unsqueeze(1)  # Convertir a (batch_size, 1, signal_length) para Conv1d
+#         x_signals = signals.view(signals.size(0), 1, -1)  # Reajustar las dimensiones
+#         x_signals = F.relu(self.conv1(x_signals))
+#         x_signals = self.pool1(x_signals)
+#         x_signals = self.layer1(x_signals)
+#         x_signals = self.layer2(x_signals)
+#         x_signals = self.layer3(x_signals)
+#         x_signals = self.layer4(x_signals)
+#         x_signals = self.global_pool_signals(x_signals)
+#         x_signals = x_signals.view(x_signals.size(0), -1)
 
-        # Procesamiento de k-mers con Transformer
-        x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]  # Añadir codificación posicional
-        x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)
-        x_sequences = x_sequences.permute(0, 2, 1)  # Para usar MaxPool1d
-        x_sequences = self.global_pool_signals(x_sequences)
-        x_sequences = x_sequences.reshape(x_sequences.size(0), -1)
-        ##x_sequences = x_sequences.mean(dim=1)
-        # sequences = self.dropout(sequences)
-        ##x_sequences = self.fc_seq(x_sequences)
+#         # Procesamiento de k-mers con Transformer
+#         x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]  # Añadir codificación posicional
+#         x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)
+#         x_sequences = x_sequences.permute(0, 2, 1)  # Para usar MaxPool1d
+#         x_sequences = self.global_pool_signals(x_sequences)
+#         x_sequences = x_sequences.reshape(x_sequences.size(0), -1)
+#         ##x_sequences = x_sequences.mean(dim=1)
+#         # sequences = self.dropout(sequences)
+#         ##x_sequences = self.fc_seq(x_sequences)
 
-        # Solo rama secuencias
-        # x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
-        # x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)
-        # x_sequences = x_sequences.mean(dim=1)  # Promediar sobre la secuencia
-        # x_sequences = self.dropout(x_sequences)  # Aplicar dropout
-        # x_sequences = self.fc_seq(x_sequences)
+#         # Solo rama secuencias
+#         # x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
+#         # x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)
+#         # x_sequences = x_sequences.mean(dim=1)  # Promediar sobre la secuencia
+#         # x_sequences = self.dropout(x_sequences)  # Aplicar dropout
+#         # x_sequences = self.fc_seq(x_sequences)
 
-        # Normalización L2
-        x_signals = F.normalize(x_signals, p=2, dim=1)  
-        x_sequences = F.normalize(x_sequences, p=2, dim=1)
+#         # Normalización L2
+#         x_signals = F.normalize(x_signals, p=2, dim=1)  
+#         x_sequences = F.normalize(x_sequences, p=2, dim=1)
         
-        # Combinar ambas ramas
-        x = torch.cat((x_signals, x_sequences), dim=1)
-        x = F.relu(self.fc1(x))
-        x = self.fc1_dropout(x)  
-        x = F.relu(self.fc2(x))
-        x = self.fc2_dropout(x)  
-        x = self.fc3(x)
+#         # Combinar ambas ramas
+#         x = torch.cat((x_signals, x_sequences), dim=1)
+#         x = F.relu(self.fc1(x))
+#         x = self.fc1_dropout(x)  
+#         x = F.relu(self.fc2(x))
+#         x = self.fc2_dropout(x)  
+#         x = self.fc3(x)
         
-        # Solo rama secuencias
-        # x = sequences
-        return x
+#         # Solo rama secuencias
+#         # x = sequences
+#         return x
     
 
-class SyntheticDataset(Dataset):
-    def __init__(self, num_samples=1000, window_size=1000, min_seq_length=50, max_seq_length=100):
-        """
-        Dataset Sintético adaptado para k-mers con ventana deslizante y padding.
+# class SyntheticDataset(Dataset):
+#     def __init__(self, num_samples=1000, window_size=1000, min_seq_length=50, max_seq_length=100):
+#         """
+#         Dataset Sintético adaptado para k-mers con ventana deslizante y padding.
 
-        Args:
-            num_samples: Número de muestras en el dataset.
-            seq_length: Longitud de la secuencia base.
-            num_kmers: Número total de k-mers diferentes (vocabulario).
-            min_k: Longitud mínima de los k-mers.
-            max_k: Longitud máxima de los k-mers.
-            window_size: Tamaño de la ventana deslizante para segmentar la señal.
-            padding_value: Valor usado para el padding en la señal.
-        """
-        self.num_samples = num_samples
-        self.min_seq_length = min_seq_length
-        self.max_seq_length = max_seq_length
-        self.window_size = window_size
+#         Args:
+#             num_samples: Número de muestras en el dataset.
+#             seq_length: Longitud de la secuencia base.
+#             num_kmers: Número total de k-mers diferentes (vocabulario).
+#             min_k: Longitud mínima de los k-mers.
+#             max_k: Longitud máxima de los k-mers.
+#             window_size: Tamaño de la ventana deslizante para segmentar la señal.
+#             padding_value: Valor usado para el padding en la señal.
+#         """
+#         self.num_samples = num_samples
+#         self.min_seq_length = min_seq_length
+#         self.max_seq_length = max_seq_length
+#         self.window_size = window_size
 
-        # Generar datos sintéticos
-        self.signals, self.sequences, self.labels = self.generate_data()
-
-
-    def generate_data(self):
-        signals = []  # Señales eléctricas
-        sequences, labels = self._generate_sequences()
-
-        for seq_idx, sequence in enumerate(sequences):
-            # print(f"Generated sequence [{seq_idx+1}/{len(sequences)}]")
-            # Generar la señal asociada a la secuencia
-            signal = self.generate_signal(sequence)
-
-            # Aplicar ventana deslizante para segmentar la señal 
-            segmented_signal = self.apply_sliding_window(signal)
-
-            signals.append(segmented_signal)
-
-        return signals, sequences, labels
+#         # Generar datos sintéticos
+#         self.signals, self.sequences, self.labels = self.generate_data()
 
 
-    def _generate_sequences(self):
-        base_probs = [
-            [0.4, 0.3, 0.2, 0.1],  # Patrón para la especie 0
-            [0.1, 0.4, 0.4, 0.1],  # Patrón para la especie 1
-            [0.3, 0.3, 0.2, 0.2],  # Patrón para la especie 2
-            [0.2, 0.2, 0.3, 0.3],  # Patrón para la especie 3
-            [0.25, 0.25, 0.25, 0.25]  # Patrón para la especie 4 (uniforme)
-        ]
-        bases = ['A', 'C', 'T', 'G']
-        data, labels = [], []
+#     def generate_data(self):
+#         signals = []  # Señales eléctricas
+#         sequences, labels = self._generate_sequences()
 
-        for label, probs in enumerate(base_probs):
-            for _ in range(self.num_samples // len(base_probs)):
-                seq_length = np.random.randint(self.min_seq_length, self.max_seq_length + 1)
-                sequence = ''.join(np.random.choice(bases, seq_length, p=probs))
-                data.append(sequence)
-                labels.append(label)
+#         for seq_idx, sequence in enumerate(sequences):
+#             # print(f"Generated sequence [{seq_idx+1}/{len(sequences)}]")
+#             # Generar la señal asociada a la secuencia
+#             signal = self.generate_signal(sequence)
 
-        return data, labels
+#             # Aplicar ventana deslizante para segmentar la señal 
+#             segmented_signal = self.apply_sliding_window(signal)
 
-    def generate_signal(self, sequence):
-        base_signals = {
-            'A': lambda: np.random.uniform(low=10, high=11, size=50),
-            'C': lambda: np.random.uniform(low=20, high=21, size=50),
-            'T': lambda: np.random.uniform(low=30, high=31, size=50),
-            'G': lambda: np.random.uniform(low=40, high=41, size=50)
-        }
-        signal = np.concatenate([base_signals[base]() for base in sequence])
+#             signals.append(segmented_signal)
 
-        return signal
-
-    def apply_sliding_window(self, signal):
-        segmented_signal = []
-
-        step_size = self.window_size
-
-        for start in range(0, len(signal), step_size):
-            end = start + step_size
-
-            signal_segment = signal[start:end]
-            if len(signal_segment) < step_size:
-                signal_segment = np.pad(signal_segment, (0, step_size - len(signal_segment)), constant_values=0)
-
-            segmented_signal.append(np.array(signal_segment, dtype=np.float32))
+#         return signals, sequences, labels
 
 
-        return segmented_signal
+#     def _generate_sequences(self):
+#         base_probs = [
+#             [0.4, 0.3, 0.2, 0.1],  # Patrón para la especie 0
+#             [0.1, 0.4, 0.4, 0.1],  # Patrón para la especie 1
+#             [0.3, 0.3, 0.2, 0.2],  # Patrón para la especie 2
+#             [0.2, 0.2, 0.3, 0.3],  # Patrón para la especie 3
+#             [0.25, 0.25, 0.25, 0.25]  # Patrón para la especie 4 (uniforme)
+#         ]
+#         bases = ['A', 'C', 'T', 'G']
+#         data, labels = [], []
 
-    def add_noise(self, signal):
-        noise = np.random.normal(loc=0.0, scale=self.noise_factor, size=signal.shape)
-        signal_con_ruido = signal + noise
-        return signal_con_ruido
+#         for label, probs in enumerate(base_probs):
+#             for _ in range(self.num_samples // len(base_probs)):
+#                 seq_length = np.random.randint(self.min_seq_length, self.max_seq_length + 1)
+#                 sequence = ''.join(np.random.choice(bases, seq_length, p=probs))
+#                 data.append(sequence)
+#                 labels.append(label)
 
-    def __len__(self):
-        return len(self.sequences)
+#         return data, labels
 
-    def __getitem__(self, idx):
-        signal = self.signals[idx]
-        sequences = self.sequences[idx]
-        label = self.labels[idx]
+#     def generate_signal(self, sequence):
+#         base_signals = {
+#             'A': lambda: np.random.uniform(low=10, high=11, size=50),
+#             'C': lambda: np.random.uniform(low=20, high=21, size=50),
+#             'T': lambda: np.random.uniform(low=30, high=31, size=50),
+#             'G': lambda: np.random.uniform(low=40, high=41, size=50)
+#         }
+#         signal = np.concatenate([base_signals[base]() for base in sequence])
 
-        return signal, sequences, label
+#         return signal
+
+#     def apply_sliding_window(self, signal):
+#         segmented_signal = []
+
+#         step_size = self.window_size
+
+#         for start in range(0, len(signal), step_size):
+#             end = start + step_size
+
+#             signal_segment = signal[start:end]
+#             if len(signal_segment) < step_size:
+#                 signal_segment = np.pad(signal_segment, (0, step_size - len(signal_segment)), constant_values=0)
+
+#             segmented_signal.append(np.array(signal_segment, dtype=np.float32))
+
+
+#         return segmented_signal
+
+#     def add_noise(self, signal):
+#         noise = np.random.normal(loc=0.0, scale=self.noise_factor, size=signal.shape)
+#         signal_con_ruido = signal + noise
+#         return signal_con_ruido
+
+#     def __len__(self):
+#         return len(self.sequences)
+
+#     def __getitem__(self, idx):
+#         signal = self.signals[idx]
+#         sequences = self.sequences[idx]
+#         label = self.labels[idx]
+
+#         return signal, sequences, label
 
 
 class SequenceCollatorSignals:
@@ -320,9 +322,9 @@ def log_confusion_matrix(model, loader, device, step):
 
 vocab = {'A': 0, 'C': 1, 'T': 2, 'G': 3, '<pad>': 4}  # Añadimos el padding en un índice diferente (4)
 padding_idx = vocab['<pad>']
-min_seq_length = 100
-max_seq_length = 150
-num_samples = 1000
+min_seq_length = 150
+max_seq_length = 200
+num_samples = 10000
 num_classes = 5
 
 batch_size = 1024
@@ -330,17 +332,18 @@ learning_rate = 0.0001
 epochs = 100
 
 # Crear el dataset sintético
-dataset = SyntheticDataset(num_samples=num_samples, min_seq_length=min_seq_length, max_seq_length=max_seq_length)
+# dataset = SyntheticDataset(num_samples=num_samples, min_seq_length=min_seq_length, max_seq_length=max_seq_length)
+dataset = SyntheticDataset("config/datasets_config/synthetic_default.yaml")
 
 # Dividir el dataset en entrenamiento y validación usando train_test_split
 train_signals, val_signals, train_sequences, val_sequences, train_labels, val_labels = train_test_split(
     dataset.signals, dataset.sequences, dataset.labels, test_size=0.2, random_state=42)
 
 # Crear datasets de PyTorch para entrenamiento y validación
-train_dataset = SyntheticDataset(num_samples=len(train_signals), min_seq_length=min_seq_length, max_seq_length=max_seq_length)
+train_dataset = SyntheticDataset("config/datasets_config/train_synthetic_default.yaml")
 train_dataset.signals, train_dataset.sequences, train_dataset.labels = train_signals, train_sequences, train_labels
 
-val_dataset = SyntheticDataset(num_samples=len(val_signals), min_seq_length=min_seq_length, max_seq_length=max_seq_length)
+val_dataset = SyntheticDataset("config/datasets_config/val_synthetic_default.yaml")
 val_dataset.signals, val_dataset.sequences, val_dataset.labels = val_signals, val_sequences, val_labels
 
 # Crear los DataLoader para entrenamiento y validación

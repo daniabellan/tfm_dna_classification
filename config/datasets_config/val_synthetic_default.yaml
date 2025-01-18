@@ -1,0 +1,23 @@
+dataset:
+  num_samples: 2000
+  min_seq_length: 150
+  max_seq_length: 200
+  window_size: 1000
+  noise_factor: 0.1
+  base_probs:
+    - [0.4, 0.3, 0.2, 0.1]
+    - [0.1, 0.4, 0.4, 0.1]
+    - [0.3, 0.3, 0.2, 0.2]
+    - [0.2, 0.2, 0.3, 0.3]
+    - [0.25, 0.25, 0.25, 0.25]
+  bases: ["A", "C", "T", "G"]
+
+vocab:
+  "A": 0
+  "C": 1
+  "T": 2
+  "G": 3
+  "<pad>": 4
+
+padding_idx: 4
+num_classes: 5

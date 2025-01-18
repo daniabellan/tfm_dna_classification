@@ -1,0 +1,17 @@
+# Tamaño del vocabulario para la rama de secuencias (número de tokens únicos)
+vocab_size: 5  
+
+# Dimensión del espacio de embedding para las secuencias de texto
+embed_dim: 256  # Dimensión de los embeddings en la rama de secuencias
+
+# Número de cabezas en la capa de atención multi-cabeza del Transformer
+num_heads: 4  # Número de cabezas de atención en el Transformer
+
+# Número de clases en el problema de clasificación
+num_classes: 5 
+
+# Número de capas en el Transformer Encoder
+num_layers: 2  # Número de capas del Transformer Encoder
+
+# Longitud máxima de la secuencia de entrada
+max_seq_length: 512  # Longitud máxima de la secuencia (ajustar según el problema)
