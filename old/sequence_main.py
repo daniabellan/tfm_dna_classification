@@ -16,6 +16,22 @@ from sklearn.metrics import confusion_matrix, classification_report, precision_s
 from datasets.synthetic_dataset import SyntheticDataset
 from models.hybrid_model import HybridSequenceClassifier
 
+def set_seed(seed):
+    # Establecer la semilla para NumPy
+    np.random.seed(seed)
+    # Establecer la semilla para PyTorch (CPU)
+    torch.manual_seed(seed)
+    # Si estás utilizando una GPU, también puedes configurar la semilla para ella
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)  # Para todas las GPUs
+    # Asegurar determinismo en operaciones CUDA (esto puede ralentizar un poco el entrenamiento)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+# Usar la función para establecer la semilla
+set_seed(42)
+
 # Clase ResidualBlock (sin cambios)
 # class ResidualBlock(nn.Module):
 #     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1):
@@ -336,19 +352,22 @@ epochs = 100
 dataset = SyntheticDataset("config/datasets_config/synthetic_default.yaml")
 
 # Dividir el dataset en entrenamiento y validación usando train_test_split
-train_signals, val_signals, train_sequences, val_sequences, train_labels, val_labels = train_test_split(
-    dataset.signals, dataset.sequences, dataset.labels, test_size=0.2, random_state=42)
+# train_signals, val_signals, train_sequences, val_sequences, train_labels, val_labels = train_test_split(
+#     dataset.signals, dataset.sequences, dataset.labels, test_size=0.2, random_state=42)
 
-# Crear datasets de PyTorch para entrenamiento y validación
-train_dataset = SyntheticDataset("config/datasets_config/train_synthetic_default.yaml")
-train_dataset.signals, train_dataset.sequences, train_dataset.labels = train_signals, train_sequences, train_labels
+# # Crear datasets de PyTorch para entrenamiento y validación
+# train_dataset = SyntheticDataset("config/datasets_config/train_synthetic_default.yaml")
+# train_dataset.signals, train_dataset.sequences, train_dataset.labels = train_signals, train_sequences, train_labels
 
-val_dataset = SyntheticDataset("config/datasets_config/val_synthetic_default.yaml")
-val_dataset.signals, val_dataset.sequences, val_dataset.labels = val_signals, val_sequences, val_labels
+# val_dataset = SyntheticDataset("config/datasets_config/val_synthetic_default.yaml")
+# val_dataset.signals, val_dataset.sequences, val_dataset.labels = val_signals, val_sequences, val_labels
+
+# Crear datasets de PyTorch para entrenamiento y test
+train_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.8, 0.2])
 
 # Crear los DataLoader para entrenamiento y validación
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=SequenceCollatorSignals(vocab, padding_idx))
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, collate_fn=SequenceCollatorSignals(vocab, padding_idx))
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, collate_fn=SequenceCollatorSignals(vocab, padding_idx))
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = HybridSequenceClassifier(vocab_size=len(vocab), embed_dim=256, num_heads=4, num_classes=num_classes, num_layers=2, max_seq_length=max_seq_length).to(device)
@@ -449,7 +468,7 @@ with mlflow.start_run(run_name=timestamp):
 
     for epoch in range(epochs):
         train_loss, train_acc, train_precision, train_recall, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, device)
-        val_loss, val_acc, val_precision, val_recall, val_f1 = validate(model, val_loader, criterion, device)
+        val_loss, val_acc, val_precision, val_recall, val_f1 = validate(model, test_loader, criterion, device)
 
         mlflow.log_metric("train_loss", train_loss, step=epoch)
         mlflow.log_metric("train_acc", train_acc, step=epoch)
@@ -476,9 +495,9 @@ with mlflow.start_run(run_name=timestamp):
 
         # Registrar la matriz de confusión cada 10 épocas
         if (epoch + 1) % 10 == 0 or early_stopping.early_stop:
-            log_confusion_matrix(model, val_loader, device, epoch + 1)
+            log_confusion_matrix(model, test_loader, device, epoch + 1)
 
     # Registrar el modelo final en MLflow
     mlflow.pytorch.log_model(model, "model")
     # Registrar la matriz de confusión final
-    log_confusion_matrix(model, val_loader, device, "final")
+    log_confusion_matrix(model, test_loader, device, "final")

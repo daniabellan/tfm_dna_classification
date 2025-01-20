@@ -5,7 +5,7 @@ from scipy.signal import butter, filtfilt, medfilt
 from scipy.stats import zscore 
 
 class SyntheticDataset(Dataset):
-    def __init__(self, config_file='config.yaml', mode="default", preprocess:bool=True):
+    def __init__(self, config:dict, seed=42, mode="default", preprocess:bool=False):
         """
         Dataset Sintético adaptado para k-mers con ventana deslizante y padding.
         Carga las configuraciones desde un archivo YAML.
@@ -13,9 +13,7 @@ class SyntheticDataset(Dataset):
         Args:
             config_file: Ruta al archivo YAML que contiene la configuración.
         """
-        with open(config_file, 'r') as f:
-            config = yaml.safe_load(f)
-        
+
         self.num_samples = config['dataset']['num_samples']
         self.min_seq_length = config['dataset']['min_seq_length']
         self.max_seq_length = config['dataset']['max_seq_length']
@@ -33,6 +31,9 @@ class SyntheticDataset(Dataset):
         self.total_time = 1.0  # Duración total de la señal en segundos
 
         self.preprocess = preprocess # Preprocess signal
+
+        # Crear un generador de números aleatorios con una semilla fija
+        self.rng = np.random.default_rng(seed)
 
         # Generar datos sintéticos
         self.preprocessed_signals, self.complete_signals, self.signals, self.sequences, self.labels = self.generate_data()
@@ -68,8 +69,8 @@ class SyntheticDataset(Dataset):
 
         for label, probs in enumerate(self.base_probs):
             for _ in range(self.num_samples // len(self.base_probs)):
-                seq_length = np.random.randint(self.min_seq_length, self.max_seq_length + 1)
-                sequence = ''.join(np.random.choice(self.bases, seq_length, p=probs))
+                seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
+                sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
                 data.append(sequence)
                 labels.append(label)
 
@@ -88,16 +89,48 @@ class SyntheticDataset(Dataset):
 
         return signal
     """
+
+    def add_salt_and_pepper_noise(self, signal, salt_prob=0.02, pepper_prob=0.02):
+        noisy_signal = signal.copy()
+        num_points = len(signal)
         
+        # Generar índices aleatorios para ruido 'salt' (valores altos)
+        salt_indices = self.rng.choice(num_points, int(salt_prob * num_points), replace=False)
+        noisy_signal[salt_indices] = np.max(signal) * 1.5  # Valor máximo (salt)
+        
+        # Generar índices aleatorios para ruido 'pepper' (valores bajos)
+        pepper_indices = self.rng.choice(num_points, int(pepper_prob * num_points), replace=False)
+        noisy_signal[pepper_indices] = np.min(signal) * 1.5  # Valor mínimo (pepper)
+        
+        return noisy_signal
+
+
+    def apply_random_amplitude_scaling(self, signal, num_segments=5, scale_range=(0.5, 1.5)):
+        scaled_signal = signal.copy()
+        segment_length = len(signal) // num_segments
+        
+        for i in range(num_segments):
+            # Definir inicio y fin del segmento
+            start = i * segment_length
+            end = start + segment_length if (i < num_segments - 1) else len(signal)
+            
+            # Escalado aleatorio
+            scale_factor = self.rng.uniform(scale_range[0], scale_range[1])
+            scaled_signal[start:end] *= scale_factor
+        
+        return scaled_signal
+
+
+
     # NEW GENERATION SIGNALS ~REAL
     def generate_signal(self, sequence):
         time_points = np.linspace(0, self.total_time, int(self.sampling_rate * self.total_time))
 
         nucleotides = {
-            'A': {'amplitude': 1.5, 'duration': 0.4},  # Amplitud y duración aproximada de la fluctuación
-            'C': {'amplitude': 1.2, 'duration': 0.35},
-            'G': {'amplitude': 1.7, 'duration': 0.45},
-            'T': {'amplitude': 1.3, 'duration': 0.4}
+            'A': {'amplitude': 1.51, 'duration': 0.4},  # Amplitud y duración aproximada de la fluctuación
+            'C': {'amplitude': 1.52, 'duration': 0.4},
+            'G': {'amplitude': 1.53, 'duration': 0.4},
+            'T': {'amplitude': 1.54, 'duration': 0.4}
         }
 
         # Generar la señal sintética
@@ -121,9 +154,16 @@ class SyntheticDataset(Dataset):
             # Avanzar al siguiente tiempo
             current_time = end_time
 
-        # Añadir ruido a la señal
-        noise = np.random.normal(0, 0.3, len(signal))  # Ruido gaussiano
+        # Añadir ruido gaussiano a la señal
+        noise = self.rng.normal(0.9, 1, len(signal))
         signal += noise
+
+        # Añadir ruido salt and pepper
+        signal = self.add_salt_and_pepper_noise(signal, salt_prob=0.02, pepper_prob=0.02)
+
+        # Aplicar escalado aleatorio de amplitud
+        signal = self.apply_random_amplitude_scaling(signal, num_segments=5, scale_range=(0.5, 1.5))
+
 
         return signal
 

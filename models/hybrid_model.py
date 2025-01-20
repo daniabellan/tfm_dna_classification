@@ -37,7 +37,7 @@ class HybridSequenceClassifier(nn.Module):
 
         # --- Configuración de la rama para señales eléctricas ---
         # Convolución inicial para extracción de características locales
-        self.conv1 = nn.Conv1d(1, 32, kernel_size=19, stride=3)
+        self.conv1 = nn.Conv1d(10, 32, kernel_size=19, stride=3)
         self.pool1 = nn.MaxPool1d(kernel_size=3, stride=2)  # Reducción de dimensionalidad
 
         # Bloques residuales para aumentar la profundidad de la red
