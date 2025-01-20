@@ -77,7 +77,11 @@ if __name__ == "__main__":
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)
 
     # Configuración de MLFlow
-    mlflow_logger = MLFlowLogger(train_config, experiment_name)
+    mlflow_logger = MLFlowLogger(train_config, 
+                                experiment_name, 
+                                len(train_dataset), 
+                                len(val_dataset), 
+                                len(test_dataset))
 
     # Iniciar el temporizador
     mlflow_logger.start_timer()
