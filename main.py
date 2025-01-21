@@ -102,7 +102,8 @@ if __name__ == "__main__":
     for epoch in range(train_config["epochs"]):
         start_epoch = time.time()
         
-        # Train
+        # Temporizador para la fase de entrenamiento
+        start_train_phase = time.time()
         train_metrics = train_one_epoch(model, 
                                         train_loader, 
                                         criterion, 
@@ -111,32 +112,38 @@ if __name__ == "__main__":
                                         train_config["gradient_clipping"]["max_grad_norm"], 
                                         dataset_config["padding_idx"])
         
-        # Validate
+        train_time = time.time() - start_train_phase
+        
+        # Temporizador para la fase de validación
+        start_val_phase = time.time()
         val_metrics = validate(model, 
-                               val_loader, 
-                               criterion, 
-                               device, 
-                               dataset_config["padding_idx"])
+                            val_loader, 
+                            criterion, 
+                            device, 
+                            dataset_config["padding_idx"])
+        val_time = time.time() - start_val_phase
 
-        # Registrar los tiempos de la época
+        # Registrar tiempos en MLflow
         epoch_time = time.time() - start_epoch
-        mlflow_logger.log_epoch_time(epoch_time)
+        mlflow_logger.log_metrics({"epoch_time": epoch_time}, epoch)
 
+        # Registrar métricas
         mlflow_logger.log_metrics({"train_" + k: v for k, v in train_metrics.items()}, epoch)
         mlflow_logger.log_metrics({"val_" + k: v for k, v in val_metrics.items()}, epoch)
 
         scheduler.step()
 
-        epoch_time = time.time() - start_epoch
         elapsed_time = time.time() - start_train
-        # Print epoch summary
         print_epoch_summary(epoch, train_metrics, val_metrics, epoch_time, elapsed_time)
 
         if early_stopping(val_metrics["loss"]):
             print("Early stopping triggered")
             break
 
-    print(f"\n** Training done in {(time.time() - start_train):4f} seconds\n")
+    # Tiempo total de entrenamiento
+    total_train_time = time.time() - start_train
+    mlflow_logger.log_metrics({"train_time": total_train_time}, epoch)
+    print(f"\n** Training done in {total_train_time:.4f} seconds\n")
 
     # Test
     start_test = time.time()
