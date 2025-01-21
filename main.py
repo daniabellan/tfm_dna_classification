@@ -77,11 +77,12 @@ if __name__ == "__main__":
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)
 
     # Configuración de MLFlow
-    mlflow_logger = MLFlowLogger(train_config, 
-                                experiment_name, 
-                                len(train_dataset), 
-                                len(val_dataset), 
-                                len(test_dataset))
+    mlflow_logger = MLFlowLogger(experiment_config = train_config,
+                                 model_config = model_config,
+                                 experiment_name = experiment_name,
+                                 len_train_dataset = len(train_dataset),
+                                 len_val_dataset = len(val_dataset),
+                                 len_test_dataset = len(test_dataset))
 
     # Iniciar el temporizador
     mlflow_logger.start_timer()
@@ -117,10 +118,10 @@ if __name__ == "__main__":
         # Temporizador para la fase de validación
         start_val_phase = time.time()
         val_metrics = validate(model, 
-                            val_loader, 
-                            criterion, 
-                            device, 
-                            dataset_config["padding_idx"])
+                               val_loader, 
+                               criterion, 
+                               device, 
+                               dataset_config["padding_idx"])
         val_time = time.time() - start_val_phase
 
         # Registrar tiempos en MLflow

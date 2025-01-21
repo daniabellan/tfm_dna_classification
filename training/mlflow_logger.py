@@ -4,21 +4,25 @@ from datetime import datetime
 
 class MLFlowLogger():
     def __init__(self, 
-                 config:dict, 
+                 experiment_config:dict, 
+                 model_config:dict, 
                  experiment_name:str, 
                  len_train_dataset:int, 
                  len_val_dataset:int, 
                  len_test_dataset:int):
         self.experiment_name = experiment_name
-        self.config = config
         self.train_size = len_train_dataset
         self.val_size = len_val_dataset
         self.test_size = len_test_dataset
+
+        # Ordenar configuracion modelo y experimento
+        sorted_model_config = {key: value for key, value in sorted(model_config.items())}
+        sorted_experiment_config = {key: value for key, value in sorted(experiment_config.items())}
         
         # Usamos la fecha y hora en formato ISO 8601
         self.run_name = "run_" + datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
-        mlflow.set_tracking_uri(self.config["mlflow"]["tracking_uri"])
+        mlflow.set_tracking_uri(sorted_experiment_config["mlflow"]["tracking_uri"])
         mlflow.set_experiment(self.experiment_name)
         mlflow.start_run(run_name=self.run_name)
 
@@ -27,15 +31,21 @@ class MLFlowLogger():
         mlflow.log_param("val_size", self.val_size)
         mlflow.log_param("test_size", self.test_size)
 
-        self.setup_params()
+        # Log de los parametros del experimento
+        self.setup_params(config = sorted_experiment_config, 
+                          config_type = "exp")
 
-    def setup_params(self):
-        for key, value in self.config.items():
+        # Log de los parametros del modelo
+        self.setup_params(config = sorted_model_config,
+                          config_type = "model")
+
+    def setup_params(self, config:dict, config_type:str):
+        for key, value in config.items():
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():
-                    mlflow.log_param(f"{key}_{sub_key}", sub_value)
+                    mlflow.log_param(f"{config_type}_{key}_{sub_key}", sub_value)
             else:
-                mlflow.log_param(key, value)
+                mlflow.log_param(f"{config_type}_{key}", value)
 
     def log_metrics(self, metrics, epoch):
         for key, value in metrics.items():

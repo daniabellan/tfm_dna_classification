@@ -14,3 +14,5 @@ class EarlyStopping:
             self.counter += 1
             if self.counter >= self.patience:
                 self.early_stop = True
+        return self.early_stop  # Retornar el estado de parada temprana
+

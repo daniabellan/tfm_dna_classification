@@ -15,3 +15,7 @@ num_layers: 2  # Número de capas del Transformer Encoder
 
 # Longitud máxima de la secuencia de entrada
 max_seq_length: 512  # Longitud máxima de la secuencia (ajustar según el problema)
+
+# Configuración de test de ablación
+use_signals: True   # Habilitar la rama de señales
+use_sequences: True  # Habilitar la rama de secuencias
