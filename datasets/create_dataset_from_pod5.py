@@ -57,7 +57,7 @@ def process_pod5_file(file: Path, reads_dict: dict, verbose: bool = False) -> in
             read_id = str(read.read_id)
             
             if read_id in reads_dict:
-                reads_dict[read_id]["signal_pa"] = read.signal_pa.tolist()
+                reads_dict[read_id]["signal_pa"] = read.signal_pa
                 detected += 1
             else:
                 not_detected += 1

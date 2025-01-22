@@ -1,6 +1,9 @@
 import h5py
+import time
+import numpy as np
 
 def load_dict_h5(file_path):
+    start = time.time()
     dictionary = {}
     
     with h5py.File(file_path, 'r') as f:
@@ -17,11 +20,9 @@ def load_dict_h5(file_path):
             # Agregar los datos al diccionario
             dictionary[read_id] = {
                 "sequence": sequence,
-                "signal_pa": signal_pa.tolist()  # Convertir a lista de Python
+                "signal_pa": signal_pa 
             }
     
     print(f"Diccionario cargado desde {file_path}")
+    print(f"Done in {(time.time() - start):.4f} secs")
     return dictionary
-
-
-load_dict_h5("data/ecoli_k12/pod5_1.h5")

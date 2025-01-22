@@ -1,12 +1,12 @@
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-def train_one_epoch(model, loader, criterion, optimizer, device, max_grad_norm, padding_idx):
+def train_one_epoch(model, loader, criterion, optimizer, device, max_grad_norm, padding_idx, verbose=True):
     model.train()
     running_loss = 0.0
     all_preds, all_labels = [], []
 
-    for signals, sequences, labels in loader:
+    for batch_idx, (signals, sequences, labels) in enumerate(loader):
         signals, sequences, labels = signals.to(device), sequences.to(device), labels.to(device)
 
         # Crear el padding mask
@@ -27,6 +27,10 @@ def train_one_epoch(model, loader, criterion, optimizer, device, max_grad_norm, 
         all_preds.extend(preds.cpu().numpy())
         all_labels.extend(labels.cpu().numpy())
 
+        # Verbose: Imprimir información de cada mini-batch
+        if verbose:
+            print(f"Batch {batch_idx + 1}/{len(loader)} - Loss: {loss.item():.4f}")
+
     metrics = {
         "loss": running_loss / len(loader),
         "accuracy": accuracy_score(all_labels, all_preds),
@@ -34,4 +38,5 @@ def train_one_epoch(model, loader, criterion, optimizer, device, max_grad_norm, 
         "recall": recall_score(all_labels, all_preds, average="weighted", zero_division=0),
         "f1": f1_score(all_labels, all_preds, average="weighted", zero_division=0),
     }
+
     return metrics

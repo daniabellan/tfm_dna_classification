@@ -6,16 +6,26 @@ from models.residual_block import ResidualBlock
 
 # Modelo Híbrido con Transformer para secuencias y procesamiento de señales eléctricas
 class HybridSequenceClassifier(nn.Module):
-    def __init__(self, vocab_size, embed_dim, num_heads, num_classes, num_layers, max_seq_length, use_signals=True, use_sequences=True):
+    def __init__(self, 
+                 input_channels,
+                 vocab_size, 
+                 embed_dim, 
+                 num_heads, 
+                 num_classes, 
+                 num_layers, 
+                 max_seq_length, 
+                 use_signals=True, 
+                 use_sequences=True):
         super(HybridSequenceClassifier, self).__init__()
 
         # Usar señales y/o secuencias
         self.use_signals = use_signals
         self.use_sequences = use_sequences
 
+
         # --- Configuración de la rama para señales eléctricas ---
         # Convolución inicial para extracción de características locales
-        self.conv1 = nn.Conv1d(10, 32, kernel_size=19, stride=3)
+        self.conv1 = nn.Conv1d(input_channels, 32, kernel_size=19, stride=3)
         self.pool1 = nn.MaxPool1d(kernel_size=3, stride=2)  # Reducción de dimensionalidad
 
         # Bloques residuales para aumentar la profundidad de la red
@@ -85,7 +95,8 @@ class HybridSequenceClassifier(nn.Module):
         if self.use_sequences:
             # --- Procesamiento de la rama de secuencias ---
             # Embedding de secuencias y adición de codificación posicional
-            x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
+            # x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
+            x_sequences = self.embedding(sequences) 
 
             # Transformer Encoder
             x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)

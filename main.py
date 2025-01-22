@@ -3,6 +3,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from datasets.synthetic_dataset import SyntheticDataset
+from datasets.real_synthetic_dataset import RealSyntheticDataset
 from datasets.collate import SequenceSignalsCollator
 from models.hybrid_model import HybridSequenceClassifier
 from training.mlflow_logger import MLFlowLogger
@@ -20,8 +21,12 @@ def load_model_from_config(model_config, model_class):
 
 
 def create_synthetic_dataset(dataset_config: dict):
-    # Crear dataset sintético
-    dataset = SyntheticDataset(config=dataset_config)
+    # Cargar dataset reales y sintéticos
+    if "real_dataset" in dataset_config: 
+        dataset = RealSyntheticDataset(config = dataset_config)
+    else:
+        # Crear dataset sintético
+        dataset = SyntheticDataset(config = dataset_config)
     # Crear datasets de PyTorch para entrenamiento y val
     train_split = dataset_config["dataset"]["train_split"]
     val_split = dataset_config["dataset"]["val_split"]
@@ -59,6 +64,7 @@ def create_dataloaders(train_dataset, val_dataset, test_dataset, train_config: d
 if __name__ == "__main__":
     # Cargar configuracion de experimento
     experiment_config = "config/experiments/synthetic_default.yaml"
+    experiment_config = "config/experiments/real_synthetic_default.yaml"
     experiment_name, dataset_config, model_config, train_config = load_experiment_config(experiment_config)
 
     # Definir device
@@ -74,6 +80,18 @@ if __name__ == "__main__":
                                                                train_config)
 
     # Supongamos que HybridSequenceClassifier ya está definido
+    # Inicializamos el valor máximo de canales en 0
+    max_channels = 0
+
+    # Iterar a través de los DataLoaders para obtener el máximo número de canales
+    for loader in [train_loader, val_loader, test_loader]:
+        for signals, sequences, _ in loader:
+            max_channels = max(max_channels, signals.shape[1])  # signals.shape[1] es el número de canales
+            break  # Solo mirar el primer batch de cada DataLoader
+
+    # Asignar el máximo número de canales a model_config
+    model_config["input_channels"] = max_channels
+    print(f"El número máximo de canales es: {max_channels}")
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)
 
     # Configuración de MLFlow
