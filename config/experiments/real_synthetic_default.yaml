@@ -1,9 +1,14 @@
 experiment_name: Real_Default
 experiment_configs:
   dataset:
+    # - "../config/experiment_configs/datasets_config/real_synthetic_default.yaml"
     - "config/experiment_configs/datasets_config/real_synthetic_default.yaml"
+
   model:
+    # - "../config/experiment_configs/models_config/hybrid_model_default.yaml"
     - "config/experiment_configs/models_config/hybrid_model_default.yaml"
+
   train:
-    - config/experiment_configs/train_config/real_synthetic_default.yaml
+    # - "../config/experiment_configs/train_config/real_synthetic_default.yaml"
+    - "config/experiment_configs/train_config/real_synthetic_default.yaml"
 

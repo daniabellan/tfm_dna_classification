@@ -84,12 +84,13 @@ if __name__ == "__main__":
     max_channels = 0
 
     # Iterar a través de los DataLoaders para obtener el máximo número de canales
-    for loader in [train_loader, val_loader, test_loader]:
-        for signals, sequences, _ in loader:
-            max_channels = max(max_channels, signals.shape[1])  # signals.shape[1] es el número de canales
-            break  # Solo mirar el primer batch de cada DataLoader
+    # for loader in [train_loader, val_loader, test_loader]:
+    #     for signals, sequences, _ in loader:
+    #         max_channels = max(max_channels, signals.shape[1])  # signals.shape[1] es el número de canales
+    #         break  # Solo mirar el primer batch de cada DataLoader
 
     # Asignar el máximo número de canales a model_config
+    max_channels = 1000
     model_config["input_channels"] = max_channels
     print(f"El número máximo de canales es: {max_channels}")
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)

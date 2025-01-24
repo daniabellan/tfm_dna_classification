@@ -34,13 +34,14 @@ class RealSyntheticDataset(Dataset):
                                sequence = read_data["sequence"])
                 )
         
-        self.real_data_sample = self.rng.choice(real_data, size=50, replace=False)
-        max_signal_length = max([len(x.signal_pa) for x in self.real_data_sample])
-        max_sequence_length = max([len(x.sequence) for x in self.real_data_sample])
+        self.real_data_sample = self.rng.choice(real_data, size=200, replace=False)
+        # max_signal_length = max([len(x.signal_pa) for x in self.real_data_sample])
+        # max_sequence_length = max([len(x.sequence) for x in self.real_data_sample])
+        average_seq_length = np.average([len(x.sequence) for x in self.real_data_sample])
 
         self.num_samples = len(self.real_data_sample)
-        self.min_seq_length = max_sequence_length - int(max_sequence_length * 0.1)
-        self.max_seq_length = max_sequence_length
+        self.min_seq_length = average_seq_length - int(average_seq_length * 0.3)
+        self.max_seq_length = average_seq_length + int(average_seq_length * 0.3)
         self.window_size = config['dataset']['window_size']
         self.noise_factor = config['dataset'].get('noise_factor', 0.0)
         self.base_probs = config['dataset']['base_probs']
@@ -51,12 +52,11 @@ class RealSyntheticDataset(Dataset):
 
         self.mode = mode  # Almacenamos el modo de acceso
 
-        self.sampling_rate = 1000  # Frecuencia de muestreo en Hz (10 kHz)
-        self.total_time = 1.0  # Duración total de la señal en segundos
+        self.bases_per_second = 400 # Número de bases que pasan por el nanoporo por segundo.
+        self.sampling_rate = 4000  # Número de puntos de muestreo por segundo.
+        # self.total_time = 1.0  # Duración total de la señal en segundos
 
         self.preprocess = preprocess # Preprocess signal
-
-
 
         # Generar datos sintéticos
         self.preprocessed_signals, self.complete_signals, self.signals, self.sequences, self.labels = self.generate_data()
@@ -90,7 +90,7 @@ class RealSyntheticDataset(Dataset):
         next_label_class = max(list(Counter(labels).keys()))
         for data in self.real_data_sample:
             # Añadir clase y secuencia asociada a la señal real
-            labels.append(next_label_class)
+            labels.append(next_label_class + 1)
             sequences.append(data.sequence)
             original_signals.append(data.signal_pa)
 
@@ -113,7 +113,7 @@ class RealSyntheticDataset(Dataset):
         data, labels = [], []
 
         for label, probs in enumerate(self.base_probs):
-            for _ in range(self.num_samples // len(self.base_probs)):
+            for _ in range(self.num_samples):
                 seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
                 sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
                 data.append(sequence)
@@ -156,35 +156,64 @@ class RealSyntheticDataset(Dataset):
 
     # NEW GENERATION SIGNALS ~REAL
     def generate_signal(self, sequence):
-        time_points = np.linspace(0, self.total_time, int(self.sampling_rate * self.total_time))
+        # time_points = np.linspace(0, self.total_time, int(self.sampling_rate * self.total_time))
+
+        # nucleotides = {
+        #     'A': {'amplitude': 1.51, 'duration': 0.001},  # Amplitud y duración aproximada de la fluctuación
+        #     'C': {'amplitude': 1.52, 'duration': 0.001},
+        #     'G': {'amplitude': 1.53, 'duration': 0.001},
+        #     'T': {'amplitude': 1.54, 'duration': 0.001}
+        # }
+
+        # # Generar la señal sintética
+        # signal = np.zeros_like(time_points, dtype=np.float32)
+
+        # # Inicializar el índice del tiempo
+        # current_time = 0
+        # for nucleotide in sequence:
+        #     # Características del nucleótido
+        #     amplitude = nucleotides[nucleotide]['amplitude']
+        #     duration = nucleotides[nucleotide]['duration']
+            
+        #     # Generar pulso rectangular para este nucleótido
+        #     end_time = current_time + duration
+        #     pulse_time_points = time_points[(time_points >= current_time) & (time_points <= end_time)]
+            
+        #     # Generar el pulso rectangular
+        #     pulse = amplitude * np.ones_like(pulse_time_points)  # Pulso constante durante la duración
+        #     signal[(time_points >= current_time) & (time_points <= end_time)] = pulse
+            
+        #     # Avanzar al siguiente tiempo
+        #     current_time = end_time
 
         nucleotides = {
-            'A': {'amplitude': 1.51, 'duration': 0.4},  # Amplitud y duración aproximada de la fluctuación
-            'C': {'amplitude': 1.52, 'duration': 0.4},
-            'G': {'amplitude': 1.53, 'duration': 0.4},
-            'T': {'amplitude': 1.54, 'duration': 0.4}
+            'A': {'amplitude': 1.51, 'duration': 1 / self.bases_per_second},
+            'C': {'amplitude': 1.52, 'duration': 1 / self.bases_per_second},
+            'G': {'amplitude': 1.53, 'duration': 1 / self.bases_per_second},
+            'T': {'amplitude': 1.54, 'duration': 1 / self.bases_per_second}
         }
 
-        # Generar la señal sintética
-        signal = np.zeros_like(time_points, dtype=np.float32)
-
-        # Inicializar el índice del tiempo
+        signal = []
+        time = []
         current_time = 0
+
         for nucleotide in sequence:
-            # Características del nucleótido
             amplitude = nucleotides[nucleotide]['amplitude']
             duration = nucleotides[nucleotide]['duration']
-            
-            # Generar pulso rectangular para este nucleótido
-            end_time = current_time + duration
-            pulse_time_points = time_points[(time_points >= current_time) & (time_points <= end_time)]
-            
-            # Generar el pulso rectangular
-            pulse = amplitude * np.ones_like(pulse_time_points)  # Pulso constante durante la duración
-            signal[(time_points >= current_time) & (time_points <= end_time)] = pulse
-            
-            # Avanzar al siguiente tiempo
-            current_time = end_time
+
+            # Número de muestras para esta duración
+            num_samples = int(duration * self.sampling_rate)
+
+            # Generar segmento de señal
+            segment = [amplitude] * num_samples
+            segment_time = np.linspace(current_time, current_time + duration, num_samples, endpoint=False)
+
+            # Agregar segmento a la señal completa
+            signal.extend(segment)
+            time.extend(segment_time)
+
+            # Actualizar el tiempo actual
+            current_time += duration
 
         # Añadir ruido gaussiano a la señal
         noise = self.rng.normal(0.9, 1, len(signal))
@@ -258,7 +287,6 @@ class RealSyntheticDataset(Dataset):
             label = self.labels[idx]
 
             return signal, sequences, label
-        
         if self.mode == "debug":
             original_signal = self.complete_signals[idx]
             preprocessed_signals = self.preprocessed_signals[idx]

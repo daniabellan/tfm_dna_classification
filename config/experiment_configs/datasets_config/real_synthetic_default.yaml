@@ -25,4 +25,5 @@ padding_idx: 4
 num_classes: 5
 
 real_dataset:
+  # - "../data/ecoli_k12/pod5_1.h5"
   - "data/ecoli_k12/pod5_1.h5"

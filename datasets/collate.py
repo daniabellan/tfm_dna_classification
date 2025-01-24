@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 class SequenceSignalsCollator:
-    def __init__(self, vocab, padding_idx, max_signal_length=2800):
+    def __init__(self, vocab, padding_idx, max_signal_length=1000):
         self.vocab = vocab
         self.padding_idx = padding_idx
 
@@ -26,6 +26,7 @@ class SequenceSignalsCollator:
         # Padding a las señales
         padded_signals = []
         cut_signals = 0
+        max_signal_length = 0
         for signal in signals:
             # Rellenar señales con ceros para que todas tengan la longitud máxima deseada
             padded_signal = np.array(signal)  # Convertir la señal a numpy si es necesario
@@ -39,7 +40,10 @@ class SequenceSignalsCollator:
                 cut_signals += 1
             padded_signals.append(padded_signal)
 
-        print(f"Cut signals: {cut_signals}")
+            if len(signal) > max_signal_length:
+                max_signal_length = len(signal)
+
+        # print(f"Max signal_length: {max_signal_length}")
         signal_tensor = torch.tensor(np.array(padded_signals), dtype=torch.float32)
         sequences_tensor = torch.tensor(sequences_idx, dtype=torch.long)
         labels_tensor = torch.tensor(labels, dtype=torch.long)
