@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from datasets.synthetic_dataset import SyntheticDataset
-from datasets.real_synthetic_dataset import RealSyntheticDataset
+from datasets.real_synthetic_dataset import RealSyntheticDataset, StratifiedDataset
 from datasets.collate import SequenceSignalsCollator
 from models.hybrid_model import HybridSequenceClassifier
 from training.mlflow_logger import MLFlowLogger
@@ -23,47 +23,77 @@ def load_model_from_config(model_config, model_class):
 def create_synthetic_dataset(dataset_config: dict):
     # Cargar dataset reales y sintéticos
     if "real_dataset" in dataset_config: 
-        dataset = RealSyntheticDataset(config = dataset_config)
+        gen_dataset = RealSyntheticDataset(config = dataset_config)
     else:
         # Crear dataset sintético
         dataset = SyntheticDataset(config = dataset_config)
+
+
+    # stratified_dataset = StratifiedDataset(
+    #     full_dataset=gen_dataset.full_dataset,
+    #     config = dataset_config
+    # )
+
+
     # Crear datasets de PyTorch para entrenamiento y val
-    train_split = dataset_config["dataset"]["train_split"]
-    val_split = dataset_config["dataset"]["val_split"]
-    test_split = dataset_config["dataset"]["test_split"]
+    # train_split = dataset_config["train_split"]
+    # val_split = dataset_config["val_split"]
+    # test_split = dataset_config["test_split"]
 
-    splt_percent = [train_split, val_split, test_split]
+    # splt_percent = [train_split, val_split, test_split]
 
-    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, splt_percent)
+    # train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, splt_percent)
+
+    train_dataset = StratifiedDataset(
+        full_dataset=gen_dataset.full_dataset,
+        config = dataset_config,
+        mode='train'  # Establecer el modo como 'train'
+    )
+
+    val_dataset = StratifiedDataset(
+        full_dataset=gen_dataset.full_dataset,
+        config = dataset_config,
+        mode='val'  # Establecer el modo como 'val'
+    )
+
+    test_dataset = StratifiedDataset(
+        full_dataset=gen_dataset.full_dataset,
+        config = dataset_config,
+        mode='test'  # Establecer el modo como 'test'
+    )
 
     return train_dataset, val_dataset, test_dataset
 
 
-def create_dataloaders(train_dataset, val_dataset, test_dataset, train_config: dict):
+def create_dataloaders(train_dataset, 
+                       val_dataset, 
+                       test_dataset, 
+                       train_config: dict, 
+                       dataset_config:dict):
     # Crear los DataLoader para entrenamiento y validación
     train_loader = DataLoader(train_dataset, 
                               batch_size=train_config["batch_size"], 
                               shuffle=True, 
-                              collate_fn=SequenceSignalsCollator(vocab=train_dataset.dataset.vocab,
-                                                                  padding_idx=train_dataset.dataset.padding_idx))
+                              collate_fn=SequenceSignalsCollator(vocab=dataset_config["vocab"],
+                                                                  padding_idx=dataset_config["padding_idx"]))
     val_loader = DataLoader(val_dataset, 
                             batch_size=train_config["batch_size"], 
                             shuffle=False, 
-                            collate_fn=SequenceSignalsCollator(vocab=val_dataset.dataset.vocab,
-                                                                padding_idx=val_dataset.dataset.padding_idx))
+                            collate_fn=SequenceSignalsCollator(vocab=dataset_config["vocab"],
+                                                                  padding_idx=dataset_config["padding_idx"]))
 
     test_loader = DataLoader(test_dataset, 
                              batch_size=train_config["batch_size"], 
                              shuffle=False, 
-                             collate_fn=SequenceSignalsCollator(vocab=test_dataset.dataset.vocab,
-                                                                 padding_idx=test_dataset.dataset.padding_idx))
+                            collate_fn=SequenceSignalsCollator(vocab=dataset_config["vocab"],
+                                                                  padding_idx=dataset_config["padding_idx"]))
 
     return train_loader, val_loader, test_loader
 
 
 if __name__ == "__main__":
     # Cargar configuracion de experimento
-    experiment_config = "config/experiments/synthetic_default.yaml"
+    # experiment_config = "config/experiments/synthetic_default.yaml"
     experiment_config = "config/experiments/real_synthetic_default.yaml"
     experiment_name, dataset_config, model_config, train_config = load_experiment_config(experiment_config)
 
@@ -77,7 +107,8 @@ if __name__ == "__main__":
     train_loader, val_loader, test_loader = create_dataloaders(train_dataset, 
                                                                val_dataset, 
                                                                test_dataset,
-                                                               train_config)
+                                                               train_config,
+                                                               dataset_config)
 
     # Supongamos que HybridSequenceClassifier ya está definido
     # Inicializamos el valor máximo de canales en 0

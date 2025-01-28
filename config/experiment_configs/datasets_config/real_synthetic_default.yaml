@@ -1,18 +1,11 @@
-dataset:
-  num_samples: 10000
-  min_seq_length: 150
-  max_seq_length: 200
-  window_size: 100
-  noise_factor: 0.1
-  base_probs:
-    - [0.4, 0.3, 0.2, 0.1]
-    - [0.1, 0.4, 0.4, 0.1]
-    - [0.3, 0.3, 0.2, 0.2]
-    - [0.2, 0.2, 0.3, 0.3]
-  bases: ["A", "C", "T", "G"]
-  train_split: 0.8
-  val_split: 0.1
-  test_split: 0.1
+window_size: 100
+num_samples: 10
+bases_per_second: 400
+sampling_rate: 4000
+bases: ["A", "C", "T", "G"]
+train_split: 0.8
+val_split: 0.1
+test_split: 0.1
 
 vocab:
   "A": 0
@@ -22,7 +15,13 @@ vocab:
   "<pad>": 4
 
 padding_idx: 4
-num_classes: 5
+
+synthetic_dataset:
+  base_probs:
+    - [0.4, 0.3, 0.2, 0.1]
+    - [0.1, 0.4, 0.4, 0.1]
+    - [0.3, 0.3, 0.2, 0.2]
+    - [0.2, 0.2, 0.3, 0.3]
 
 real_dataset:
   # - "../data/ecoli_k12/pod5_1.h5"

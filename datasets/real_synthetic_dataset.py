@@ -4,122 +4,32 @@ from collections import Counter
 from torch.utils.data import Dataset
 from scipy.signal import butter, filtfilt, medfilt
 from scipy.stats import zscore 
-from dataclasses import dataclass
 from datasets.load_h5 import load_dict_h5
+from sklearn.model_selection import StratifiedShuffleSplit
+from torch.utils.data import Dataset
+from sklearn.model_selection import train_test_split
 
-@dataclass
-class SignalData:
-    signal_pa: list
-    sequence: list
+# Plantilla para almacenar los datos
+SIGNALDATA_KEYS = {
+    "signal_pa": None,          # Señal cruda
+    "processed_signal": None,   # Señal procesada
+    "window_signal": None,      # Señal con ventana deslizante
+    "sequence": None,           # Secuencia de nucleótidos
+    "label": None               # Etiqueta de clase
+}
 
-class RealSyntheticDataset(Dataset):
-    def __init__(self, config:dict, seed=42, mode="default", preprocess:bool=True):
-        """
-        Dataset Sintético adaptado para k-mers con ventana deslizante y padding.
-        Carga las configuraciones desde un archivo YAML.
 
-        Args:
-            config_file: Ruta al archivo YAML que contiene la configuración.
-        """
-        # Crear un generador de números aleatorios con una semilla fija
-        self.rng = np.random.default_rng(seed)
-
-        real_data = []
-        for file in config["real_dataset"]:
-            reads = load_dict_h5(file)
-            for read_idx, read_data in reads.items():
-                pass
-                real_data.append(
-                    SignalData(signal_pa = read_data["signal_pa"],
-                               sequence = read_data["sequence"])
-                )
+class SignalGenerator:
+    def __init__(self, 
+                 rng, 
+                 bases_per_second:int,
+                 sampling_rate:int,
+                 noise_factor:float = 0.1):
         
-        self.real_data_sample = self.rng.choice(real_data, size=200, replace=False)
-        # max_signal_length = max([len(x.signal_pa) for x in self.real_data_sample])
-        # max_sequence_length = max([len(x.sequence) for x in self.real_data_sample])
-        average_seq_length = np.average([len(x.sequence) for x in self.real_data_sample])
-
-        self.num_samples = len(self.real_data_sample)
-        self.min_seq_length = average_seq_length - int(average_seq_length * 0.3)
-        self.max_seq_length = average_seq_length + int(average_seq_length * 0.3)
-        self.window_size = config['dataset']['window_size']
-        self.noise_factor = config['dataset'].get('noise_factor', 0.0)
-        self.base_probs = config['dataset']['base_probs']
-        self.bases = config['dataset']['bases']
-        
-        self.vocab = config['vocab']
-        self.padding_idx = config['padding_idx']
-
-        self.mode = mode  # Almacenamos el modo de acceso
-
-        self.bases_per_second = 400 # Número de bases que pasan por el nanoporo por segundo.
-        self.sampling_rate = 4000  # Número de puntos de muestreo por segundo.
-        # self.total_time = 1.0  # Duración total de la señal en segundos
-
-        self.preprocess = preprocess # Preprocess signal
-
-        # Generar datos sintéticos
-        self.preprocessed_signals, self.complete_signals, self.signals, self.sequences, self.labels = self.generate_data()
-
-    def generate_data(self):
-        preprocessed_signals = []
-        original_signals = []
-        window_signals = []  # Señales eléctricas divididas
-        sequences, labels = self._generate_sequences()
-
-        # Procesar señales sintéticas
-        for seq_idx, sequence in enumerate(sequences):
-            # Generar la señal asociada a la secuencia
-            signal = self.generate_signal(sequence)
-            original_signals.append(signal)
-
-            # Preprocess signals
-            if self.preprocess:
-                preprocessed_signal = self.preprocess_signal(signal)
-                preprocessed_signals.append(preprocessed_signal)
-
-                # Aplicar ventana deslizante para segmentar la señal 
-                segmented_signal = self.apply_sliding_window(preprocessed_signal)
-            else:
-                # Aplicar ventana deslizante para segmentar la señal 
-                segmented_signal = self.apply_sliding_window(signal)
-
-            window_signals.append(segmented_signal)
-
-        # Procesar señales reales
-        next_label_class = max(list(Counter(labels).keys()))
-        for data in self.real_data_sample:
-            # Añadir clase y secuencia asociada a la señal real
-            labels.append(next_label_class + 1)
-            sequences.append(data.sequence)
-            original_signals.append(data.signal_pa)
-
-            # Preprocess signals
-            if self.preprocess:
-                preprocessed_signal = self.preprocess_signal(data.signal_pa)
-                preprocessed_signals.append(preprocessed_signal)
-
-                # Aplicar ventana deslizante para segmentar la señal 
-                segmented_signal = self.apply_sliding_window(preprocessed_signal)
-            else:
-                # Aplicar ventana deslizante para segmentar la señal 
-                segmented_signal = self.apply_sliding_window(data.signal_pa)
-
-            window_signals.append(segmented_signal)
-
-        return preprocessed_signals, original_signals, window_signals, sequences, labels
-
-    def _generate_sequences(self):
-        data, labels = [], []
-
-        for label, probs in enumerate(self.base_probs):
-            for _ in range(self.num_samples):
-                seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
-                sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
-                data.append(sequence)
-                labels.append(label)
-
-        return data, labels
+        self.rng = rng
+        self.noise_factor = noise_factor
+        self.bases_per_second = bases_per_second
+        self.sampling_rate = sampling_rate
 
     def add_salt_and_pepper_noise(self, signal, salt_prob=0.02, pepper_prob=0.02):
         noisy_signal = signal.copy()
@@ -154,38 +64,8 @@ class RealSyntheticDataset(Dataset):
         noise = np.random.normal(loc=0.0, scale=self.noise_factor, size=signal.shape)
         return signal + noise
 
-    # NEW GENERATION SIGNALS ~REAL
+
     def generate_signal(self, sequence):
-        # time_points = np.linspace(0, self.total_time, int(self.sampling_rate * self.total_time))
-
-        # nucleotides = {
-        #     'A': {'amplitude': 1.51, 'duration': 0.001},  # Amplitud y duración aproximada de la fluctuación
-        #     'C': {'amplitude': 1.52, 'duration': 0.001},
-        #     'G': {'amplitude': 1.53, 'duration': 0.001},
-        #     'T': {'amplitude': 1.54, 'duration': 0.001}
-        # }
-
-        # # Generar la señal sintética
-        # signal = np.zeros_like(time_points, dtype=np.float32)
-
-        # # Inicializar el índice del tiempo
-        # current_time = 0
-        # for nucleotide in sequence:
-        #     # Características del nucleótido
-        #     amplitude = nucleotides[nucleotide]['amplitude']
-        #     duration = nucleotides[nucleotide]['duration']
-            
-        #     # Generar pulso rectangular para este nucleótido
-        #     end_time = current_time + duration
-        #     pulse_time_points = time_points[(time_points >= current_time) & (time_points <= end_time)]
-            
-        #     # Generar el pulso rectangular
-        #     pulse = amplitude * np.ones_like(pulse_time_points)  # Pulso constante durante la duración
-        #     signal[(time_points >= current_time) & (time_points <= end_time)] = pulse
-            
-        #     # Avanzar al siguiente tiempo
-        #     current_time = end_time
-
         nucleotides = {
             'A': {'amplitude': 1.51, 'duration': 1 / self.bases_per_second},
             'C': {'amplitude': 1.52, 'duration': 1 / self.bases_per_second},
@@ -215,9 +95,8 @@ class RealSyntheticDataset(Dataset):
             # Actualizar el tiempo actual
             current_time += duration
 
-        # Añadir ruido gaussiano a la señal
-        noise = self.rng.normal(0.9, 1, len(signal))
-        signal += noise
+        # Añadir ruido gaussiano
+        signal = self.add_noise(np.array(signal))
 
         # Añadir ruido salt and pepper
         signal = self.add_salt_and_pepper_noise(signal, salt_prob=0.02, pepper_prob=0.02)
@@ -225,8 +104,15 @@ class RealSyntheticDataset(Dataset):
         # Aplicar escalado aleatorio de amplitud
         signal = self.apply_random_amplitude_scaling(signal, num_segments=5, scale_range=(0.5, 1.5))
 
-
         return signal
+
+class SignalPreprocess:
+    def __init__(self, 
+                 sampling_rate:int,
+                 window_size:int):
+        
+        self.sampling_rate = sampling_rate
+        self.window_size = window_size
 
     # Función de filtro de paso bajo
     def lowpass_filter(self, data, cutoff, order=4):
@@ -243,7 +129,8 @@ class RealSyntheticDataset(Dataset):
     # Filtro de media móvil
     def moving_average(self, data, window_size):
         return np.convolve(data, np.ones(window_size)/window_size, mode='same')
-
+    
+    # Preprocesar señal cargada/generada
     def preprocess_signal(self, signal, cutoff=1000, window_size=5, median_kernel_size=5):
         # Paso 1: Filtro de paso bajo (eliminar ruido de alta frecuencia)
         preprocessed_signal = self.lowpass_filter(signal, cutoff)
@@ -276,25 +163,247 @@ class RealSyntheticDataset(Dataset):
         return segmented_signal
 
 
+class RealSyntheticDataset:
+    def __init__(self, 
+                 config:dict, 
+                 seed:int=42, 
+                 mode:str="default", 
+                 seq_variation_perc:float=0.3,
+                 preprocess:bool=True):
 
-    def __len__(self):
-        return len(self.sequences)
+        # Crear un generador de números aleatorios con una semilla fija
+        self.rng = np.random.default_rng(seed)
 
-    def __getitem__(self, idx):
-        if self.mode == "default":
-            signal = self.signals[idx]
-            sequences = self.sequences[idx]
-            label = self.labels[idx]
+        # Tamaño de la ventana deslizante
+        self.window_size = config['window_size']
+        
+        # Distribución de las bases por "especie"
+        self.base_probs = config["synthetic_dataset"]['base_probs']
+        
+        # Bases genéticas
+        self.bases = config['bases']
 
-            return signal, sequences, label
-        if self.mode == "debug":
-            original_signal = self.complete_signals[idx]
-            preprocessed_signals = self.preprocessed_signals[idx]
-            signal = self.signals[idx]
-            sequences = self.sequences[idx]
-            label = self.labels[idx]
+        # Vocabulario (letras de las bases)
+        self.vocab = config['vocab']
+
+        # Número que representa el caracter del padding
+        self.padding_idx = config['padding_idx']
+        
+        # Número de bases que pasan por el nanoporo por segundo.
+        self.bases_per_second = config["bases_per_second"] 
+        
+        # Número de puntos de muestreo por segundo.
+        self.sampling_rate = config["sampling_rate"]   
+
+        # Almacenamos el modo de acceso al dataset
+        self.mode = mode  
+
+        # Indica si la señal del Dataset se va a preprocesar o no
+        self.preprocess = preprocess 
+        
+        # Cargar funciones de pre-procesamiento de señal
+        self.prepr_fn = SignalPreprocess(sampling_rate = self.sampling_rate,
+                                         window_size = self.window_size)
+
+        # Cargar funciones para generar señales sintéticas
+        self.signal_gen_fn = SignalGenerator(rng = self.rng,
+                                             bases_per_second = self.bases_per_second,
+                                             sampling_rate = self.sampling_rate)
+
+
+        # Número de clases dinámico en función de los datos reales y los sintéticos
+        self.num_classes = len(config["real_dataset"]) + len(config["synthetic_dataset"]["base_probs"])
+
+        # Número de muestras reales
+        self.num_samples = config["num_samples"]
+
+        # Cargar datos reales
+        real_data = self._load_fast5(fast5_path = config["real_dataset"])
+
+        # Crear una muestra de estos datos reales para evitar utilizar demasiados datos
+        real_data_sample = list(self.rng.choice(real_data, 
+                                                     size = self.num_samples, 
+                                                     replace = False))
+        
+        # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
+        # Media de la longitud de la secuencia
+        average_seq_length = np.average([len(x["sequence"]) for x in real_data_sample])
+        
+        # Longitud mínima y máxima de la secuencia +- X%
+        self.min_seq_length = average_seq_length - int(average_seq_length * seq_variation_perc)
+        self.max_seq_length = average_seq_length + int(average_seq_length * seq_variation_perc)
+        
+        # Generar datos sintéticos 
+        synthetic_data = self._generate_data(real_data_sample)
+
+        # Unir datasets (real + sintético)
+        self.full_dataset = real_data_sample + synthetic_data
+
+        # self.original_signal = [x["signal_pa"] for x in full_dataset]
+        # self.processed_signal = [x["processed_signal"] for x in full_dataset]
+        # self.window_signal = [x["window_signal"] for x in full_dataset]
+        # self.sequences = [x["sequence"] for x in full_dataset]
+        # self.labels = [x["label"] for x in full_dataset]
+
+        pass
+
+    
+    def _load_fast5(self, fast5_path:str):
+        real_data = []
+        for class_idx, file in enumerate(fast5_path):
+            reads = load_dict_h5(file)
+            for read_idx, read_data in list(reads.items()):
+                if self.preprocess:
+                    processed_signal = self.prepr_fn.preprocess_signal(signal = read_data["signal_pa"])
+                    window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
+                else:
+                    processed_signal = []
+                    window_signal = self.prepr_fn.apply_sliding_window(signal = read_data["signal_pa"])
+
+
+                # Rellenar con datos el diccionario
+                signal_data = SIGNALDATA_KEYS.copy()  # Copiar la plantilla
+                signal_data["signal_pa"] = read_data["signal_pa"]
+                signal_data["processed_signal"] = processed_signal
+                signal_data["window_signal"] = window_signal
+                signal_data["sequence"] = read_data["sequence"]
+                signal_data["label"] = class_idx
+
+                real_data.append(signal_data)
+
+        
+        return real_data
+
+
+    def _generate_data(self, real_data_sample):
+        synthetic_data = []
+        # Comprobar cuales son las etiquetas asignadas a los datos reales
+        last_label_class = max(list(Counter([x["label"] for x in real_data_sample]).keys()))
+
+        # Generar secuencias en base a las probabilidades de bases
+        for label_offset, probs in enumerate(self.base_probs):
+            # Hacer que el label comience desde last_label_class + 1
+            label = last_label_class + 1 + label_offset
+            
+            for _ in range(self.num_samples):
+                # Generar secuencia
+                seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
+                sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
+                
+                # Generar señal
+                signal = self.signal_gen_fn.generate_signal(sequence = sequence)
+
+                # Pre-procesar señal y aplicar sliding window
+                if self.preprocess:
+                    processed_signal = self.prepr_fn.preprocess_signal(signal = signal)
+                    window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
+                else:
+                    processed_signal = []
+                    window_signal = self.prepr_fn.apply_sliding_window(signal = signal)
+
+                # Rellenar con datos el diccionario
+                signal_data = SIGNALDATA_KEYS.copy()  # Copiar la plantilla
+                signal_data["signal_pa"] = signal
+                signal_data["processed_signal"] = processed_signal
+                signal_data["window_signal"] = window_signal
+                signal_data["sequence"] = sequence
+                signal_data["label"] = label
+
+                synthetic_data.append(signal_data)
+
+                pass
+        
+        return synthetic_data
+
+
+    # def __len__(self):
+    #     return len(self.sequences)
+
+    # def __getitem__(self, idx):
+    #     if self.mode == "default":
+    #         window_signal = self.window_signal[idx]
+    #         sequences = self.sequences[idx]
+    #         label = self.labels[idx]
+
+    #         return window_signal, sequences, label
+    #     if self.mode == "debug":
+    #         original_signal = self.original_signal[idx]
+    #         preprocessed_signals = self.processed_signal[idx]
+    #         window_signal = self.window_signal[idx]
+    #         sequences = self.sequences[idx]
+    #         label = self.labels[idx]
 
             
-            return preprocessed_signals, original_signal, signal, sequences, label
+    #         return preprocessed_signals, original_signal, window_signal, sequences, label
+
+
+class StratifiedDataset(Dataset):
+    def __init__(self, full_dataset, mode, config, seed=42):
+        # Guardar datos completos
+        self.full_dataset = full_dataset
+        self.original_signal = [x["signal_pa"] for x in full_dataset]
+        self.processed_signal = [x["processed_signal"] for x in full_dataset]
+        self.window_signal = [x["window_signal"] for x in full_dataset]
+        self.sequences = [x["sequence"] for x in full_dataset]
+        self.labels = [x["label"] for x in full_dataset]
+
+        self.seed = seed
+        self.mode = mode 
+
+        # Parámetros de la división
+        # Crear datasets de PyTorch para entrenamiento y val
+        self.train_ratio = config["train_split"]
+        self.val_ratio = config["val_split"]
+        self.test_ratio = config["test_split"]
+        
+        # Generar la división estratificada
+        self.train_data, self.val_data, self.test_data = self._stratified_split(self.full_dataset, self.labels)
+
+    def _stratified_split(self, dataset, labels):
+        """
+        Realiza una división estratificada en conjuntos de entrenamiento, validación y prueba.
+        """
+        # División inicial en train+val y test
+        train_val_ratio = self.train_ratio + self.val_ratio
+        train_val_data, test_data, train_val_labels, test_labels = train_test_split(
+            dataset, labels, 
+            test_size=self.test_ratio, 
+            random_state=self.seed, 
+            stratify=labels
+        )
+
+        # Proporción ajustada para dividir train y val
+        val_adjusted_ratio = self.val_ratio / train_val_ratio
+        train_data, val_data, train_labels, val_labels = train_test_split(
+            train_val_data, train_val_labels, 
+            test_size=val_adjusted_ratio, 
+            random_state=self.seed, 
+            stratify=train_val_labels
+        )
+
+        return train_data, val_data, test_data
+
+
+
+    def __len__(self):
+        # El tamaño del dataset depende del modo actual
+        if self.mode == 'train':
+            return len(self.train_data)
+        elif self.mode == 'val':
+            return len(self.val_data)
+        elif self.mode == 'test':
+            return len(self.test_data)
+
+    def __getitem__(self, idx):
+        # Aquí seleccionamos qué conjunto devolver dependiendo del índice.
+        if self.mode == 'train':
+            dataset = self.train_data
+        elif self.mode == 'val':
+            dataset = self.val_data
+        else:
+            dataset = self.test_data
+        
+        # Retornar el índice del dataset correspondiente
+        return dataset[idx]["signal_pa"], dataset[idx]["sequence"], dataset[idx]["label"]
 
 
