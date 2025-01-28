@@ -252,7 +252,7 @@ class RealSyntheticDataset:
         real_data = []
         for class_idx, file in enumerate(fast5_path):
             reads = load_dict_h5(file)
-            for read_idx, read_data in list(reads.items()):
+            for read_idx, read_data in list(reads.items())[:20]:
                 if self.preprocess:
                     processed_signal = self.prepr_fn.preprocess_signal(signal = read_data["signal_pa"])
                     window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
@@ -404,6 +404,6 @@ class StratifiedDataset(Dataset):
             dataset = self.test_data
         
         # Retornar el índice del dataset correspondiente
-        return dataset[idx]["signal_pa"], dataset[idx]["sequence"], dataset[idx]["label"]
+        return dataset[idx]["window_signal"], dataset[idx]["sequence"], dataset[idx]["label"]
 
 

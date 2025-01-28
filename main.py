@@ -28,22 +28,7 @@ def create_synthetic_dataset(dataset_config: dict):
         # Crear dataset sintético
         dataset = SyntheticDataset(config = dataset_config)
 
-
-    # stratified_dataset = StratifiedDataset(
-    #     full_dataset=gen_dataset.full_dataset,
-    #     config = dataset_config
-    # )
-
-
-    # Crear datasets de PyTorch para entrenamiento y val
-    # train_split = dataset_config["train_split"]
-    # val_split = dataset_config["val_split"]
-    # test_split = dataset_config["test_split"]
-
-    # splt_percent = [train_split, val_split, test_split]
-
-    # train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, splt_percent)
-
+    # Split estratificado para mantener el balance de las clases entre cada split
     train_dataset = StratifiedDataset(
         full_dataset=gen_dataset.full_dataset,
         config = dataset_config,
@@ -110,17 +95,8 @@ if __name__ == "__main__":
                                                                train_config,
                                                                dataset_config)
 
-    # Supongamos que HybridSequenceClassifier ya está definido
-    # Inicializamos el valor máximo de canales en 0
-    max_channels = 0
 
-    # Iterar a través de los DataLoaders para obtener el máximo número de canales
-    # for loader in [train_loader, val_loader, test_loader]:
-    #     for signals, sequences, _ in loader:
-    #         max_channels = max(max_channels, signals.shape[1])  # signals.shape[1] es el número de canales
-    #         break  # Solo mirar el primer batch de cada DataLoader
-
-    # Asignar el máximo número de canales a model_config
+    # Asignar el máximo número de canales a model_config y cargar el modelo
     max_channels = 1000
     model_config["input_channels"] = max_channels
     print(f"El número máximo de canales es: {max_channels}")
