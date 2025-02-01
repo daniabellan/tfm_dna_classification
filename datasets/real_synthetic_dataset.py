@@ -252,7 +252,7 @@ class RealSyntheticDataset:
         real_data = []
         for class_idx, file in enumerate(fast5_path):
             reads = load_dict_h5(file)
-            for read_idx, read_data in list(reads.items()):
+            for read_idx, read_data in list(reads.items())[:10]:
                 if self.preprocess:
                     processed_signal = self.prepr_fn.preprocess_signal(signal = read_data["signal_pa"])
                     window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)

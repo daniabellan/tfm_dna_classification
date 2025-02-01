@@ -10,7 +10,7 @@ from training.mlflow_logger import MLFlowLogger
 from training.train import train_one_epoch
 from training.validate import validate
 from training.test import test_model
-from training.callbacks import EarlyStopping
+from training.callbacks import EarlyStopping, BestModelCheckpoint
 from utils.common import load_experiment_config, get_device, print_epoch_summary
 
 
@@ -102,6 +102,10 @@ if __name__ == "__main__":
     print(f"El número máximo de canales es: {max_channels}")
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)
 
+    # Load model (TODO: Not implemented)
+    # model_checkpoint = "checkpoints/run_2025-01-31T18-53-05__best_model_epoch_0.pt"
+    # model = torch.load(model_checkpoint, weights_only=False)
+
     # Configuración de MLFlow
     mlflow_logger = MLFlowLogger(experiment_config = train_config,
                                  model_config = model_config,
@@ -123,6 +127,14 @@ if __name__ == "__main__":
                                                 gamma=train_config["scheduler"]["gamma"])
     early_stopping = EarlyStopping(train_config["early_stopping"]["patience"], 
                                    train_config["early_stopping"]["min_delta"])
+
+    # Directorio para guardar los checkpoints
+    checkpoint_dir = "checkpoints"
+    best_checkpoint = BestModelCheckpoint(save_dir=checkpoint_dir,
+                                           monitor="loss", 
+                                           mode="min",
+                                           run_name=mlflow_logger.run_name)
+
 
     # Entrenamiento
     start_train = time.time()
@@ -149,6 +161,11 @@ if __name__ == "__main__":
                                device, 
                                dataset_config["padding_idx"])
         val_time = time.time() - start_val_phase
+
+        # Guardar el mejor modelo
+        best_checkpoint(model, 
+                        epoch, 
+                        val_metrics)
 
         # Registrar tiempos en MLflow
         epoch_time = time.time() - start_epoch
