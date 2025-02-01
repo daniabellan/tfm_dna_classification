@@ -25,4 +25,4 @@ synthetic_dataset:
 
 real_dataset:
   # - "../data/ecoli_k12/pod5_1.h5"
-  - "data/ecoli_k12/pod5_1.h5"
+  - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5"

@@ -23,7 +23,9 @@ def load_model_from_config(model_config, model_class):
 def create_synthetic_dataset(dataset_config: dict):
     # Cargar dataset reales y sintéticos
     if "real_dataset" in dataset_config: 
+        start = time.time()
         gen_dataset = RealSyntheticDataset(config = dataset_config)
+        print(f"Data loaded in {(time.time() - start):.4f} seconds")
     else:
         # Crear dataset sintético
         dataset = SyntheticDataset(config = dataset_config)

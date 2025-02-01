@@ -1,9 +1,9 @@
 experiment_name: Synthetic_Default
 experiment_configs:
   dataset:
-    - "config/experiment_configs/datasets_config/synthetic_default.yaml"
+    - "/home/diz-wsl/personal_repos/tfm/config/experiment_configs/datasets_config/synthetic_default.yaml"
   model:
-    - "config/experiment_configs/models_config/hybrid_model_default.yaml"
+    - "/home/diz-wsl/personal_repos/tfm/config/experiment_configs/models_config/hybrid_model_default.yaml"
   train:
-    - "config/experiment_configs/train_config/synthetic_default.yaml"
+    - "/home/diz-wsl/personal_repos/tfm/config/experiment_configs/train_config/synthetic_default.yaml"
 

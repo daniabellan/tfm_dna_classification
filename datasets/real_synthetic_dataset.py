@@ -8,6 +8,8 @@ from datasets.load_h5 import load_dict_h5
 from sklearn.model_selection import StratifiedShuffleSplit
 from torch.utils.data import Dataset
 from sklearn.model_selection import train_test_split
+from filterpy.kalman import KalmanFilter
+import pywt
 
 # Plantilla para almacenar los datos
 SIGNALDATA_KEYS = {
@@ -106,6 +108,7 @@ class SignalGenerator:
 
         return signal
 
+
 class SignalPreprocess:
     def __init__(self, 
                  sampling_rate:int,
@@ -129,20 +132,78 @@ class SignalPreprocess:
     # Filtro de media móvil
     def moving_average(self, data, window_size):
         return np.convolve(data, np.ones(window_size)/window_size, mode='same')
-    
+
+    def wavelet_transform(self, signal, wavelet='db4', level=5, threshold=0.1):
+        # Realizar la transformación wavelet
+        coeffs = pywt.wavedec(signal, wavelet, level=level)
+        
+        # Umbralización (eliminar coeficientes pequeños)
+        coeffs = [pywt.threshold(c, threshold, mode='soft') for c in coeffs]
+        
+        # Reconstruir la señal usando los coeficientes umbralizados
+        filtered_signal = pywt.waverec(coeffs, wavelet)
+        
+        return filtered_signal    
+
+    def kalman_filter(self, signal):
+        # Crear un filtro de Kalman
+        kf = KalmanFilter(dim_x=1, dim_z=1)
+        
+        # Establecer las matrices del filtro de Kalman
+        kf.F = np.array([[1]])  # Matriz de transición de estado
+        kf.H = np.array([[1]])  # Matriz de observación
+        kf.P *= 1000.           # Error de predicción inicial
+        kf.R = 5                # Ruido de observación
+        kf.Q = 0.1              # Ruido del proceso
+        
+        filtered_signal = []
+        
+        for z in signal:
+            kf.predict()
+            kf.update(z)
+            filtered_signal.append(kf.x[0])
+        
+        return np.array(filtered_signal)
+
+    def modified_zscore(self, signal):
+        median_X = np.median(signal)  # Mediana de la señal
+        MAD = np.median(np.abs(signal - median_X))  # Desviación absoluta mediana (MAD)
+
+        if MAD == 0:
+            MAD = 1e-9  # Para evitar división por cero
+
+        z_scores = (signal - median_X) / MAD  # Cálculo del Z-score modificado
+
+        # Manejo de valores atípicos (outliers)
+        threshold = 3.5  # Umbral de detección de outliers
+        outliers = np.abs(z_scores) > threshold
+
+        # Sustituir outliers con la media de los puntos adyacentes
+        for i in np.where(outliers)[0]:
+            if 1 <= i < len(signal) - 1:
+                signal[i] = np.mean([signal[i - 1], signal[i + 1]])
+
+        return z_scores
+
     # Preprocesar señal cargada/generada
     def preprocess_signal(self, signal, cutoff=1000, window_size=5, median_kernel_size=5):
         # Paso 1: Filtro de paso bajo (eliminar ruido de alta frecuencia)
         preprocessed_signal = self.lowpass_filter(signal, cutoff)
         
-        # # Paso 2: Filtro de mediana (eliminar picos de ruido impulsivo)
+        # Paso 2: Filtro de mediana (eliminar picos de ruido impulsivo)
         preprocessed_signal = self.median_filter(preprocessed_signal, median_kernel_size)
         
-        # # Paso 3: Suavizado por media móvil (suavizar la señal)
+        # Paso 3: Suavizado por media móvil (suavizar la señal)
         preprocessed_signal = self.moving_average(preprocessed_signal, window_size)
+        
+        # Paso 4: Transformada Wavelet para reducción de ruido
+        preprocessed_signal = self.wavelet_transform(preprocessed_signal)
+        
+        # Paso 5: Filtro de Kalman para suavizado adicional
+        # preprocessed_signal = self.kalman_filter(preprocessed_signal)
 
-        # Paso 4: Aplicar Z-score para normalizar la señal
-        preprocessed_signal = zscore(preprocessed_signal)
+        # Paso 6: Aplicar Z-score para normalizar la señal
+        preprocessed_signal = self.modified_zscore(preprocessed_signal)
 
         return preprocessed_signal
 
@@ -238,12 +299,6 @@ class RealSyntheticDataset:
 
         # Unir datasets (real + sintético)
         self.full_dataset = real_data_sample + synthetic_data
-
-        # self.original_signal = [x["signal_pa"] for x in full_dataset]
-        # self.processed_signal = [x["processed_signal"] for x in full_dataset]
-        # self.window_signal = [x["window_signal"] for x in full_dataset]
-        # self.sequences = [x["sequence"] for x in full_dataset]
-        # self.labels = [x["label"] for x in full_dataset]
 
         pass
 
