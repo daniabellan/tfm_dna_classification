@@ -1,4 +1,4 @@
-window_size: 100
+window_size: 1000
 num_samples: 10
 bases_per_second: 400
 sampling_rate: 4000
