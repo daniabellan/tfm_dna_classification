@@ -40,7 +40,8 @@ class HybridSequenceClassifier(nn.Module):
 
         # --- Configuración de la rama para secuencias con Transformer ---
         # Embedding para representar tokens en un espacio d-dimensional
-        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.kmer_padding_idx = vocab_size-1
+        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=self.kmer_padding_idx)
 
         # Codificación posicional para incorporar información de posición en la secuencia
         self.positional_encoding = nn.Parameter(torch.zeros(1, max_seq_length, embed_dim))
@@ -95,6 +96,9 @@ class HybridSequenceClassifier(nn.Module):
 
         if self.use_sequences:
             # --- Procesamiento de la rama de secuencias ---
+            # Convertir -1 en máscara de padding (True donde hay padding)
+            padding_mask = sequences == self.kmer_padding_idx
+            
             # Embedding de secuencias y adición de codificación posicional
             # x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
             x_sequences = self.embedding(sequences) 

@@ -17,7 +17,8 @@ SIGNALDATA_KEYS = {
     "processed_signal": None,   # Señal procesada
     "window_signal": None,      # Señal con ventana deslizante
     "sequence": None,           # Secuencia de nucleótidos
-    "label": None               # Etiqueta de clase
+    "label": None,               # Etiqueta de clase
+    "k_mers": None              # Etiqueta para almacenar K-Mers
 }
 
 
@@ -244,9 +245,6 @@ class RealSyntheticDataset:
         # Bases genéticas
         self.bases = config['bases']
 
-        # Vocabulario (letras de las bases)
-        self.vocab = config['vocab']
-
         # Número que representa el caracter del padding
         self.padding_idx = config['padding_idx']
         
@@ -278,13 +276,23 @@ class RealSyntheticDataset:
         # Número de muestras reales
         self.num_samples = config["num_samples"]
 
+        # Tamaño del K-Mer
+        self.k_mers_size = config["k_mers_size"]
+        
+        # Almacena el diccionario con las diferentes posibilidades de K-Mers
+        self.kmer_dict = self.generate_kmer_dict()
+
         # Cargar datos reales
         real_data = self._load_fast5(fast5_path = config["real_dataset"])
 
         # Crear una muestra de estos datos reales para evitar utilizar demasiados datos
         real_data_sample = list(self.rng.choice(real_data, 
-                                                     size = self.num_samples, 
-                                                     replace = False))
+                                                size = self.num_samples, 
+                                                replace = False))
+        
+        # Añadir K-Mers a la muestra del dataset real
+        for sample in real_data_sample:
+            sample["k_mers"] = self.sequence_to_kmer_indices(sequence = sample["sequence"])
         
         # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
         # Media de la longitud de la secuencia
@@ -302,12 +310,37 @@ class RealSyntheticDataset:
 
         pass
 
+    def generate_kmer_dict(self):
+        """Genera un diccionario de K-mers con sus índices únicos."""
+        from itertools import product
+        bases = ['A', 'C', 'G', 'T']
+        kmer_list = [''.join(p) for p in product(bases, repeat=self.k_mers_size)]
+        kmer_dict = {kmer: idx for idx, kmer in enumerate(kmer_list)}
+        return kmer_dict
+
+    def sequence_to_kmer_indices(self, sequence):
+        """
+        Convierte una secuencia en una lista de índices de K-mers.
+        - `sequence`: Secuencia de ADN (ej. "ACGTAG")
+        - `k`: Tamaño del K-mer
+        - `kmer_dict`: Diccionario {K-mer: índice}
+        - `unk_idx`: Índice para K-mers desconocidos (opcional)
+        """
+        kmer_indices = []
+        for i in range(len(sequence) - self.k_mers_size + 1):
+            kmer = sequence[i:i + self.k_mers_size]
+            if kmer in self.kmer_dict:
+                kmer_indices.append(self.kmer_dict[kmer])
+            else:
+                raise "No K-Mer available. Hint: change K-size value"
+        return kmer_indices
+
     
     def _load_fast5(self, fast5_path:str):
         real_data = []
         for class_idx, file in enumerate(fast5_path):
             reads = load_dict_h5(file)
-            for read_idx, read_data in list(reads.items())[:10]:
+            for read_idx, read_data in list(reads.items()):
                 if self.preprocess:
                     processed_signal = self.prepr_fn.preprocess_signal(signal = read_data["signal_pa"])
                     window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
@@ -345,6 +378,9 @@ class RealSyntheticDataset:
                 seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
                 sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
                 
+                # Generar K-Mers usando la secuencia
+                k_mers = self.sequence_to_kmer_indices(sequence = sequence)
+
                 # Generar señal
                 signal = self.signal_gen_fn.generate_signal(sequence = sequence)
 
@@ -363,6 +399,7 @@ class RealSyntheticDataset:
                 signal_data["window_signal"] = window_signal
                 signal_data["sequence"] = sequence
                 signal_data["label"] = label
+                signal_data["k_mers"] = k_mers
 
                 synthetic_data.append(signal_data)
 
@@ -371,37 +408,17 @@ class RealSyntheticDataset:
         return synthetic_data
 
 
-    # def __len__(self):
-    #     return len(self.sequences)
-
-    # def __getitem__(self, idx):
-    #     if self.mode == "default":
-    #         window_signal = self.window_signal[idx]
-    #         sequences = self.sequences[idx]
-    #         label = self.labels[idx]
-
-    #         return window_signal, sequences, label
-    #     if self.mode == "debug":
-    #         original_signal = self.original_signal[idx]
-    #         preprocessed_signals = self.processed_signal[idx]
-    #         window_signal = self.window_signal[idx]
-    #         sequences = self.sequences[idx]
-    #         label = self.labels[idx]
-
-            
-    #         return preprocessed_signals, original_signal, window_signal, sequences, label
-
-
 class StratifiedDataset(Dataset):
-    def __init__(self, full_dataset, mode, config, seed=42):
+    def __init__(self, gen_dataset, mode, config, seed=42):
         # Guardar datos completos
-        self.full_dataset = full_dataset
-        self.original_signal = [x["signal_pa"] for x in full_dataset]
-        self.processed_signal = [x["processed_signal"] for x in full_dataset]
-        self.window_signal = [x["window_signal"] for x in full_dataset]
-        self.sequences = [x["sequence"] for x in full_dataset]
-        self.labels = [x["label"] for x in full_dataset]
-
+        self.full_dataset = gen_dataset.full_dataset
+        self.kmer_dict = gen_dataset.kmer_dict
+        self.original_signal = [x["signal_pa"] for x in self.full_dataset]
+        self.processed_signal = [x["processed_signal"] for x in self.full_dataset]
+        self.window_signal = [x["window_signal"] for x in self.full_dataset]
+        self.sequences = [x["sequence"] for x in self.full_dataset]
+        self.labels = [x["label"] for x in self.full_dataset]
+        
         self.seed = seed
         self.mode = mode 
 
@@ -459,6 +476,9 @@ class StratifiedDataset(Dataset):
             dataset = self.test_data
         
         # Retornar el índice del dataset correspondiente
-        return dataset[idx]["window_signal"], dataset[idx]["sequence"], dataset[idx]["label"]
+        window_signal = dataset[idx]["window_signal"]
+        k_mers = dataset[idx]["k_mers"]
+        label = dataset[idx]["label"]
 
+        return window_signal, k_mers, label
 

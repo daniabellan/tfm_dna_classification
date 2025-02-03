@@ -26,25 +26,22 @@ def create_synthetic_dataset(dataset_config: dict):
         start = time.time()
         gen_dataset = RealSyntheticDataset(config = dataset_config)
         print(f"Data loaded in {(time.time() - start):.4f} seconds")
-    else:
-        # Crear dataset sintético
-        dataset = SyntheticDataset(config = dataset_config)
 
     # Split estratificado para mantener el balance de las clases entre cada split
     train_dataset = StratifiedDataset(
-        full_dataset=gen_dataset.full_dataset,
+        gen_dataset=gen_dataset,
         config = dataset_config,
         mode='train'  # Establecer el modo como 'train'
     )
 
     val_dataset = StratifiedDataset(
-        full_dataset=gen_dataset.full_dataset,
+        gen_dataset=gen_dataset,
         config = dataset_config,
         mode='val'  # Establecer el modo como 'val'
     )
 
     test_dataset = StratifiedDataset(
-        full_dataset=gen_dataset.full_dataset,
+        gen_dataset=gen_dataset,
         config = dataset_config,
         mode='test'  # Establecer el modo como 'test'
     )
@@ -57,23 +54,21 @@ def create_dataloaders(train_dataset,
                        test_dataset, 
                        train_config: dict, 
                        dataset_config:dict):
+    
     # Crear los DataLoader para entrenamiento y validación
     train_loader = DataLoader(train_dataset, 
                               batch_size=train_config["batch_size"], 
                               shuffle=True, 
-                              collate_fn=SequenceSignalsCollator(vocab=dataset_config["vocab"],
-                                                                  padding_idx=dataset_config["padding_idx"]))
+                              collate_fn=SequenceSignalsCollator(padding_idx=dataset_config["padding_idx"]))
     val_loader = DataLoader(val_dataset, 
                             batch_size=train_config["batch_size"], 
                             shuffle=False, 
-                            collate_fn=SequenceSignalsCollator(vocab=dataset_config["vocab"],
-                                                                  padding_idx=dataset_config["padding_idx"]))
+                            collate_fn=SequenceSignalsCollator(padding_idx=dataset_config["padding_idx"]))
 
     test_loader = DataLoader(test_dataset, 
                              batch_size=train_config["batch_size"], 
                              shuffle=False, 
-                            collate_fn=SequenceSignalsCollator(vocab=dataset_config["vocab"],
-                                                                  padding_idx=dataset_config["padding_idx"]))
+                            collate_fn=SequenceSignalsCollator(padding_idx=dataset_config["padding_idx"]))
 
     return train_loader, val_loader, test_loader
 
@@ -83,6 +78,9 @@ if __name__ == "__main__":
     # experiment_config = "config/experiments/synthetic_default.yaml"
     experiment_config = "config/experiments/real_synthetic_default.yaml"
     experiment_name, dataset_config, model_config, train_config = load_experiment_config(experiment_config)
+
+    dataset_config["padding_idx"] = (4**dataset_config["k_mers_size"])
+
 
     # Definir device
     device = get_device()
@@ -102,6 +100,7 @@ if __name__ == "__main__":
     max_channels = 1000
     model_config["input_channels"] = max_channels
     print(f"El número máximo de canales es: {max_channels}")
+    model_config["vocab_size"] = (4**dataset_config["k_mers_size"])+1
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)
 
     # Load model (TODO: Not implemented)

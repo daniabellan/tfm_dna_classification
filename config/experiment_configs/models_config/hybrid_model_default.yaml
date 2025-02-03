@@ -1,5 +1,5 @@
 # Tamaño del vocabulario para la rama de secuencias (número de tokens únicos)
-vocab_size: 5  
+# vocab_size: 5  
 
 # Dimensión del espacio de embedding para las secuencias de texto
 embed_dim: 256  # Dimensión de los embeddings en la rama de secuencias

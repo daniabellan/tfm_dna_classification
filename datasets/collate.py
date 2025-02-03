@@ -2,26 +2,22 @@ import torch
 import numpy as np
 
 class SequenceSignalsCollator:
-    def __init__(self, vocab, padding_idx, max_signal_length=1000):
-        self.vocab = vocab
+    def __init__(self, padding_idx, max_signal_length=1000):
         self.padding_idx = padding_idx
 
         # Se añade esta variable para "fijar" el número de canales de la capa convolucional
         self.max_signal_length = max_signal_length
 
     def __call__(self, batch):
-        signals, sequences, labels = zip(*batch)
+        signals, kmer_sequences, labels = zip(*batch)
 
         # Encontrar la longitud máxima de secuencia en el batch
-        max_len = max(len(seq) for seq in sequences)
+        max_kmer_len = max(len(seq) for seq in kmer_sequences)
         
-        # Codificar las secuencias y hacer padding
-        sequences_idx = []
-        for seq in sequences:
-            seq_idx = [self.vocab[base] for base in seq]
-            # Aplicar padding a las secuencias para igualar las longitudes
-            padded_seq = seq_idx + [self.padding_idx] * (max_len - len(seq))
-            sequences_idx.append(padded_seq)
+        # Aplicar padding a los k-mers
+        padded_kmer_sequences = [
+            seq + [self.padding_idx] * (max_kmer_len - len(seq)) for seq in kmer_sequences
+        ]
 
         # Padding a las señales
         padded_signals = []
@@ -45,7 +41,7 @@ class SequenceSignalsCollator:
 
         # print(f"Max signal_length: {max_signal_length}")
         signal_tensor = torch.tensor(np.array(padded_signals), dtype=torch.float32)
-        sequences_tensor = torch.tensor(sequences_idx, dtype=torch.long)
+        padded_kmer_sequences = torch.tensor(padded_kmer_sequences, dtype=torch.long)
         labels_tensor = torch.tensor(labels, dtype=torch.long)
 
-        return signal_tensor, sequences_tensor, labels_tensor
+        return signal_tensor, padded_kmer_sequences, labels_tensor
