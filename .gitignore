@@ -6,3 +6,4 @@ data/*
 checkpoints/*
 *.pod5
 *.sam
+dorado_models/*

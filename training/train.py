@@ -31,7 +31,7 @@ def train_one_epoch(model, loader, criterion, optimizer, device, max_grad_norm, 
         all_labels.extend(labels.cpu().numpy())
 
         # Verbose: Imprimir información de cada mini-batch
-        if verbose and (batch_idx % 10 == 0):
+        if verbose and (batch_idx % 5 == 0):
             print(f"  Mini-Batch {batch_idx + 1}/{len(loader)} - Loss: {loss.item():.4f}")
             print(f"  Elapsed time : {(time.time()-start):.4f}")
 

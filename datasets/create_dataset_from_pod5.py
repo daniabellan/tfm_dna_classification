@@ -1,4 +1,5 @@
 import pod5
+from ont_fast5_api.fast5_interface import get_fast5_file
 import pysam
 import h5py
 import numpy as np
@@ -68,28 +69,77 @@ def process_pod5_file(file: Path, reads_dict: dict, verbose: bool = False) -> in
     return not_detected
 
 
-def match_reads(pod5_data_path: str, reads_dict: dict, verbose: bool = False) -> dict:
+def process_fast5_file(file: Path, reads_dict: dict, verbose: bool = False) -> int:
+    not_detected = 0
+    detected = 0
+    if verbose:
+        print(f"Procesando archivo Fast5: {file}")
+    
+    f5 = get_fast5_file(file, mode='r')
+    
+    file_reads = f5.get_read_ids()
+    for read_idx, read_id in enumerate(file_reads):
+        read = f5.get_read(read_id)
+
+        if read_id in reads_dict:
+            # Raw data en int16
+            raw_data = read.get_raw_data()
+
+            
+            # Scale offset
+            metadata = read.get_channel_info()
+            offset = metadata["offset"]
+            range_scaling = metadata["range"]
+            digitisation = metadata["digitisation"]
+
+            # Convert signal to pA (picoAmpers)
+            raw_signals_pa = (raw_data + offset) * range_scaling / digitisation
+            
+            # Add signal to dictionary
+            reads_dict[read_id]["signal_pa"] = raw_signals_pa
+            detected += 1
+        
+        else:
+            not_detected += 1
+
+    if verbose:
+        print(f"Reads procesados en {file}: {detected}")
+    
+    return not_detected
+
+
+def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False) -> dict:
     """
     Procesa archivos POD5 para actualizar el campo 'signal_pa' en reads_dict y retorna
     un nuevo diccionario con los reads que contienen tanto 'sequence' como 'signal_pa'.
 
     Args:
-        pod5_data_path (str): Ruta al directorio que contiene archivos .pod5.
+        nanopore_data_path (str): Ruta al directorio que contiene archivos .pod5 o fast5.
         reads_dict (dict): Diccionario con información de reads.
         verbose (bool): Si es True, imprime mensajes de progreso.
 
     Returns:
         dict: Nuevo diccionario con solo los reads que contienen 'sequence' y 'signal_pa'.
     """
-    pod5_files = list(Path(pod5_data_path).rglob('*.pod5'))
+    
 
-    if verbose:
-        print(f"Se encontraron {len(pod5_files)} archivos POD5 en el directorio: {pod5_data_path}")
+    pod5_files = list(Path(nanopore_data_path).rglob('*.pod5'))
+    fast5_files = list(Path(nanopore_data_path).rglob('*.fast5'))
 
-    # Procesamos los archivos y contamos los reads no detectados
     not_detected = 0
-    for file in pod5_files:
-        not_detected += process_pod5_file(file, reads_dict, verbose)
+    if verbose:
+        print(f"Se encontraron {len(pod5_files)} archivos POD5 en el directorio: {nanopore_data_path}")
+        print(f"Se encontraron {len(fast5_files)} archivos FAST5 en el directorio: {nanopore_data_path}")
+
+    
+    # Procesamos los archivos y contamos los reads no detectados 
+    if len(fast5_files) > 0:
+        for file in fast5_files:
+            not_detected += process_fast5_file(file, reads_dict, verbose)
+
+    if len(pod5_files) > 0:
+        for file in pod5_files:
+            not_detected += process_pod5_file(file, reads_dict, verbose)
 
     # Filtrar los reads que tienen tanto 'sequence' como 'signal_pa'
     filtered_dict = {
@@ -128,8 +178,8 @@ def save_dict_h5(dictionary, file_path, verbose: bool = False):
 
 
 if __name__ == '__main__':
-    sam_file_path = "data/ecoli_k12/FAR64318_97d55db5_12.sam"
-    pod5_data_path = "data/ecoli_k12/pod5_1"
+    sam_file_path = "data/mm39/reads.sam"
+    nanopore_data_path = "data/mm39/fast5"
     
     # Establecer verbose en True para mostrar más detalles
     verbose = True
@@ -138,8 +188,8 @@ if __name__ == '__main__':
     reads_dict = read_sam_file(sam_file_path, verbose)
     
     # Procesar los archivos POD5 y actualizar el diccionario con las señales
-    filtered_dict = match_reads(pod5_data_path, reads_dict, verbose)
+    filtered_dict = match_reads(nanopore_data_path, reads_dict, verbose)
     
     # Guardar el diccionario resultante en un archivo HDF5 con el mismo nombre que el directorio POD5
-    h5_file_path = pod5_data_path.rstrip('/') + '.h5'  # Crear el nombre del archivo HDF5
+    h5_file_path = nanopore_data_path.rstrip('/') + '.h5'  # Crear el nombre del archivo HDF5
     save_dict_h5(filtered_dict, h5_file_path, verbose)
