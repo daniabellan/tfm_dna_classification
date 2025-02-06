@@ -111,10 +111,11 @@ if __name__ == "__main__":
     mlflow_logger = MLFlowLogger(experiment_config = train_config,
                                  model_config = model_config,
                                  experiment_name = experiment_name,
+                                 dataset_config = dataset_config,
                                  len_train_dataset = len(train_dataset),
                                  len_val_dataset = len(val_dataset),
                                  len_test_dataset = len(test_dataset))
-
+        
     # Iniciar el temporizador
     mlflow_logger.start_timer()
 

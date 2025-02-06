@@ -46,11 +46,17 @@ class HybridSequenceClassifier(nn.Module):
         # Codificación posicional para incorporar información de posición en la secuencia
         self.positional_encoding = nn.Parameter(torch.zeros(1, max_seq_length, embed_dim))
 
+        # Normalización antes del Transformer
+        self.seq_norm = nn.LayerNorm(embed_dim)
+        
         # Capas del Transformer Encoder
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.3
         )
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+
+        # Dropout
+        self.seq_dropout = nn.Dropout(0.1)
 
         # --- Clasificadores ---
         # Clasificador conjunto
@@ -71,6 +77,9 @@ class HybridSequenceClassifier(nn.Module):
         # Regularización con Dropout
         self.fc1_dropout = nn.Dropout(0.5)
         self.fc2_dropout = nn.Dropout(0.5)
+
+        # Normalizar esclas después de la concatenación
+        self.bn_combined = nn.BatchNorm1d(512 * 8 + embed_dim * 8)
 
 
     def forward(self, signals, sequences, padding_mask=None):
@@ -103,8 +112,14 @@ class HybridSequenceClassifier(nn.Module):
             # x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
             x_sequences = self.embedding(sequences) 
 
+            # Normalización de las sequencias
+            x_sequences = self.seq_norm(x_sequences)
+            
             # Transformer Encoder
             x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)
+
+            # Dropout
+            x_sequences = self.seq_dropout(x_sequences)
 
             # Pooling global sobre la salida del Transformer
             x_sequences = x_sequences.permute(0, 2, 1)  # Cambiar a (batch_size, embed_dim, seq_length)
@@ -123,10 +138,14 @@ class HybridSequenceClassifier(nn.Module):
             # Concatenar características de ambas ramas
             x = torch.cat((x_signals, x_sequences), dim=1)
            
+            x = self.bn_combined(x)
+
             x = F.relu(self.fc1(x))
             x = self.fc1_dropout(x)
+            
             x = F.relu(self.fc2(x))
             x = self.fc2_dropout(x)
+            
             x = self.fc3(x)  
         
         elif self.use_signals:

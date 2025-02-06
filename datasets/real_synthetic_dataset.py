@@ -1,4 +1,5 @@
 import yaml
+import time
 import numpy as np
 from collections import Counter
 from torch.utils.data import Dataset
@@ -339,6 +340,7 @@ class RealSyntheticDataset:
     def _load_fast5(self, fast5_path:str):
         real_data = []
         for class_idx, file in enumerate(fast5_path):
+            start = time.time()
             reads = load_dict_h5(file)
             for read_idx, read_data in list(reads.items()):
                 if self.preprocess:
@@ -358,8 +360,9 @@ class RealSyntheticDataset:
                 signal_data["label"] = class_idx
 
                 real_data.append(signal_data)
-
         
+            print(f"Preprocessing done in {(time.time() - start):.4f} secs")
+
         return real_data
 
 

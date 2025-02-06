@@ -23,6 +23,5 @@ def load_dict_h5(file_path):
                 "signal_pa": signal_pa 
             }
     
-    print(f"Diccionario cargado desde {file_path}")
-    print(f"Done in {(time.time() - start):.4f} secs")
+    print(f"H5 cargado desde {file_path} | Done in {(time.time() - start):.4f} secs")
     return dictionary

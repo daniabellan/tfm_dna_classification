@@ -1,5 +1,5 @@
 window_size: 1000
-num_samples: 200
+num_samples: 1000
 bases_per_second: 400
 sampling_rate: 4000
 bases: ["A", "C", "T", "G"]
@@ -16,7 +16,7 @@ test_split: 0.1
 
 # padding_idx: (4**k_mers_size)-1
 
-k_mers_size: 3
+k_mers_size: 5
 
 synthetic_dataset:
   base_probs: []

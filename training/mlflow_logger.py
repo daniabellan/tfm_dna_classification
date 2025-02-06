@@ -6,6 +6,7 @@ class MLFlowLogger():
     def __init__(self, 
                  experiment_config:dict, 
                  model_config:dict, 
+                 dataset_config:dict,
                  experiment_name:str, 
                  len_train_dataset:int, 
                  len_val_dataset:int, 
@@ -18,6 +19,7 @@ class MLFlowLogger():
         # Ordenar configuracion modelo y experimento
         sorted_model_config = {key: value for key, value in sorted(model_config.items())}
         sorted_experiment_config = {key: value for key, value in sorted(experiment_config.items())}
+        sorted_dataset_config = {key: value for key, value in sorted(dataset_config.items())}
         
         # Usamos la fecha y hora en formato ISO 8601
         self.run_name = "run_" + datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
@@ -38,6 +40,10 @@ class MLFlowLogger():
         # Log de los parametros del modelo
         self.setup_params(config = sorted_model_config,
                           config_type = "model")
+
+        # Log de los parametros del modelo
+        self.setup_params(config = sorted_dataset_config,
+                          config_type = "data")
 
     def setup_params(self, config:dict, config_type:str):
         for key, value in config.items():
