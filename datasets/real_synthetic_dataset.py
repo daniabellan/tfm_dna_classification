@@ -237,14 +237,14 @@ class RealSyntheticDataset:
         # Crear un generador de números aleatorios con una semilla fija
         self.rng = np.random.default_rng(seed)
 
+        # Bases genéticas
+        self.bases = ["A", "C", "T", "G"]
+
         # Tamaño de la ventana deslizante
         self.window_size = config['window_size']
         
         # Distribución de las bases por "especie"
-        self.base_probs = config["synthetic_dataset"]['base_probs']
-        
-        # Bases genéticas
-        self.bases = config['bases']
+        self.base_probs = config['base_probs']
 
         # Número que representa el caracter del padding
         self.padding_idx = config['padding_idx']
@@ -272,7 +272,7 @@ class RealSyntheticDataset:
 
 
         # Número de clases dinámico en función de los datos reales y los sintéticos
-        self.num_classes = len(config["real_dataset"]) + len(config["synthetic_dataset"]["base_probs"])
+        self.num_classes = len(config["real_dataset"]) + len(self.base_probs)
 
         # Número de muestras reales
         self.num_samples = config["num_samples"]

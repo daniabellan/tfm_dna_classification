@@ -1,5 +1,8 @@
 import time as time
+import argparse
 import torch
+import yaml
+from pathlib import Path
 from torch.utils.data import DataLoader
 
 from datasets.synthetic_dataset import SyntheticDataset
@@ -12,6 +15,11 @@ from training.validate import validate
 from training.test import test_model
 from training.callbacks import EarlyStopping, BestModelCheckpoint
 from utils.common import load_experiment_config, get_device, print_epoch_summary
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train a hybrid sequence classifier.")
+    parser.add_argument("--config", type=str, required=True, help="Path to the YAML configuration file.")
+    return parser.parse_args()
 
 
 def load_model_from_config(model_config, model_class):
@@ -74,16 +82,31 @@ def create_dataloaders(train_dataset,
 
 
 if __name__ == "__main__":
-    # Cargar configuracion de experimento
-    # experiment_config = "config/experiments/synthetic_default.yaml"
-    experiment_config = "config/experiments/real_synthetic_default.yaml"
-    experiment_name, dataset_config, model_config, train_config = load_experiment_config(experiment_config)
+    # Parse arguments
+    args = parse_args()
+    experiment_config_file = args.config
 
-    dataset_config["padding_idx"] = (4**dataset_config["k_mers_size"])
+    # Definir configuración del experimento
+    try:
+        # Cargar experimento
+        experiment_config = yaml.safe_load(open(experiment_config_file, "r"))
+        experiment_name = Path(args.config).name.strip(".yaml")
 
+        # Cargar configuuracion de entrenamiento
+        train_config = experiment_config["train"]
 
-    # Definir device
-    device = get_device()
+        # Cargar configuración del dataset 
+        dataset_config = experiment_config["dataset"]
+        # Incluir padding idx para indicar el int que representa el padding de los kmer 
+        dataset_config["padding_idx"] = (4**dataset_config["k_mers_size"])
+
+        # Cargar configuracion del modelo
+        model_config = experiment_config["model"]
+        # Numero de indices que representan los kmers (4^N)
+        model_config["vocab_size"] = (4**dataset_config["k_mers_size"])+1
+    except:
+        raise FileNotFoundError 
+
 
     # Cargar dataset sintético
     train_dataset, val_dataset, test_dataset = create_synthetic_dataset(dataset_config)
@@ -94,13 +117,10 @@ if __name__ == "__main__":
                                                                test_dataset,
                                                                train_config,
                                                                dataset_config)
-
-
-    # Asignar el máximo número de canales a model_config y cargar el modelo
-    max_channels = 1000
-    model_config["input_channels"] = max_channels
-    print(f"El número máximo de canales es: {max_channels}")
-    model_config["vocab_size"] = (4**dataset_config["k_mers_size"])+1
+    # Definir device
+    device = get_device()
+    
+    # Cargar modelo
     model = load_model_from_config(model_config, HybridSequenceClassifier).to(device)
 
     # Load model (TODO: Not implemented)
@@ -108,7 +128,7 @@ if __name__ == "__main__":
     # model = torch.load(model_checkpoint, weights_only=False)
 
     # Configuración de MLFlow
-    mlflow_logger = MLFlowLogger(experiment_config = train_config,
+    mlflow_logger = MLFlowLogger(train_config = train_config,
                                  model_config = model_config,
                                  experiment_name = experiment_name,
                                  dataset_config = dataset_config,
@@ -124,9 +144,11 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), 
                                  lr=train_config["learning_rate"], 
                                  weight_decay=train_config["optimizer"]["weight_decay"])
+    
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
                                                 step_size=train_config["scheduler"]["step_size"], 
                                                 gamma=train_config["scheduler"]["gamma"])
+    
     early_stopping = EarlyStopping(train_config["early_stopping"]["patience"], 
                                    train_config["early_stopping"]["min_delta"])
 
