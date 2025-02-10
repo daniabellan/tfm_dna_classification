@@ -91,22 +91,21 @@ if __name__ == "__main__":
         # Cargar experimento
         experiment_config = yaml.safe_load(open(experiment_config_file, "r"))
         experiment_name = Path(args.config).name.strip(".yaml")
-
-        # Cargar configuuracion de entrenamiento
-        train_config = experiment_config["train"]
-
-        # Cargar configuración del dataset 
-        dataset_config = experiment_config["dataset"]
-        # Incluir padding idx para indicar el int que representa el padding de los kmer 
-        dataset_config["padding_idx"] = (4**dataset_config["k_mers_size"])
-
-        # Cargar configuracion del modelo
-        model_config = experiment_config["model"]
-        # Numero de indices que representan los kmers (4^N)
-        model_config["vocab_size"] = (4**dataset_config["k_mers_size"])+1
     except:
         raise FileNotFoundError 
 
+    # Cargar configuuracion de entrenamiento
+    train_config = experiment_config["train"]
+
+    # Cargar configuración del dataset 
+    dataset_config = experiment_config["dataset"]
+    # Incluir padding idx para indicar el int que representa el padding de los kmer 
+    dataset_config["padding_idx"] = (4**dataset_config["k_mers_size"])
+
+    # Cargar configuracion del modelo
+    model_config = experiment_config["model"]
+    # Numero de indices que representan los kmers (4^N)
+    model_config["vocab_size"] = (4**dataset_config["k_mers_size"])+1
 
     # Cargar dataset sintético
     train_dataset, val_dataset, test_dataset = create_synthetic_dataset(dataset_config)

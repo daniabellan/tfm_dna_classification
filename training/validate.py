@@ -28,4 +28,7 @@ def validate(model, loader, criterion, device, padding_idx):
         "recall": recall_score(all_labels, all_preds, average="weighted", zero_division=0),
         "f1": f1_score(all_labels, all_preds, average="weighted", zero_division=0),
     }
+
+    torch.cuda.empty_cache()
+
     return metrics

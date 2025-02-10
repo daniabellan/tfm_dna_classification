@@ -114,10 +114,12 @@ class SignalGenerator:
 class SignalPreprocess:
     def __init__(self, 
                  sampling_rate:int,
-                 window_size:int):
+                 window_size:int,
+                 step_ratio:float):
         
         self.sampling_rate = sampling_rate
         self.window_size = window_size
+        self.step_ratio = step_ratio
 
     # Función de filtro de paso bajo
     def lowpass_filter(self, data, cutoff, order=4):
@@ -207,23 +209,36 @@ class SignalPreprocess:
         # Paso 6: Aplicar Z-score para normalizar la señal
         preprocessed_signal = self.modified_zscore(preprocessed_signal)
 
-        return preprocessed_signal
+        return np.array(preprocessed_signal, dtype=np.float32)
+
+    # def apply_sliding_window(self, signal):
+    #     segmented_signal = []
+
+    #     step_size = self.window_size
+
+    #     for start in range(0, len(signal), step_size):
+    #         end = start + step_size
+
+    #         signal_segment = signal[start:end]
+    #         if len(signal_segment) < step_size:
+    #             signal_segment = np.pad(signal_segment, (0, step_size - len(signal_segment)), constant_values=0)
+
+    #         segmented_signal.append(np.array(signal_segment, dtype=np.float32))
+
+    #     return segmented_signal
 
     def apply_sliding_window(self, signal):
-        segmented_signal = []
+        if self.window_size > len(signal) or self.window_size <= 0:
+            raise ValueError("El tamaño de la ventana debe ser mayor que 0 y menor o igual a la longitud de la señal.")
+        
+        if not (0 < self.step_ratio <= 1):
+            raise ValueError("El step_ratio debe estar entre 0 y 1.")
+        
+        step = max(1, int(self.window_size * self.step_ratio))
+        num_windows = (len(signal) - self.window_size) // step + 1
+        
+        return np.array([signal[i : i + self.window_size] for i in range(0, len(signal) - self.window_size + 1, step)])
 
-        step_size = self.window_size
-
-        for start in range(0, len(signal), step_size):
-            end = start + step_size
-
-            signal_segment = signal[start:end]
-            if len(signal_segment) < step_size:
-                signal_segment = np.pad(signal_segment, (0, step_size - len(signal_segment)), constant_values=0)
-
-            segmented_signal.append(np.array(signal_segment, dtype=np.float32))
-
-        return segmented_signal
 
 
 class RealSyntheticDataset:
@@ -260,10 +275,14 @@ class RealSyntheticDataset:
 
         # Indica si la señal del Dataset se va a preprocesar o no
         self.preprocess = preprocess 
-        
+
+        # Ratio de solapamiento entre las ventanas de la señal eléctrica (0-1)
+        self.step_ratio = config["step_ratio"]        
+
         # Cargar funciones de pre-procesamiento de señal
         self.prepr_fn = SignalPreprocess(sampling_rate = self.sampling_rate,
-                                         window_size = self.window_size)
+                                         window_size = self.window_size,
+                                         step_ratio = self.step_ratio)
 
         # Cargar funciones para generar señales sintéticas
         self.signal_gen_fn = SignalGenerator(rng = self.rng,
@@ -295,19 +314,24 @@ class RealSyntheticDataset:
         for sample in real_data_sample:
             sample["k_mers"] = self.sequence_to_kmer_indices(sequence = sample["sequence"])
         
-        # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
-        # Media de la longitud de la secuencia
-        average_seq_length = np.average([len(x["sequence"]) for x in real_data_sample])
-        
-        # Longitud mínima y máxima de la secuencia +- X%
-        self.min_seq_length = average_seq_length - int(average_seq_length * seq_variation_perc)
-        self.max_seq_length = average_seq_length + int(average_seq_length * seq_variation_perc)
-        
-        # Generar datos sintéticos 
-        synthetic_data = self._generate_data(real_data_sample)
+        # Final dataset real
+        self.full_dataset = real_data_sample
 
-        # Unir datasets (real + sintético)
-        self.full_dataset = real_data_sample + synthetic_data
+        # Si se requiere generar dataset sintético
+        if len(self.base_probs) > 0:
+            # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
+            # Media de la longitud de la secuencia
+            average_seq_length = np.average([len(x["sequence"]) for x in real_data_sample])
+            
+            # Longitud mínima y máxima de la secuencia +- X%
+            self.min_seq_length = average_seq_length - int(average_seq_length * seq_variation_perc)
+            self.max_seq_length = average_seq_length + int(average_seq_length * seq_variation_perc)
+            
+            # Generar datos sintéticos 
+            synthetic_data = self._generate_data(real_data_sample)
+
+            # Unir datasets (real + sintético)
+            self.full_dataset += synthetic_data
 
         pass
 
@@ -349,7 +373,6 @@ class RealSyntheticDataset:
                 else:
                     processed_signal = []
                     window_signal = self.prepr_fn.apply_sliding_window(signal = read_data["signal_pa"])
-
 
                 # Rellenar con datos el diccionario
                 signal_data = SIGNALDATA_KEYS.copy()  # Copiar la plantilla

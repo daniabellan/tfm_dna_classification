@@ -6,7 +6,10 @@ dataset:
   num_samples: 1000
 
   # Tamaño de la ventana en la que se segmentan las señales para su procesamiento.
-  window_size: 1000
+  window_size: 1500
+
+  # Ratio de solapamiento entre señales (0-1)
+  step_ratio: 0.5 
 
   # Número de bases (nucleótidos) que se leen por segundo en la secuenciación.
   bases_per_second: 400
@@ -39,7 +42,7 @@ model:
   input_channels: 1000
 
   # Dimensión del embedding para representar secuencias de nucleótidos en el modelo.
-  embed_dim: 256
+  embed_dim: 128
 
   # Número de cabezas de atención en la capa de Multi-Head Attention del Transformer.
   num_heads: 4

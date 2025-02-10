@@ -25,8 +25,7 @@ class HybridSequenceClassifier(nn.Module):
 
         # --- Configuración de la rama para señales eléctricas ---
         # Convolución inicial para extracción de características locales
-        self.conv1 = nn.Conv1d(input_channels, 32, kernel_size=19, stride=3)
-        #self.conv1 = nn.Conv1d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv1d(input_channels, 32, kernel_size=5, stride=3)
         self.pool1 = nn.MaxPool1d(kernel_size=3, stride=2)  # Reducción de dimensionalidad
 
         # Bloques residuales para aumentar la profundidad de la red
@@ -51,7 +50,7 @@ class HybridSequenceClassifier(nn.Module):
         
         # Capas del Transformer Encoder
         encoder_layer = nn.TransformerEncoderLayer(
-            d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.3
+            d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.5
         )
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
@@ -85,7 +84,6 @@ class HybridSequenceClassifier(nn.Module):
     def forward(self, signals, sequences, padding_mask=None):
         if self.use_signals:
             # --- Procesamiento de la rama de señales ---
-            # signals = signals.unsqueeze(1)  # (batch_size, 1, signal_length) para Conv1d
             x_signals = F.relu(self.conv1(signals))
             x_signals = self.pool1(x_signals)
 
@@ -109,7 +107,6 @@ class HybridSequenceClassifier(nn.Module):
             padding_mask = sequences == self.kmer_padding_idx
             
             # Embedding de secuencias y adición de codificación posicional
-            # x_sequences = self.embedding(sequences) + self.positional_encoding[:, :sequences.size(1), :]
             x_sequences = self.embedding(sequences) 
 
             # Normalización de las sequencias
