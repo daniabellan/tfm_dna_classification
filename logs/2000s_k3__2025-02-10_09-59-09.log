@@ -1,0 +1,2506 @@
+CONFIG:
+dataset:
+  k_mers_size: 3
+  num_samples: 2000
+  window_size: 1500
+  step_ratio: 0.5 
+  bases_per_second: 400
+  sampling_rate: 4000
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  base_probs: []
+  real_dataset:
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/mm39/fast5.h5"
+
+model:
+  num_classes: 2
+  input_channels: 1000
+  embed_dim: 128
+  num_heads: 4
+  num_layers: 2
+  max_seq_length: 512
+  use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
+  use_sequences: True  # Si True, utiliza la rama que procesa secuencias de ADN.
+
+train:
+  batch_size: 8
+  learning_rate: 0.0001
+  epochs: 100
+  seed: 42
+
+  optimizer:
+    type: Adam
+    weight_decay: 0.00001
+
+  scheduler:
+    step_size: 10
+    gamma: 0.1
+
+  early_stopping:
+    patience: 5
+    min_delta: 0.0001
+
+  gradient_clipping:
+    max_grad_norm: 1.0
+
+  mlflow:
+    # Dirección del servidor de MLflow para registrar experimentos y métricas.
+    tracking_uri: "http://127.0.0.1:5000"
+
+
+
+H5 cargado desde /home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5 | Done in 2.5561 secs
+Preprocessing done in 30.0162 secs
+H5 cargado desde /home/diz-wsl/personal_repos/tfm/data/mm39/fast5.h5 | Done in 2.7691 secs
+Preprocessing done in 24.7573 secs
+Data loaded in 56.8263 seconds
+2025/02/10 10:00:09 INFO mlflow.tracking.fluent: Experiment with name '2000s_k3' does not exist. Creating a new experiment.
+  Mini-Batch 1/200 - Loss: 0.7237
+  Elapsed time : 1.3803
+  Mini-Batch 2/200 - Loss: 0.7351
+  Elapsed time : 2.7553
+  Mini-Batch 3/200 - Loss: 0.7052
+  Elapsed time : 19.5049
+  Mini-Batch 4/200 - Loss: 0.7076
+  Elapsed time : 20.6914
+  Mini-Batch 5/200 - Loss: 0.7366
+  Elapsed time : 27.4322
+  Mini-Batch 6/200 - Loss: 0.7015
+  Elapsed time : 31.8066
+  Mini-Batch 7/200 - Loss: 0.6489
+  Elapsed time : 32.7910
+  Mini-Batch 8/200 - Loss: 0.6686
+  Elapsed time : 35.9647
+  Mini-Batch 9/200 - Loss: 0.6013
+  Elapsed time : 36.8331
+  Mini-Batch 10/200 - Loss: 0.5342
+  Elapsed time : 39.8568
+  Mini-Batch 11/200 - Loss: 0.5518
+  Elapsed time : 43.1247
+  Mini-Batch 12/200 - Loss: 0.6035
+  Elapsed time : 46.1080
+  Mini-Batch 13/200 - Loss: 0.6019
+  Elapsed time : 50.4081
+  Mini-Batch 14/200 - Loss: 0.6453
+  Elapsed time : 51.5088
+  Mini-Batch 15/200 - Loss: 0.6476
+  Elapsed time : 56.5775
+  Mini-Batch 16/200 - Loss: 0.5438
+  Elapsed time : 60.3930
+  Mini-Batch 17/200 - Loss: 0.5626
+  Elapsed time : 63.3483
+  Mini-Batch 18/200 - Loss: 0.4606
+  Elapsed time : 64.5761
+  Mini-Batch 19/200 - Loss: 0.5391
+  Elapsed time : 70.9156
+  Mini-Batch 20/200 - Loss: 0.4683
+  Elapsed time : 72.0233
+  Mini-Batch 21/200 - Loss: 0.6368
+  Elapsed time : 72.6514
+  Mini-Batch 22/200 - Loss: 0.5362
+  Elapsed time : 72.9314
+  Mini-Batch 23/200 - Loss: 0.4475
+  Elapsed time : 74.1815
+  Mini-Batch 24/200 - Loss: 0.3664
+  Elapsed time : 74.6856
+  Mini-Batch 25/200 - Loss: 0.4363
+  Elapsed time : 79.0466
+  Mini-Batch 26/200 - Loss: 0.4007
+  Elapsed time : 82.0282
+  Mini-Batch 27/200 - Loss: 0.3831
+  Elapsed time : 85.2043
+  Mini-Batch 28/200 - Loss: 0.6421
+  Elapsed time : 85.7335
+  Mini-Batch 29/200 - Loss: 0.5398
+  Elapsed time : 87.0930
+  Mini-Batch 30/200 - Loss: 0.2317
+  Elapsed time : 90.6203
+  Mini-Batch 31/200 - Loss: 0.4219
+  Elapsed time : 93.7688
+  Mini-Batch 32/200 - Loss: 0.2865
+  Elapsed time : 97.1206
+  Mini-Batch 33/200 - Loss: 0.4359
+  Elapsed time : 98.3778
+  Mini-Batch 34/200 - Loss: 0.3889
+  Elapsed time : 98.6210
+  Mini-Batch 35/200 - Loss: 0.2590
+  Elapsed time : 99.6396
+  Mini-Batch 36/200 - Loss: 0.2488
+  Elapsed time : 106.7427
+  Mini-Batch 37/200 - Loss: 0.2555
+  Elapsed time : 107.9313
+  Mini-Batch 38/200 - Loss: 0.1340
+  Elapsed time : 116.2556
+  Mini-Batch 39/200 - Loss: 0.5938
+  Elapsed time : 117.4750
+  Mini-Batch 40/200 - Loss: 0.1542
+  Elapsed time : 120.5742
+  Mini-Batch 41/200 - Loss: 0.2039
+  Elapsed time : 127.6433
+  Mini-Batch 42/200 - Loss: 0.1382
+  Elapsed time : 129.0018
+  Mini-Batch 43/200 - Loss: 0.4541
+  Elapsed time : 133.7273
+  Mini-Batch 44/200 - Loss: 0.1158
+  Elapsed time : 138.2075
+  Mini-Batch 45/200 - Loss: 0.2487
+  Elapsed time : 142.6339
+  Mini-Batch 46/200 - Loss: 0.1243
+  Elapsed time : 143.6694
+  Mini-Batch 47/200 - Loss: 0.1179
+  Elapsed time : 151.7361
+  Mini-Batch 48/200 - Loss: 0.2593
+  Elapsed time : 153.0558
+  Mini-Batch 49/200 - Loss: 0.3850
+  Elapsed time : 156.2626
+  Mini-Batch 50/200 - Loss: 0.6081
+  Elapsed time : 157.5815
+  Mini-Batch 51/200 - Loss: 0.2257
+  Elapsed time : 162.1028
+  Mini-Batch 52/200 - Loss: 0.0760
+  Elapsed time : 166.5999
+  Mini-Batch 53/200 - Loss: 0.8809
+  Elapsed time : 171.6163
+  Mini-Batch 54/200 - Loss: 0.1876
+  Elapsed time : 174.5697
+  Mini-Batch 55/200 - Loss: 0.3360
+  Elapsed time : 177.5891
+  Mini-Batch 56/200 - Loss: 0.2372
+  Elapsed time : 178.7243
+  Mini-Batch 57/200 - Loss: 0.1694
+  Elapsed time : 179.9563
+  Mini-Batch 58/200 - Loss: 0.0348
+  Elapsed time : 183.2064
+  Mini-Batch 59/200 - Loss: 0.0914
+  Elapsed time : 186.2821
+  Mini-Batch 60/200 - Loss: 0.1414
+  Elapsed time : 191.9869
+  Mini-Batch 61/200 - Loss: 0.0737
+  Elapsed time : 196.6562
+  Mini-Batch 62/200 - Loss: 0.1136
+  Elapsed time : 202.4563
+  Mini-Batch 63/200 - Loss: 0.0647
+  Elapsed time : 205.6340
+  Mini-Batch 64/200 - Loss: 0.1800
+  Elapsed time : 205.9077
+  Mini-Batch 65/200 - Loss: 0.0715
+  Elapsed time : 206.3762
+  Mini-Batch 66/200 - Loss: 0.0345
+  Elapsed time : 207.1807
+  Mini-Batch 67/200 - Loss: 0.0329
+  Elapsed time : 213.4986
+  Mini-Batch 68/200 - Loss: 0.0936
+  Elapsed time : 216.5638
+  Mini-Batch 69/200 - Loss: 0.1043
+  Elapsed time : 221.2641
+  Mini-Batch 70/200 - Loss: 0.0708
+  Elapsed time : 226.2856
+  Mini-Batch 71/200 - Loss: 0.2400
+  Elapsed time : 226.9342
+  Mini-Batch 72/200 - Loss: 0.2789
+  Elapsed time : 230.0173
+  Mini-Batch 73/200 - Loss: 0.4579
+  Elapsed time : 231.2324
+  Mini-Batch 74/200 - Loss: 0.0201
+  Elapsed time : 235.7201
+  Mini-Batch 75/200 - Loss: 0.0023
+  Elapsed time : 236.7580
+  Mini-Batch 76/200 - Loss: 0.2238
+  Elapsed time : 237.3883
+  Mini-Batch 77/200 - Loss: 0.0117
+  Elapsed time : 237.7653
+  Mini-Batch 78/200 - Loss: 0.0188
+  Elapsed time : 238.4671
+  Mini-Batch 79/200 - Loss: 0.5757
+  Elapsed time : 246.5313
+  Mini-Batch 80/200 - Loss: 0.1015
+  Elapsed time : 249.4913
+  Mini-Batch 81/200 - Loss: 0.0590
+  Elapsed time : 250.4677
+  Mini-Batch 82/200 - Loss: 0.0085
+  Elapsed time : 258.4743
+  Mini-Batch 83/200 - Loss: 0.0020
+  Elapsed time : 263.8320
+  Mini-Batch 84/200 - Loss: 0.0076
+  Elapsed time : 268.0921
+  Mini-Batch 85/200 - Loss: 0.0105
+  Elapsed time : 268.7505
+  Mini-Batch 86/200 - Loss: 0.0220
+  Elapsed time : 269.9593
+  Mini-Batch 87/200 - Loss: 0.0021
+  Elapsed time : 271.2897
+  Mini-Batch 88/200 - Loss: 0.0043
+  Elapsed time : 276.9665
+  Mini-Batch 89/200 - Loss: 0.0078
+  Elapsed time : 278.2952
+  Mini-Batch 90/200 - Loss: 0.0008
+  Elapsed time : 278.8320
+  Mini-Batch 91/200 - Loss: 0.0149
+  Elapsed time : 280.0745
+  Mini-Batch 92/200 - Loss: 0.0015
+  Elapsed time : 280.5485
+  Mini-Batch 93/200 - Loss: 0.0126
+  Elapsed time : 283.5768
+  Mini-Batch 94/200 - Loss: 0.1814
+  Elapsed time : 284.6562
+  Mini-Batch 95/200 - Loss: 0.0155
+  Elapsed time : 287.9271
+  Mini-Batch 96/200 - Loss: 0.0002
+  Elapsed time : 292.2225
+  Mini-Batch 97/200 - Loss: 0.0022
+  Elapsed time : 297.5862
+  Mini-Batch 98/200 - Loss: 0.0001
+  Elapsed time : 298.7652
+  Mini-Batch 99/200 - Loss: 0.0007
+  Elapsed time : 303.4210
+  Mini-Batch 100/200 - Loss: 0.0009
+  Elapsed time : 304.6799
+  Mini-Batch 101/200 - Loss: 0.0005
+  Elapsed time : 308.2448
+  Mini-Batch 102/200 - Loss: 0.0346
+  Elapsed time : 308.9468
+  Mini-Batch 103/200 - Loss: 0.8786
+  Elapsed time : 309.9618
+  Mini-Batch 104/200 - Loss: 0.7896
+  Elapsed time : 313.2121
+  Mini-Batch 105/200 - Loss: 0.3169
+  Elapsed time : 321.1931
+  Mini-Batch 106/200 - Loss: 0.0084
+  Elapsed time : 324.5377
+  Mini-Batch 107/200 - Loss: 0.0000
+  Elapsed time : 329.2361
+  Mini-Batch 108/200 - Loss: 0.0000
+  Elapsed time : 332.4127
+  Mini-Batch 109/200 - Loss: 0.0021
+  Elapsed time : 333.7603
+  Mini-Batch 110/200 - Loss: 0.0001
+  Elapsed time : 338.2793
+  Mini-Batch 111/200 - Loss: 0.0031
+  Elapsed time : 342.6187
+  Mini-Batch 112/200 - Loss: 0.0016
+  Elapsed time : 347.3123
+  Mini-Batch 113/200 - Loss: 0.0914
+  Elapsed time : 347.5557
+  Mini-Batch 114/200 - Loss: 0.0005
+  Elapsed time : 348.8957
+  Mini-Batch 115/200 - Loss: 0.0822
+  Elapsed time : 351.9992
+  Mini-Batch 116/200 - Loss: 0.2686
+  Elapsed time : 352.8631
+  Mini-Batch 117/200 - Loss: 0.0539
+  Elapsed time : 355.8114
+  Mini-Batch 118/200 - Loss: 0.1122
+  Elapsed time : 357.1264
+  Mini-Batch 119/200 - Loss: 0.0001
+  Elapsed time : 362.4162
+  Mini-Batch 120/200 - Loss: 0.0004
+  Elapsed time : 370.4592
+  Mini-Batch 121/200 - Loss: 0.0307
+  Elapsed time : 375.1778
+  Mini-Batch 122/200 - Loss: 0.2504
+  Elapsed time : 376.4511
+  Mini-Batch 123/200 - Loss: 0.0006
+  Elapsed time : 384.4826
+  Mini-Batch 124/200 - Loss: 0.2775
+  Elapsed time : 385.6378
+  Mini-Batch 125/200 - Loss: 0.0071
+  Elapsed time : 386.6039
+  Mini-Batch 126/200 - Loss: 0.0030
+  Elapsed time : 387.4283
+  Mini-Batch 127/200 - Loss: 0.0000
+  Elapsed time : 392.9896
+  Mini-Batch 128/200 - Loss: 0.0001
+  Elapsed time : 393.3555
+  Mini-Batch 129/200 - Loss: 0.0013
+  Elapsed time : 394.6762
+  Mini-Batch 130/200 - Loss: 0.0245
+  Elapsed time : 395.5495
+  Mini-Batch 131/200 - Loss: 0.0012
+  Elapsed time : 396.7187
+  Mini-Batch 132/200 - Loss: 0.0003
+  Elapsed time : 401.4072
+  Mini-Batch 133/200 - Loss: 0.0762
+  Elapsed time : 409.5090
+  Mini-Batch 134/200 - Loss: 0.0010
+  Elapsed time : 410.3812
+  Mini-Batch 135/200 - Loss: 0.0090
+  Elapsed time : 414.0392
+  Mini-Batch 136/200 - Loss: 0.0011
+  Elapsed time : 421.6275
+  Mini-Batch 137/200 - Loss: 0.0065
+  Elapsed time : 424.7875
+  Mini-Batch 138/200 - Loss: 0.4646
+  Elapsed time : 425.5517
+  Mini-Batch 139/200 - Loss: 0.0052
+  Elapsed time : 426.3658
+  Mini-Batch 140/200 - Loss: 0.0000
+  Elapsed time : 427.3500
+  Mini-Batch 141/200 - Loss: 0.2692
+  Elapsed time : 430.2389
+  Mini-Batch 142/200 - Loss: 0.0000
+  Elapsed time : 431.6026
+  Mini-Batch 143/200 - Loss: 0.2865
+  Elapsed time : 432.8317
+  Mini-Batch 144/200 - Loss: 0.0257
+  Elapsed time : 433.3237
+  Mini-Batch 145/200 - Loss: 0.0109
+  Elapsed time : 434.6010
+  Mini-Batch 146/200 - Loss: 0.0013
+  Elapsed time : 438.0073
+  Mini-Batch 147/200 - Loss: 0.0012
+  Elapsed time : 443.2913
+  Mini-Batch 148/200 - Loss: 0.0166
+  Elapsed time : 444.2023
+  Mini-Batch 149/200 - Loss: 0.0000
+  Elapsed time : 444.9710
+  Mini-Batch 150/200 - Loss: 0.0168
+  Elapsed time : 445.9408
+  Mini-Batch 151/200 - Loss: 0.0025
+  Elapsed time : 446.9290
+  Mini-Batch 152/200 - Loss: 0.0626
+  Elapsed time : 447.6736
+  Mini-Batch 153/200 - Loss: 0.0002
+  Elapsed time : 448.2296
+  Mini-Batch 154/200 - Loss: 0.1846
+  Elapsed time : 449.5923
+  Mini-Batch 155/200 - Loss: 1.1058
+  Elapsed time : 450.4108
+  Mini-Batch 156/200 - Loss: 0.0042
+  Elapsed time : 458.5091
+  Mini-Batch 157/200 - Loss: 0.0001
+  Elapsed time : 459.3337
+  Mini-Batch 158/200 - Loss: 0.3448
+  Elapsed time : 460.1539
+  Mini-Batch 159/200 - Loss: 0.0007
+  Elapsed time : 463.0263
+  Mini-Batch 160/200 - Loss: 0.0131
+  Elapsed time : 466.2567
+  Mini-Batch 161/200 - Loss: 0.0002
+  Elapsed time : 467.2631
+  Mini-Batch 162/200 - Loss: 0.0031
+  Elapsed time : 470.7369
+  Mini-Batch 163/200 - Loss: 0.0066
+  Elapsed time : 471.8443
+  Mini-Batch 164/200 - Loss: 0.0003
+  Elapsed time : 472.3248
+  Mini-Batch 165/200 - Loss: 0.0008
+  Elapsed time : 473.1945
+  Mini-Batch 166/200 - Loss: 0.1491
+  Elapsed time : 477.4477
+  Mini-Batch 167/200 - Loss: 0.0229
+  Elapsed time : 480.6178
+  Mini-Batch 168/200 - Loss: 0.0005
+  Elapsed time : 485.0269
+  Mini-Batch 169/200 - Loss: 0.0264
+  Elapsed time : 486.1437
+  Mini-Batch 170/200 - Loss: 0.0416
+  Elapsed time : 491.2280
+  Mini-Batch 171/200 - Loss: 0.0000
+  Elapsed time : 494.1039
+  Mini-Batch 172/200 - Loss: 0.0000
+  Elapsed time : 495.3064
+  Mini-Batch 173/200 - Loss: 0.0026
+  Elapsed time : 496.2381
+  Mini-Batch 174/200 - Loss: 0.0012
+  Elapsed time : 499.3017
+  Mini-Batch 175/200 - Loss: 0.0007
+  Elapsed time : 500.4645
+  Mini-Batch 176/200 - Loss: 0.0000
+  Elapsed time : 504.0609
+  Mini-Batch 177/200 - Loss: 2.1771
+  Elapsed time : 508.7169
+  Mini-Batch 178/200 - Loss: 0.0000
+  Elapsed time : 509.2008
+  Mini-Batch 179/200 - Loss: 1.0744
+  Elapsed time : 509.8832
+  Mini-Batch 180/200 - Loss: 0.0693
+  Elapsed time : 513.0288
+  Mini-Batch 181/200 - Loss: 0.0007
+  Elapsed time : 521.3326
+  Mini-Batch 182/200 - Loss: 0.0354
+  Elapsed time : 525.6046
+  Mini-Batch 183/200 - Loss: 0.1360
+  Elapsed time : 526.7320
+  Mini-Batch 184/200 - Loss: 0.8890
+  Elapsed time : 527.8262
+  Mini-Batch 185/200 - Loss: 0.0151
+  Elapsed time : 530.8873
+  Mini-Batch 186/200 - Loss: 0.0051
+  Elapsed time : 533.9945
+  Mini-Batch 187/200 - Loss: 0.0655
+  Elapsed time : 539.5172
+  Mini-Batch 188/200 - Loss: 0.0000
+  Elapsed time : 544.4808
+  Mini-Batch 189/200 - Loss: 0.0001
+  Elapsed time : 549.0566
+  Mini-Batch 190/200 - Loss: 0.0000
+  Elapsed time : 553.5230
+  Mini-Batch 191/200 - Loss: 2.5882
+  Elapsed time : 554.2213
+  Mini-Batch 192/200 - Loss: 0.0000
+  Elapsed time : 555.5839
+  Mini-Batch 193/200 - Loss: 0.0026
+  Elapsed time : 558.5309
+  Mini-Batch 194/200 - Loss: 0.0006
+  Elapsed time : 559.8029
+  Mini-Batch 195/200 - Loss: 0.1332
+  Elapsed time : 562.7444
+  Mini-Batch 196/200 - Loss: 0.0026
+  Elapsed time : 565.9039
+  Mini-Batch 197/200 - Loss: 0.0001
+  Elapsed time : 570.3519
+  Mini-Batch 198/200 - Loss: 0.0012
+  Elapsed time : 571.3201
+  Mini-Batch 199/200 - Loss: 0.1130
+  Elapsed time : 572.3954
+  Mini-Batch 200/200 - Loss: 0.0000
+  Elapsed time : 572.9861
+/home/diz-wsl/anaconda3/envs/tfm/lib/python3.10/site-packages/torch/nn/modules/transformer.py:502: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. (Triggered internally at ../aten/src/ATen/NestedTensorImpl.cpp:178.)
+  output = torch._nested_tensor_from_mask(
+Best model saved at epoch 0 with loss: 0.2346
+
+# ========== Train Epoch 1/100 ==========
+[Train] Loss: 0.2103 | Accuracy: 0.9187 | Precision: 0.9188 | Recall: 0.9187 | F1: 0.9188
+[Val]   Loss: 0.2346 | Accuracy: 0.9450 | Precision: 0.9486 | Recall: 0.9450 | F1: 0.9449
+Epoch Time: 576.9083 seconds | Elapsed Time: 576.9284 seconds
+  Mini-Batch 1/200 - Loss: 0.0009
+  Elapsed time : 0.7891
+  Mini-Batch 2/200 - Loss: 0.0020
+  Elapsed time : 2.5070
+  Mini-Batch 3/200 - Loss: 0.0103
+  Elapsed time : 3.3749
+  Mini-Batch 4/200 - Loss: 0.0000
+  Elapsed time : 4.1912
+  Mini-Batch 5/200 - Loss: 0.0001
+  Elapsed time : 6.0160
+  Mini-Batch 6/200 - Loss: 0.0000
+  Elapsed time : 162.0293
+  Mini-Batch 7/200 - Loss: 0.0000
+  Elapsed time : 189.3675
+  Mini-Batch 8/200 - Loss: 0.0000
+  Elapsed time : 268.3374
+  Mini-Batch 9/200 - Loss: 0.0000
+  Elapsed time : 404.8494
+  Mini-Batch 10/200 - Loss: 0.0000
+  Elapsed time : 506.4645
+  Mini-Batch 11/200 - Loss: 0.0037
+  Elapsed time : 557.8049
+  Mini-Batch 12/200 - Loss: 0.0000
+  Elapsed time : 719.0508
+  Mini-Batch 13/200 - Loss: 0.0370
+  Elapsed time : 743.3919
+  Mini-Batch 14/200 - Loss: 0.0008
+  Elapsed time : 750.5957
+  Mini-Batch 15/200 - Loss: 0.0005
+  Elapsed time : 794.7064
+  Mini-Batch 16/200 - Loss: 0.0000
+  Elapsed time : 820.1211
+  Mini-Batch 17/200 - Loss: 0.0001
+  Elapsed time : 854.6201
+  Mini-Batch 18/200 - Loss: 0.0066
+  Elapsed time : 998.8149
+  Mini-Batch 19/200 - Loss: 0.0000
+  Elapsed time : 1009.2410
+  Mini-Batch 20/200 - Loss: 0.0000
+  Elapsed time : 1019.3957
+  Mini-Batch 21/200 - Loss: 0.0003
+  Elapsed time : 1051.5226
+  Mini-Batch 22/200 - Loss: 0.0000
+  Elapsed time : 1088.6357
+  Mini-Batch 23/200 - Loss: 0.0000
+  Elapsed time : 1170.1374
+  Mini-Batch 24/200 - Loss: 0.0000
+  Elapsed time : 1198.9737
+  Mini-Batch 25/200 - Loss: 4.7813
+  Elapsed time : 1225.9589
+  Mini-Batch 26/200 - Loss: 0.0000
+  Elapsed time : 1289.0819
+  Mini-Batch 27/200 - Loss: 0.0001
+  Elapsed time : 1308.0493
+  Mini-Batch 28/200 - Loss: 0.0002
+  Elapsed time : 1329.6969
+  Mini-Batch 29/200 - Loss: 0.0000
+  Elapsed time : 1343.2337
+  Mini-Batch 30/200 - Loss: 0.0000
+  Elapsed time : 1423.6715
+  Mini-Batch 31/200 - Loss: 0.0000
+  Elapsed time : 1439.1666
+  Mini-Batch 32/200 - Loss: 0.0000
+  Elapsed time : 1465.6055
+  Mini-Batch 33/200 - Loss: 0.0000
+  Elapsed time : 1497.1067
+  Mini-Batch 34/200 - Loss: 0.0000
+  Elapsed time : 1580.4476
+  Mini-Batch 35/200 - Loss: 0.0006
+  Elapsed time : 1641.8306
+  Mini-Batch 36/200 - Loss: 0.0253
+  Elapsed time : 1725.8477
+  Mini-Batch 37/200 - Loss: 0.0958
+  Elapsed time : 1850.2209
+  Mini-Batch 38/200 - Loss: 0.0264
+  Elapsed time : 1859.6485
+  Mini-Batch 39/200 - Loss: 0.0085
+  Elapsed time : 1869.3497
+  Mini-Batch 40/200 - Loss: 0.0000
+  Elapsed time : 1910.3619
+  Mini-Batch 41/200 - Loss: 0.0000
+  Elapsed time : 1921.1991
+  Mini-Batch 42/200 - Loss: 0.0000
+  Elapsed time : 1941.0643
+  Mini-Batch 43/200 - Loss: 0.0001
+  Elapsed time : 1965.8627
+  Mini-Batch 44/200 - Loss: 0.0002
+  Elapsed time : 2044.9583
+  Mini-Batch 45/200 - Loss: 0.0004
+  Elapsed time : 2075.7943
+  Mini-Batch 46/200 - Loss: 0.0000
+  Elapsed time : 2104.5693
+  Mini-Batch 47/200 - Loss: 0.0245
+  Elapsed time : 2142.5614
+  Mini-Batch 48/200 - Loss: 0.0000
+  Elapsed time : 2168.6463
+  Mini-Batch 49/200 - Loss: 0.0676
+  Elapsed time : 2173.4644
+  Mini-Batch 50/200 - Loss: 0.0000
+  Elapsed time : 2195.3973
+  Mini-Batch 51/200 - Loss: 0.0000
+  Elapsed time : 2204.9144
+  Mini-Batch 52/200 - Loss: 0.0050
+  Elapsed time : 2234.2333
+  Mini-Batch 53/200 - Loss: 0.0000
+  Elapsed time : 2308.8727
+  Mini-Batch 54/200 - Loss: 0.0000
+  Elapsed time : 2376.9480
+  Mini-Batch 55/200 - Loss: 0.0001
+  Elapsed time : 2442.0521
+  Mini-Batch 56/200 - Loss: 0.0001
+  Elapsed time : 2458.7841
+  Mini-Batch 57/200 - Loss: 0.0000
+  Elapsed time : 2500.3248
+  Mini-Batch 58/200 - Loss: 0.0001
+  Elapsed time : 2507.0993
+  Mini-Batch 59/200 - Loss: 0.0000
+  Elapsed time : 2546.6478
+  Mini-Batch 60/200 - Loss: 0.0401
+  Elapsed time : 2589.4180
+  Mini-Batch 61/200 - Loss: 0.8103
+  Elapsed time : 2597.4519
+  Mini-Batch 62/200 - Loss: 0.0000
+  Elapsed time : 2686.0532
+  Mini-Batch 63/200 - Loss: 0.0128
+  Elapsed time : 2695.2725
+  Mini-Batch 64/200 - Loss: 0.0000
+  Elapsed time : 2770.0247
+  Mini-Batch 65/200 - Loss: 0.0000
+  Elapsed time : 2830.5131
+  Mini-Batch 66/200 - Loss: 0.0000
+  Elapsed time : 2850.2947
+  Mini-Batch 67/200 - Loss: 0.0000
+  Elapsed time : 2941.1278
+  Mini-Batch 68/200 - Loss: 0.0001
+  Elapsed time : 2943.4693
+  Mini-Batch 69/200 - Loss: 0.0000
+  Elapsed time : 2944.8455
+  Mini-Batch 70/200 - Loss: 0.0001
+  Elapsed time : 2947.6767
+  Mini-Batch 71/200 - Loss: 0.0000
+  Elapsed time : 2948.9857
+  Mini-Batch 72/200 - Loss: 0.8116
+  Elapsed time : 2950.0039
+  Mini-Batch 73/200 - Loss: 1.9033
+  Elapsed time : 2950.8265
+  Mini-Batch 74/200 - Loss: 0.0001
+  Elapsed time : 2951.9002
+  Mini-Batch 75/200 - Loss: 0.0000
+  Elapsed time : 2953.9893
+  Mini-Batch 76/200 - Loss: 0.0000
+  Elapsed time : 2955.1170
+  Mini-Batch 77/200 - Loss: 0.0000
+  Elapsed time : 2957.7560
+  Mini-Batch 78/200 - Loss: 0.0001
+  Elapsed time : 2960.3985
+  Mini-Batch 79/200 - Loss: 0.1343
+  Elapsed time : 2961.3647
+  Mini-Batch 80/200 - Loss: 0.0730
+  Elapsed time : 2963.0039
+  Mini-Batch 81/200 - Loss: 0.0000
+  Elapsed time : 2965.4682
+  Mini-Batch 82/200 - Loss: 0.1613
+  Elapsed time : 2966.6555
+  Mini-Batch 83/200 - Loss: 0.0007
+  Elapsed time : 2967.9933
+  Mini-Batch 84/200 - Loss: 0.0008
+  Elapsed time : 2969.8713
+  Mini-Batch 85/200 - Loss: 0.0008
+  Elapsed time : 2971.3325
+  Mini-Batch 86/200 - Loss: 0.0018
+  Elapsed time : 2975.3406
+  Mini-Batch 87/200 - Loss: 0.0000
+  Elapsed time : 2977.0707
+  Mini-Batch 88/200 - Loss: 0.0005
+  Elapsed time : 2977.9362
+  Mini-Batch 89/200 - Loss: 0.0000
+  Elapsed time : 2979.9721
+  Mini-Batch 90/200 - Loss: 0.0004
+  Elapsed time : 2984.7189
+  Mini-Batch 91/200 - Loss: 0.0000
+  Elapsed time : 2985.9877
+  Mini-Batch 92/200 - Loss: 0.0000
+  Elapsed time : 2987.0229
+  Mini-Batch 93/200 - Loss: 0.0003
+  Elapsed time : 2988.6143
+  Mini-Batch 94/200 - Loss: 0.0000
+  Elapsed time : 2991.6302
+  Mini-Batch 95/200 - Loss: 0.0000
+  Elapsed time : 2993.9068
+  Mini-Batch 96/200 - Loss: 0.0000
+  Elapsed time : 2995.4780
+  Mini-Batch 97/200 - Loss: 0.0002
+  Elapsed time : 2996.2507
+  Mini-Batch 98/200 - Loss: 0.0000
+  Elapsed time : 2999.4221
+  Mini-Batch 99/200 - Loss: 0.0000
+  Elapsed time : 3001.6162
+  Mini-Batch 100/200 - Loss: 0.4861
+  Elapsed time : 3003.5156
+  Mini-Batch 101/200 - Loss: 1.1712
+  Elapsed time : 3004.4659
+  Mini-Batch 102/200 - Loss: 0.0000
+  Elapsed time : 3007.2461
+  Mini-Batch 103/200 - Loss: 0.0891
+  Elapsed time : 3008.9647
+  Mini-Batch 104/200 - Loss: 0.0007
+  Elapsed time : 3013.8908
+  Mini-Batch 105/200 - Loss: 0.0000
+  Elapsed time : 3014.9572
+  Mini-Batch 106/200 - Loss: 0.0000
+  Elapsed time : 3015.9542
+  Mini-Batch 107/200 - Loss: 0.1450
+  Elapsed time : 3016.4539
+  Mini-Batch 108/200 - Loss: 0.0000
+  Elapsed time : 3018.8833
+  Mini-Batch 109/200 - Loss: 0.0000
+  Elapsed time : 3022.3002
+  Mini-Batch 110/200 - Loss: 0.1126
+  Elapsed time : 3023.3595
+  Mini-Batch 111/200 - Loss: 0.0001
+  Elapsed time : 3024.4237
+  Mini-Batch 112/200 - Loss: 1.0074
+  Elapsed time : 3025.9023
+  Mini-Batch 113/200 - Loss: 0.0000
+  Elapsed time : 3027.2094
+  Mini-Batch 114/200 - Loss: 0.0081
+  Elapsed time : 3027.9751
+  Mini-Batch 115/200 - Loss: 0.0000
+  Elapsed time : 3028.2917
+  Mini-Batch 116/200 - Loss: 0.0023
+  Elapsed time : 3030.3144
+  Mini-Batch 117/200 - Loss: 0.0000
+  Elapsed time : 3031.6782
+  Mini-Batch 118/200 - Loss: 0.0000
+  Elapsed time : 3032.6456
+  Mini-Batch 119/200 - Loss: 0.0946
+  Elapsed time : 3033.9211
+  Mini-Batch 120/200 - Loss: 0.0651
+  Elapsed time : 3036.1349
+  Mini-Batch 121/200 - Loss: 0.0000
+  Elapsed time : 3038.3352
+  Mini-Batch 122/200 - Loss: 0.0003
+  Elapsed time : 3040.5309
+  Mini-Batch 123/200 - Loss: 0.0000
+  Elapsed time : 3043.1528
+  Mini-Batch 124/200 - Loss: 0.0001
+  Elapsed time : 3044.9955
+  Mini-Batch 125/200 - Loss: 0.0001
+  Elapsed time : 3045.9815
+  Mini-Batch 126/200 - Loss: 0.0000
+  Elapsed time : 3048.6483
+  Mini-Batch 127/200 - Loss: 0.0000
+  Elapsed time : 3050.9644
+  Mini-Batch 128/200 - Loss: 0.0013
+  Elapsed time : 3051.8532
+  Mini-Batch 129/200 - Loss: 0.1160
+  Elapsed time : 3054.3255
+  Mini-Batch 130/200 - Loss: 0.0000
+  Elapsed time : 3055.2872
+  Mini-Batch 131/200 - Loss: 0.0000
+  Elapsed time : 3056.2223
+  Mini-Batch 132/200 - Loss: 0.0001
+  Elapsed time : 3058.3314
+  Mini-Batch 133/200 - Loss: 0.0000
+  Elapsed time : 3062.2500
+  Mini-Batch 134/200 - Loss: 0.0000
+  Elapsed time : 3064.3932
+  Mini-Batch 135/200 - Loss: 0.0000
+  Elapsed time : 3065.7015
+  Mini-Batch 136/200 - Loss: 0.0003
+  Elapsed time : 3065.9576
+  Mini-Batch 137/200 - Loss: 0.0664
+  Elapsed time : 3067.0005
+  Mini-Batch 138/200 - Loss: 0.0000
+  Elapsed time : 3068.6195
+  Mini-Batch 139/200 - Loss: 0.0064
+  Elapsed time : 3072.6667
+  Mini-Batch 140/200 - Loss: 0.0265
+  Elapsed time : 3073.3507
+  Mini-Batch 141/200 - Loss: 0.0000
+  Elapsed time : 3074.3576
+  Mini-Batch 142/200 - Loss: 0.0003
+  Elapsed time : 3076.0001
+  Mini-Batch 143/200 - Loss: 0.0470
+  Elapsed time : 3076.9010
+  Mini-Batch 144/200 - Loss: 0.5272
+  Elapsed time : 3078.0885
+  Mini-Batch 145/200 - Loss: 0.0114
+  Elapsed time : 3079.1485
+  Mini-Batch 146/200 - Loss: 0.0000
+  Elapsed time : 3083.3065
+  Mini-Batch 147/200 - Loss: 0.0000
+  Elapsed time : 3084.4667
+  Mini-Batch 148/200 - Loss: 0.0000
+  Elapsed time : 3086.6185
+  Mini-Batch 149/200 - Loss: 0.0008
+  Elapsed time : 3087.2815
+  Mini-Batch 150/200 - Loss: 0.0129
+  Elapsed time : 3088.8110
+  Mini-Batch 151/200 - Loss: 0.0000
+  Elapsed time : 3091.4545
+  Mini-Batch 152/200 - Loss: 0.0000
+  Elapsed time : 3096.2221
+  Mini-Batch 153/200 - Loss: 0.0002
+  Elapsed time : 3097.4262
+  Mini-Batch 154/200 - Loss: 0.0008
+  Elapsed time : 3098.2497
+  Mini-Batch 155/200 - Loss: 0.0000
+  Elapsed time : 3099.5329
+  Mini-Batch 156/200 - Loss: 0.0000
+  Elapsed time : 3100.3531
+  Mini-Batch 157/200 - Loss: 0.0000
+  Elapsed time : 3103.7479
+  Mini-Batch 158/200 - Loss: 0.0002
+  Elapsed time : 3106.7875
+  Mini-Batch 159/200 - Loss: 0.0003
+  Elapsed time : 3107.8935
+  Mini-Batch 160/200 - Loss: 0.0001
+  Elapsed time : 3503.6969
+  Mini-Batch 161/200 - Loss: 0.0004
+  Elapsed time : 3545.9075
+  Mini-Batch 162/200 - Loss: 0.0000
+  Elapsed time : 3588.8355
+  Mini-Batch 163/200 - Loss: 0.0006
+  Elapsed time : 3641.3055
+  Mini-Batch 164/200 - Loss: 0.0000
+  Elapsed time : 3760.3510
+  Mini-Batch 165/200 - Loss: 0.0002
+  Elapsed time : 3801.9638
+  Mini-Batch 166/200 - Loss: 0.0000
+  Elapsed time : 3926.1696
+  Mini-Batch 167/200 - Loss: 0.0000
+  Elapsed time : 3944.8391
+  Mini-Batch 168/200 - Loss: 0.0001
+  Elapsed time : 3991.3492
+  Mini-Batch 169/200 - Loss: 0.0096
+  Elapsed time : 4026.3572
+  Mini-Batch 170/200 - Loss: 0.0000
+  Elapsed time : 4069.8392
+  Mini-Batch 171/200 - Loss: 0.0000
+  Elapsed time : 4218.7695
+  Mini-Batch 172/200 - Loss: 1.1380
+  Elapsed time : 4260.5511
+  Mini-Batch 173/200 - Loss: 0.3031
+  Elapsed time : 4304.5101
+  Mini-Batch 174/200 - Loss: 0.0000
+  Elapsed time : 4360.8732
+  Mini-Batch 175/200 - Loss: 0.0000
+  Elapsed time : 4392.7840
+  Mini-Batch 176/200 - Loss: 0.0000
+  Elapsed time : 4409.6497
+  Mini-Batch 177/200 - Loss: 0.0001
+  Elapsed time : 4464.9203
+  Mini-Batch 178/200 - Loss: 0.0006
+  Elapsed time : 4497.1246
+  Mini-Batch 179/200 - Loss: 0.0000
+  Elapsed time : 4538.9261
+  Mini-Batch 180/200 - Loss: 0.0000
+  Elapsed time : 4582.2200
+  Mini-Batch 181/200 - Loss: 0.0913
+  Elapsed time : 4637.2714
+  Mini-Batch 182/200 - Loss: 0.0006
+  Elapsed time : 4698.9919
+  Mini-Batch 183/200 - Loss: 0.0002
+  Elapsed time : 4722.0098
+  Mini-Batch 184/200 - Loss: 0.0000
+  Elapsed time : 4889.0062
+  Mini-Batch 185/200 - Loss: 0.0134
+  Elapsed time : 4903.3900
+  Mini-Batch 186/200 - Loss: 0.0002
+  Elapsed time : 4934.2546
+  Mini-Batch 187/200 - Loss: 0.0000
+  Elapsed time : 4974.2042
+  Mini-Batch 188/200 - Loss: 0.0000
+  Elapsed time : 5008.7409
+  Mini-Batch 189/200 - Loss: 0.1940
+  Elapsed time : 5019.9646
+  Mini-Batch 190/200 - Loss: 0.0004
+  Elapsed time : 5122.9310
+  Mini-Batch 191/200 - Loss: 0.0000
+  Elapsed time : 5159.0264
+  Mini-Batch 192/200 - Loss: 0.0001
+  Elapsed time : 5191.5974
+  Mini-Batch 193/200 - Loss: 0.3590
+  Elapsed time : 5231.2860
+  Mini-Batch 194/200 - Loss: 0.0004
+  Elapsed time : 5270.1913
+  Mini-Batch 195/200 - Loss: 0.0103
+  Elapsed time : 5304.8634
+  Mini-Batch 196/200 - Loss: 0.0000
+  Elapsed time : 5329.2564
+  Mini-Batch 197/200 - Loss: 0.0002
+  Elapsed time : 5370.7409
+  Mini-Batch 198/200 - Loss: 0.0000
+  Elapsed time : 5495.7410
+  Mini-Batch 199/200 - Loss: 0.0002
+  Elapsed time : 5553.0634
+  Mini-Batch 200/200 - Loss: 0.0000
+  Elapsed time : 5614.6413
+
+# ========== Train Epoch 2/100 ==========
+[Train] Loss: 0.0759 | Accuracy: 0.9825 | Precision: 0.9825 | Recall: 0.9825 | F1: 0.9825
+[Val]   Loss: 1.1298 | Accuracy: 0.8200 | Precision: 0.8673 | Recall: 0.8200 | F1: 0.8136
+Epoch Time: 5804.3887 seconds | Elapsed Time: 6381.3353 seconds
+  Mini-Batch 1/200 - Loss: 0.0001
+  Elapsed time : 6.1897
+  Mini-Batch 2/200 - Loss: 0.0000
+  Elapsed time : 7.8963
+  Mini-Batch 3/200 - Loss: 0.0000
+  Elapsed time : 8.8882
+  Mini-Batch 4/200 - Loss: 0.1064
+  Elapsed time : 9.9807
+  Mini-Batch 5/200 - Loss: 0.0000
+  Elapsed time : 11.3565
+  Mini-Batch 6/200 - Loss: 0.0000
+  Elapsed time : 59.1076
+  Mini-Batch 7/200 - Loss: 0.0000
+  Elapsed time : 191.6700
+  Mini-Batch 8/200 - Loss: 0.0000
+  Elapsed time : 200.8706
+  Mini-Batch 9/200 - Loss: 0.0001
+  Elapsed time : 227.0660
+  Mini-Batch 10/200 - Loss: 0.0000
+  Elapsed time : 295.3343
+  Mini-Batch 11/200 - Loss: 0.0000
+  Elapsed time : 353.7832
+  Mini-Batch 12/200 - Loss: 0.0000
+  Elapsed time : 485.7760
+  Mini-Batch 13/200 - Loss: 0.0000
+  Elapsed time : 603.5805
+  Mini-Batch 14/200 - Loss: 0.0001
+  Elapsed time : 624.0423
+  Mini-Batch 15/200 - Loss: 0.0001
+  Elapsed time : 646.2441
+  Mini-Batch 16/200 - Loss: 0.0000
+  Elapsed time : 699.7461
+  Mini-Batch 17/200 - Loss: 0.0000
+  Elapsed time : 738.6585
+  Mini-Batch 18/200 - Loss: 0.0000
+  Elapsed time : 833.3343
+  Mini-Batch 19/200 - Loss: 0.0000
+  Elapsed time : 970.8033
+  Mini-Batch 20/200 - Loss: 0.0000
+  Elapsed time : 972.1358
+  Mini-Batch 21/200 - Loss: 0.0000
+  Elapsed time : 973.1033
+  Mini-Batch 22/200 - Loss: 0.0000
+  Elapsed time : 974.3979
+  Mini-Batch 23/200 - Loss: 0.1092
+  Elapsed time : 976.7264
+  Mini-Batch 24/200 - Loss: 0.0000
+  Elapsed time : 978.3645
+  Mini-Batch 25/200 - Loss: 0.0000
+  Elapsed time : 980.3951
+  Mini-Batch 26/200 - Loss: 0.0002
+  Elapsed time : 981.3651
+  Mini-Batch 27/200 - Loss: 0.0001
+  Elapsed time : 982.1240
+  Mini-Batch 28/200 - Loss: 0.0000
+  Elapsed time : 984.5390
+  Mini-Batch 29/200 - Loss: 0.0000
+  Elapsed time : 987.9574
+  Mini-Batch 30/200 - Loss: 0.0001
+  Elapsed time : 988.5555
+  Mini-Batch 31/200 - Loss: 0.0210
+  Elapsed time : 990.4266
+  Mini-Batch 32/200 - Loss: 0.0000
+  Elapsed time : 991.1818
+  Mini-Batch 33/200 - Loss: 0.0002
+  Elapsed time : 992.2467
+  Mini-Batch 34/200 - Loss: 0.0144
+  Elapsed time : 993.9235
+  Mini-Batch 35/200 - Loss: 0.0017
+  Elapsed time : 997.8635
+  Mini-Batch 36/200 - Loss: 0.0000
+  Elapsed time : 998.8896
+  Mini-Batch 37/200 - Loss: 0.0000
+  Elapsed time : 1001.0573
+  Mini-Batch 38/200 - Loss: 0.0000
+  Elapsed time : 1002.0451
+  Mini-Batch 39/200 - Loss: 0.0001
+  Elapsed time : 1002.8777
+  Mini-Batch 40/200 - Loss: 0.0000
+  Elapsed time : 1004.1235
+  Mini-Batch 41/200 - Loss: 0.0000
+  Elapsed time : 1007.2099
+  Mini-Batch 42/200 - Loss: 0.0000
+  Elapsed time : 1008.6267
+  Mini-Batch 43/200 - Loss: 0.0000
+  Elapsed time : 1009.1785
+  Mini-Batch 44/200 - Loss: 0.0000
+  Elapsed time : 1010.6936
+  Mini-Batch 45/200 - Loss: 0.0000
+  Elapsed time : 1013.0542
+  Mini-Batch 46/200 - Loss: 0.0010
+  Elapsed time : 1015.8667
+  Mini-Batch 47/200 - Loss: 0.0000
+  Elapsed time : 1017.1459
+  Mini-Batch 48/200 - Loss: 0.0000
+  Elapsed time : 1019.2564
+  Mini-Batch 49/200 - Loss: 0.0000
+  Elapsed time : 1019.9868
+  Mini-Batch 50/200 - Loss: 0.0001
+  Elapsed time : 1022.4845
+  Mini-Batch 51/200 - Loss: 0.0000
+  Elapsed time : 1024.7019
+  Mini-Batch 52/200 - Loss: 0.0000
+  Elapsed time : 1027.1267
+  Mini-Batch 53/200 - Loss: 0.0000
+  Elapsed time : 1028.2408
+  Mini-Batch 54/200 - Loss: 0.0001
+  Elapsed time : 1031.1037
+  Mini-Batch 55/200 - Loss: 0.0000
+  Elapsed time : 1031.9535
+  Mini-Batch 56/200 - Loss: 0.0003
+  Elapsed time : 1033.6577
+  Mini-Batch 57/200 - Loss: 0.0000
+  Elapsed time : 1037.4985
+  Mini-Batch 58/200 - Loss: 0.0000
+  Elapsed time : 1038.7733
+  Mini-Batch 59/200 - Loss: 0.0001
+  Elapsed time : 1039.7640
+  Mini-Batch 60/200 - Loss: 0.0000
+  Elapsed time : 1041.6422
+  Mini-Batch 61/200 - Loss: 0.0001
+  Elapsed time : 1043.1868
+  Mini-Batch 62/200 - Loss: 0.0000
+  Elapsed time : 1044.2034
+  Mini-Batch 63/200 - Loss: 0.0000
+  Elapsed time : 1047.0185
+  Mini-Batch 64/200 - Loss: 0.0000
+  Elapsed time : 1048.0482
+  Mini-Batch 65/200 - Loss: 0.0001
+  Elapsed time : 1048.9016
+  Mini-Batch 66/200 - Loss: 0.0000
+  Elapsed time : 1051.0308
+  Mini-Batch 67/200 - Loss: 0.0000
+  Elapsed time : 1054.0987
+  Mini-Batch 68/200 - Loss: 0.0003
+  Elapsed time : 1055.3219
+  Mini-Batch 69/200 - Loss: 0.0000
+  Elapsed time : 1056.7013
+  Mini-Batch 70/200 - Loss: 0.0000
+  Elapsed time : 1057.7771
+  Mini-Batch 71/200 - Loss: 0.0400
+  Elapsed time : 1059.2662
+  Mini-Batch 72/200 - Loss: 0.6072
+  Elapsed time : 1060.4403
+  Mini-Batch 73/200 - Loss: 0.0000
+  Elapsed time : 1062.2372
+  Mini-Batch 74/200 - Loss: 2.1302
+  Elapsed time : 1063.3191
+  Mini-Batch 75/200 - Loss: 2.6625
+  Elapsed time : 1064.1542
+  Mini-Batch 76/200 - Loss: 0.0002
+  Elapsed time : 1064.5202
+  Mini-Batch 77/200 - Loss: 0.0000
+  Elapsed time : 1064.8882
+  Mini-Batch 78/200 - Loss: 0.0001
+  Elapsed time : 1066.8941
+  Mini-Batch 79/200 - Loss: 0.0000
+  Elapsed time : 1068.6127
+  Mini-Batch 80/200 - Loss: 0.0000
+  Elapsed time : 1069.2291
+  Mini-Batch 81/200 - Loss: 0.0000
+  Elapsed time : 1585.1966
+  Mini-Batch 82/200 - Loss: 0.0015
+  Elapsed time : 1611.7650
+  Mini-Batch 83/200 - Loss: 0.0261
+  Elapsed time : 1813.9829
+  Mini-Batch 84/200 - Loss: 0.0000
+  Elapsed time : 2056.0810
+  Mini-Batch 85/200 - Loss: 0.0000
+  Elapsed time : 2077.2722
+  Mini-Batch 86/200 - Loss: 0.0002
+  Elapsed time : 2079.7834
+  Mini-Batch 87/200 - Loss: 0.0002
+  Elapsed time : 2148.7478
+  Mini-Batch 88/200 - Loss: 0.0000
+  Elapsed time : 2175.5945
+  Mini-Batch 89/200 - Loss: 0.0001
+  Elapsed time : 2203.2730
+  Mini-Batch 90/200 - Loss: 0.0001
+  Elapsed time : 2273.4840
+  Mini-Batch 91/200 - Loss: 0.0000
+  Elapsed time : 2304.2333
+  Mini-Batch 92/200 - Loss: 0.0000
+  Elapsed time : 2374.5002
+  Mini-Batch 93/200 - Loss: 0.0000
+  Elapsed time : 2404.6764
+  Mini-Batch 94/200 - Loss: 0.0010
+  Elapsed time : 2432.1390
+  Mini-Batch 95/200 - Loss: 0.0043
+  Elapsed time : 2454.0658
+  Mini-Batch 96/200 - Loss: 0.0002
+  Elapsed time : 2511.3633
+  Mini-Batch 97/200 - Loss: 0.0000
+  Elapsed time : 2534.4304
+  Mini-Batch 98/200 - Loss: 0.0000
+  Elapsed time : 2617.5960
+  Mini-Batch 99/200 - Loss: 0.0001
+  Elapsed time : 2627.9778
+  Mini-Batch 100/200 - Loss: 0.0000
+  Elapsed time : 2634.0763
+  Mini-Batch 101/200 - Loss: 0.0000
+  Elapsed time : 2652.7134
+  Mini-Batch 102/200 - Loss: 0.0000
+  Elapsed time : 2675.6369
+  Mini-Batch 103/200 - Loss: 0.0002
+  Elapsed time : 2698.8429
+  Mini-Batch 104/200 - Loss: 0.0911
+  Elapsed time : 2769.8345
+  Mini-Batch 105/200 - Loss: 0.0000
+  Elapsed time : 2781.3683
+  Mini-Batch 106/200 - Loss: 0.0000
+  Elapsed time : 2830.8601
+  Mini-Batch 107/200 - Loss: 0.0000
+  Elapsed time : 2848.4578
+  Mini-Batch 108/200 - Loss: 0.0000
+  Elapsed time : 2878.2121
+  Mini-Batch 109/200 - Loss: 0.0000
+  Elapsed time : 2895.3864
+  Mini-Batch 110/200 - Loss: 0.0001
+  Elapsed time : 2924.2582
+  Mini-Batch 111/200 - Loss: 0.0001
+  Elapsed time : 2945.8474
+  Mini-Batch 112/200 - Loss: 0.5110
+  Elapsed time : 2959.5190
+  Mini-Batch 113/200 - Loss: 0.0002
+  Elapsed time : 2988.7580
+  Mini-Batch 114/200 - Loss: 0.0000
+  Elapsed time : 3006.3152
+  Mini-Batch 115/200 - Loss: 0.0000
+  Elapsed time : 3026.8303
+  Mini-Batch 116/200 - Loss: 0.0000
+  Elapsed time : 3082.1267
+  Mini-Batch 117/200 - Loss: 0.0000
+  Elapsed time : 3157.5122
+  Mini-Batch 118/200 - Loss: 0.0000
+  Elapsed time : 3172.0571
+  Mini-Batch 119/200 - Loss: 0.0377
+  Elapsed time : 3223.0106
+  Mini-Batch 120/200 - Loss: 0.0012
+  Elapsed time : 3250.4331
+  Mini-Batch 121/200 - Loss: 0.0000
+  Elapsed time : 3318.2851
+  Mini-Batch 122/200 - Loss: 0.0000
+  Elapsed time : 3379.7260
+  Mini-Batch 123/200 - Loss: 0.0001
+  Elapsed time : 3425.0210
+  Mini-Batch 124/200 - Loss: 0.0000
+  Elapsed time : 3434.1640
+  Mini-Batch 125/200 - Loss: 0.0000
+  Elapsed time : 3459.0240
+  Mini-Batch 126/200 - Loss: 0.0002
+  Elapsed time : 3547.9354
+  Mini-Batch 127/200 - Loss: 0.0000
+  Elapsed time : 3569.9669
+  Mini-Batch 128/200 - Loss: 0.0000
+  Elapsed time : 3582.6002
+  Mini-Batch 129/200 - Loss: 0.0001
+  Elapsed time : 3640.1301
+  Mini-Batch 130/200 - Loss: 0.0000
+  Elapsed time : 3660.6661
+  Mini-Batch 131/200 - Loss: 0.0002
+  Elapsed time : 3669.8847
+  Mini-Batch 132/200 - Loss: 0.0000
+  Elapsed time : 3687.3820
+  Mini-Batch 133/200 - Loss: 0.0000
+  Elapsed time : 3716.6791
+  Mini-Batch 134/200 - Loss: 0.2034
+  Elapsed time : 3768.2762
+  Mini-Batch 135/200 - Loss: 0.0000
+  Elapsed time : 3786.7325
+  Mini-Batch 136/200 - Loss: 0.0000
+  Elapsed time : 3868.5023
+  Mini-Batch 137/200 - Loss: 0.0000
+  Elapsed time : 3929.1942
+  Mini-Batch 138/200 - Loss: 0.9420
+  Elapsed time : 3941.8996
+  Mini-Batch 139/200 - Loss: 0.0009
+  Elapsed time : 3996.2210
+  Mini-Batch 140/200 - Loss: 0.0020
+  Elapsed time : 4019.6152
+  Mini-Batch 141/200 - Loss: 0.0001
+  Elapsed time : 4042.7862
+  Mini-Batch 142/200 - Loss: 0.0000
+  Elapsed time : 4071.9545
+  Mini-Batch 143/200 - Loss: 0.0000
+  Elapsed time : 4090.0685
+  Mini-Batch 144/200 - Loss: 0.0000
+  Elapsed time : 4101.7713
+  Mini-Batch 145/200 - Loss: 0.0000
+  Elapsed time : 4113.6687
+  Mini-Batch 146/200 - Loss: 0.3378
+  Elapsed time : 4122.8290
+  Mini-Batch 147/200 - Loss: 0.0000
+  Elapsed time : 4142.5607
+  Mini-Batch 148/200 - Loss: 0.0096
+  Elapsed time : 4171.3395
+  Mini-Batch 149/200 - Loss: 0.0000
+  Elapsed time : 4249.2311
+  Mini-Batch 150/200 - Loss: 0.0000
+  Elapsed time : 4336.4355
+  Mini-Batch 151/200 - Loss: 0.0000
+  Elapsed time : 4401.8831
+  Mini-Batch 152/200 - Loss: 0.0004
+  Elapsed time : 4413.0176
+  Mini-Batch 153/200 - Loss: 0.0001
+  Elapsed time : 4442.0596
+  Mini-Batch 154/200 - Loss: 0.0000
+  Elapsed time : 4504.2331
+  Mini-Batch 155/200 - Loss: 0.0000
+  Elapsed time : 4525.5615
+  Mini-Batch 156/200 - Loss: 0.0000
+  Elapsed time : 4539.4118
+  Mini-Batch 157/200 - Loss: 0.0000
+  Elapsed time : 4555.4264
+  Mini-Batch 158/200 - Loss: 0.0002
+  Elapsed time : 4562.9427
+  Mini-Batch 159/200 - Loss: 0.0002
+  Elapsed time : 4646.4083
+  Mini-Batch 160/200 - Loss: 0.0000
+  Elapsed time : 4700.5875
+  Mini-Batch 161/200 - Loss: 0.0694
+  Elapsed time : 4720.0320
+  Mini-Batch 162/200 - Loss: 0.0000
+  Elapsed time : 4740.7701
+  Mini-Batch 163/200 - Loss: 0.0000
+  Elapsed time : 4785.3394
+  Mini-Batch 164/200 - Loss: 0.0000
+  Elapsed time : 4806.0271
+  Mini-Batch 165/200 - Loss: 0.0064
+  Elapsed time : 4813.3488
+  Mini-Batch 166/200 - Loss: 0.0006
+  Elapsed time : 4833.6920
+  Mini-Batch 167/200 - Loss: 0.0000
+  Elapsed time : 4864.4319
+  Mini-Batch 168/200 - Loss: 0.1531
+  Elapsed time : 4877.9654
+  Mini-Batch 169/200 - Loss: 0.0000
+  Elapsed time : 4907.2834
+  Mini-Batch 170/200 - Loss: 0.0000
+  Elapsed time : 5007.0068
+  Mini-Batch 171/200 - Loss: 0.0000
+  Elapsed time : 5015.3471
+  Mini-Batch 172/200 - Loss: 0.0000
+  Elapsed time : 5037.1062
+  Mini-Batch 173/200 - Loss: 0.0000
+  Elapsed time : 5061.4427
+  Mini-Batch 174/200 - Loss: 0.0000
+  Elapsed time : 5091.1728
+  Mini-Batch 175/200 - Loss: 0.0001
+  Elapsed time : 5112.4362
+  Mini-Batch 176/200 - Loss: 0.0002
+  Elapsed time : 5136.0706
+  Mini-Batch 177/200 - Loss: 0.0000
+  Elapsed time : 5149.2625
+  Mini-Batch 178/200 - Loss: 0.0820
+  Elapsed time : 5152.9763
+  Mini-Batch 179/200 - Loss: 0.0001
+  Elapsed time : 5183.6319
+  Mini-Batch 180/200 - Loss: 0.0374
+  Elapsed time : 5214.0419
+  Mini-Batch 181/200 - Loss: 0.0007
+  Elapsed time : 5282.2822
+  Mini-Batch 182/200 - Loss: 0.1706
+  Elapsed time : 5311.4316
+  Mini-Batch 183/200 - Loss: 0.0000
+  Elapsed time : 5318.7895
+  Mini-Batch 184/200 - Loss: 0.0000
+  Elapsed time : 5346.3970
+  Mini-Batch 185/200 - Loss: 0.0850
+  Elapsed time : 5370.6127
+  Mini-Batch 186/200 - Loss: 0.4340
+  Elapsed time : 5384.8359
+  Mini-Batch 187/200 - Loss: 0.0000
+  Elapsed time : 5476.7559
+  Mini-Batch 188/200 - Loss: 0.0000
+  Elapsed time : 5581.1521
+  Mini-Batch 189/200 - Loss: 0.0000
+  Elapsed time : 5593.9044
+  Mini-Batch 190/200 - Loss: 0.0046
+  Elapsed time : 5618.0580
+  Mini-Batch 191/200 - Loss: 0.0000
+  Elapsed time : 5629.7416
+  Mini-Batch 192/200 - Loss: 0.0010
+  Elapsed time : 5642.5500
+  Mini-Batch 193/200 - Loss: 0.0001
+  Elapsed time : 5694.6126
+  Mini-Batch 194/200 - Loss: 0.0001
+  Elapsed time : 5708.1993
+  Mini-Batch 195/200 - Loss: 0.0000
+  Elapsed time : 5729.1111
+  Mini-Batch 196/200 - Loss: 0.0001
+  Elapsed time : 5800.6688
+  Mini-Batch 197/200 - Loss: 0.0000
+  Elapsed time : 5820.0573
+  Mini-Batch 198/200 - Loss: 0.0001
+  Elapsed time : 5850.6468
+  Mini-Batch 199/200 - Loss: 0.0000
+  Elapsed time : 5870.3015
+  Mini-Batch 200/200 - Loss: 0.0015
+  Elapsed time : 5880.4243
+
+# ========== Train Epoch 3/100 ==========
+[Train] Loss: 0.0446 | Accuracy: 0.9894 | Precision: 0.9894 | Recall: 0.9894 | F1: 0.9894
+[Val]   Loss: 1.1874 | Accuracy: 0.7950 | Precision: 0.8259 | Recall: 0.7950 | F1: 0.7896
+Epoch Time: 6069.1411 seconds | Elapsed Time: 12450.4960 seconds
+  Mini-Batch 1/200 - Loss: 0.0000
+  Elapsed time : 4.4846
+  Mini-Batch 2/200 - Loss: 0.0005
+  Elapsed time : 5.5681
+  Mini-Batch 3/200 - Loss: 0.0000
+  Elapsed time : 5.8675
+  Mini-Batch 4/200 - Loss: 0.0257
+  Elapsed time : 7.6151
+  Mini-Batch 5/200 - Loss: 0.0000
+  Elapsed time : 43.7830
+  Mini-Batch 6/200 - Loss: 0.0000
+  Elapsed time : 70.3757
+  Mini-Batch 7/200 - Loss: 0.0000
+  Elapsed time : 78.0639
+  Mini-Batch 8/200 - Loss: 0.0000
+  Elapsed time : 88.3066
+  Mini-Batch 9/200 - Loss: 0.0000
+  Elapsed time : 100.2961
+  Mini-Batch 10/200 - Loss: 0.0000
+  Elapsed time : 110.1109
+  Mini-Batch 11/200 - Loss: 0.0000
+  Elapsed time : 132.6190
+  Mini-Batch 12/200 - Loss: 0.0000
+  Elapsed time : 138.1357
+  Mini-Batch 13/200 - Loss: 0.0000
+  Elapsed time : 143.7960
+  Mini-Batch 14/200 - Loss: 0.0000
+  Elapsed time : 217.7912
+  Mini-Batch 15/200 - Loss: 0.0000
+  Elapsed time : 236.2226
+  Mini-Batch 16/200 - Loss: 0.3973
+  Elapsed time : 250.6919
+  Mini-Batch 17/200 - Loss: 0.0000
+  Elapsed time : 293.9608
+  Mini-Batch 18/200 - Loss: 0.0000
+  Elapsed time : 310.4289
+  Mini-Batch 19/200 - Loss: 0.0000
+  Elapsed time : 318.2499
+  Mini-Batch 20/200 - Loss: 0.0000
+  Elapsed time : 331.2404
+  Mini-Batch 21/200 - Loss: 0.0000
+  Elapsed time : 388.8949
+  Mini-Batch 22/200 - Loss: 0.0008
+  Elapsed time : 401.4490
+  Mini-Batch 23/200 - Loss: 0.0000
+  Elapsed time : 408.8185
+  Mini-Batch 24/200 - Loss: 0.0000
+  Elapsed time : 419.2414
+  Mini-Batch 25/200 - Loss: 0.0000
+  Elapsed time : 428.8261
+  Mini-Batch 26/200 - Loss: 0.0002
+  Elapsed time : 458.4565
+  Mini-Batch 27/200 - Loss: 0.0000
+  Elapsed time : 471.6303
+  Mini-Batch 28/200 - Loss: 0.0038
+  Elapsed time : 536.5708
+  Mini-Batch 29/200 - Loss: 0.0000
+  Elapsed time : 545.1947
+  Mini-Batch 30/200 - Loss: 0.0000
+  Elapsed time : 551.9334
+  Mini-Batch 31/200 - Loss: 0.0000
+  Elapsed time : 582.1860
+  Mini-Batch 32/200 - Loss: 0.8720
+  Elapsed time : 599.1880
+  Mini-Batch 33/200 - Loss: 0.0000
+  Elapsed time : 630.6464
+  Mini-Batch 34/200 - Loss: 0.0000
+  Elapsed time : 633.6811
+  Mini-Batch 35/200 - Loss: 0.0071
+  Elapsed time : 670.2538
+  Mini-Batch 36/200 - Loss: 0.0000
+  Elapsed time : 687.9401
+  Mini-Batch 37/200 - Loss: 0.0020
+  Elapsed time : 752.3336
+  Mini-Batch 38/200 - Loss: 0.0000
+  Elapsed time : 756.2350
+  Mini-Batch 39/200 - Loss: 0.6136
+  Elapsed time : 761.1027
+  Mini-Batch 40/200 - Loss: 0.0004
+  Elapsed time : 792.0149
+  Mini-Batch 41/200 - Loss: 0.0001
+  Elapsed time : 827.8419
+  Mini-Batch 42/200 - Loss: 0.0000
+  Elapsed time : 886.1633
+  Mini-Batch 43/200 - Loss: 0.0000
+  Elapsed time : 918.1612
+  Mini-Batch 44/200 - Loss: 3.4603
+  Elapsed time : 924.8107
+  Mini-Batch 45/200 - Loss: 0.0000
+  Elapsed time : 936.9749
+  Mini-Batch 46/200 - Loss: 0.0000
+  Elapsed time : 945.5353
+  Mini-Batch 47/200 - Loss: 0.0000
+  Elapsed time : 958.7223
+  Mini-Batch 48/200 - Loss: 0.0000
+  Elapsed time : 990.5011
+  Mini-Batch 49/200 - Loss: 0.0009
+  Elapsed time : 1028.5670
+  Mini-Batch 50/200 - Loss: 0.0000
+  Elapsed time : 1068.3802
+  Mini-Batch 51/200 - Loss: 0.0000
+  Elapsed time : 1080.1930
+  Mini-Batch 52/200 - Loss: 0.0000
+  Elapsed time : 1152.1480
+  Mini-Batch 53/200 - Loss: 0.0000
+  Elapsed time : 1169.6498
+  Mini-Batch 54/200 - Loss: 0.0000
+  Elapsed time : 1199.4594
+  Mini-Batch 55/200 - Loss: 0.0000
+  Elapsed time : 1211.6828
+  Mini-Batch 56/200 - Loss: 0.0000
+  Elapsed time : 1227.9003
+  Mini-Batch 57/200 - Loss: 0.0000
+  Elapsed time : 1245.5914
+  Mini-Batch 58/200 - Loss: 0.0000
+  Elapsed time : 1249.7994
+  Mini-Batch 59/200 - Loss: 0.0000
+  Elapsed time : 1285.5977
+  Mini-Batch 60/200 - Loss: 0.0000
+  Elapsed time : 1289.3015
+  Mini-Batch 61/200 - Loss: 0.0004
+  Elapsed time : 1320.6107
+  Mini-Batch 62/200 - Loss: 0.0000
+  Elapsed time : 1338.2002
+  Mini-Batch 63/200 - Loss: 0.0000
+  Elapsed time : 1343.1880
+  Mini-Batch 64/200 - Loss: 0.0336
+  Elapsed time : 1373.2903
+  Mini-Batch 65/200 - Loss: 0.0000
+  Elapsed time : 1379.7849
+  Mini-Batch 66/200 - Loss: 0.0000
+  Elapsed time : 1392.6616
+  Mini-Batch 67/200 - Loss: 0.0000
+  Elapsed time : 1402.6274
+  Mini-Batch 68/200 - Loss: 0.0000
+  Elapsed time : 1440.0376
+  Mini-Batch 69/200 - Loss: 0.0000
+  Elapsed time : 1456.5497
+  Mini-Batch 70/200 - Loss: 0.0007
+  Elapsed time : 1487.2667
+  Mini-Batch 71/200 - Loss: 0.0004
+  Elapsed time : 1493.1700
+  Mini-Batch 72/200 - Loss: 0.0000
+  Elapsed time : 1500.5452
+  Mini-Batch 73/200 - Loss: 0.0000
+  Elapsed time : 1519.1216
+  Mini-Batch 74/200 - Loss: 0.0010
+  Elapsed time : 1536.4797
+  Mini-Batch 75/200 - Loss: 0.0049
+  Elapsed time : 1548.2969
+  Mini-Batch 76/200 - Loss: 0.0000
+  Elapsed time : 1585.4053
+  Mini-Batch 77/200 - Loss: 0.0003
+  Elapsed time : 1621.2278
+  Mini-Batch 78/200 - Loss: 0.0000
+  Elapsed time : 1628.2360
+  Mini-Batch 79/200 - Loss: 0.0007
+  Elapsed time : 1642.1013
+  Mini-Batch 80/200 - Loss: 0.0000
+  Elapsed time : 1647.4581
+  Mini-Batch 81/200 - Loss: 0.0000
+  Elapsed time : 1662.7018
+  Mini-Batch 82/200 - Loss: 0.0000
+  Elapsed time : 1669.4138
+  Mini-Batch 83/200 - Loss: 0.0002
+  Elapsed time : 1681.3918
+  Mini-Batch 84/200 - Loss: 0.2878
+  Elapsed time : 1697.4363
+  Mini-Batch 85/200 - Loss: 0.0000
+  Elapsed time : 1731.7736
+  Mini-Batch 86/200 - Loss: 0.0000
+  Elapsed time : 1736.9430
+  Mini-Batch 87/200 - Loss: 0.0248
+  Elapsed time : 1753.1459
+  Mini-Batch 88/200 - Loss: 0.0000
+  Elapsed time : 1763.8638
+  Mini-Batch 89/200 - Loss: 0.0227
+  Elapsed time : 1773.2571
+  Mini-Batch 90/200 - Loss: 0.0000
+  Elapsed time : 1804.1195
+  Mini-Batch 91/200 - Loss: 0.0000
+  Elapsed time : 1842.1999
+  Mini-Batch 92/200 - Loss: 0.0000
+  Elapsed time : 1847.6826
+  Mini-Batch 93/200 - Loss: 0.0000
+  Elapsed time : 1866.3339
+  Mini-Batch 94/200 - Loss: 0.0002
+  Elapsed time : 1879.6108
+  Mini-Batch 95/200 - Loss: 0.0000
+  Elapsed time : 1897.5633
+  Mini-Batch 96/200 - Loss: 0.3337
+  Elapsed time : 1909.6964
+  Mini-Batch 97/200 - Loss: 0.0000
+  Elapsed time : 1940.8597
+  Mini-Batch 98/200 - Loss: 0.0296
+  Elapsed time : 1954.1073
+  Mini-Batch 99/200 - Loss: 0.0000
+  Elapsed time : 1960.6398
+  Mini-Batch 100/200 - Loss: 0.0196
+  Elapsed time : 1972.9328
+  Mini-Batch 101/200 - Loss: 0.0918
+  Elapsed time : 2002.1921
+  Mini-Batch 102/200 - Loss: 0.0001
+  Elapsed time : 2013.4429
+  Mini-Batch 103/200 - Loss: 0.0017
+  Elapsed time : 2044.3621
+  Mini-Batch 104/200 - Loss: 0.0000
+  Elapsed time : 2053.5444
+  Mini-Batch 105/200 - Loss: 0.0499
+  Elapsed time : 2061.6477
+  Mini-Batch 106/200 - Loss: 0.0000
+  Elapsed time : 2066.3794
+  Mini-Batch 107/200 - Loss: 0.0000
+  Elapsed time : 2097.0190
+  Mini-Batch 108/200 - Loss: 0.0000
+  Elapsed time : 2106.6218
+  Mini-Batch 109/200 - Loss: 0.0000
+  Elapsed time : 2138.1607
+  Mini-Batch 110/200 - Loss: 0.0422
+  Elapsed time : 2169.8194
+  Mini-Batch 111/200 - Loss: 0.0000
+  Elapsed time : 2181.6947
+  Mini-Batch 112/200 - Loss: 0.0000
+  Elapsed time : 2195.4415
+  Mini-Batch 113/200 - Loss: 0.0000
+  Elapsed time : 2232.0488
+  Mini-Batch 114/200 - Loss: 0.0000
+  Elapsed time : 2243.6167
+  Mini-Batch 115/200 - Loss: 0.0059
+  Elapsed time : 2252.2737
+  Mini-Batch 116/200 - Loss: 0.0000
+  Elapsed time : 2293.2788
+  Mini-Batch 117/200 - Loss: 0.0000
+  Elapsed time : 2306.2012
+  Mini-Batch 118/200 - Loss: 0.0000
+  Elapsed time : 2323.5571
+  Mini-Batch 119/200 - Loss: 0.0000
+  Elapsed time : 2382.5470
+  Mini-Batch 120/200 - Loss: 0.0000
+  Elapsed time : 2389.5865
+  Mini-Batch 121/200 - Loss: 0.0380
+  Elapsed time : 2404.4399
+  Mini-Batch 122/200 - Loss: 0.0009
+  Elapsed time : 2435.4315
+  Mini-Batch 123/200 - Loss: 0.0000
+  Elapsed time : 2438.9430
+  Mini-Batch 124/200 - Loss: 2.7958
+  Elapsed time : 2445.1808
+  Mini-Batch 125/200 - Loss: 0.0000
+  Elapsed time : 2457.3741
+  Mini-Batch 126/200 - Loss: 0.0000
+  Elapsed time : 2461.4862
+  Mini-Batch 127/200 - Loss: 0.0000
+  Elapsed time : 2494.6808
+  Mini-Batch 128/200 - Loss: 0.0000
+  Elapsed time : 2509.0847
+  Mini-Batch 129/200 - Loss: 0.0000
+  Elapsed time : 2518.6785
+  Mini-Batch 130/200 - Loss: 0.0000
+  Elapsed time : 2525.8395
+  Mini-Batch 131/200 - Loss: 0.0000
+  Elapsed time : 2566.2018
+  Mini-Batch 132/200 - Loss: 0.8867
+  Elapsed time : 2579.2090
+  Mini-Batch 133/200 - Loss: 0.0000
+  Elapsed time : 2664.7610
+  Mini-Batch 134/200 - Loss: 0.0000
+  Elapsed time : 2665.5773
+  Mini-Batch 135/200 - Loss: 0.0000
+  Elapsed time : 2667.9731
+  Mini-Batch 136/200 - Loss: 0.0000
+  Elapsed time : 2669.3197
+  Mini-Batch 137/200 - Loss: 0.0000
+  Elapsed time : 2675.1063
+  Mini-Batch 138/200 - Loss: 0.3113
+  Elapsed time : 2676.4663
+  Mini-Batch 139/200 - Loss: 0.0000
+  Elapsed time : 2677.8182
+  Mini-Batch 140/200 - Loss: 0.0001
+  Elapsed time : 2679.7756
+  Mini-Batch 141/200 - Loss: 0.0000
+  Elapsed time : 2682.4453
+  Mini-Batch 142/200 - Loss: 0.0001
+  Elapsed time : 2684.4771
+  Mini-Batch 143/200 - Loss: 0.0000
+  Elapsed time : 2685.5773
+  Mini-Batch 144/200 - Loss: 0.0000
+  Elapsed time : 2686.4562
+  Mini-Batch 145/200 - Loss: 0.0000
+  Elapsed time : 2688.0588
+  Mini-Batch 146/200 - Loss: 0.0000
+  Elapsed time : 2690.6363
+  Mini-Batch 147/200 - Loss: 0.0000
+  Elapsed time : 2693.6695
+  Mini-Batch 148/200 - Loss: 0.0000
+  Elapsed time : 2695.4832
+  Mini-Batch 149/200 - Loss: 0.0000
+  Elapsed time : 2696.1620
+  Mini-Batch 150/200 - Loss: 0.0000
+  Elapsed time : 2698.1440
+  Mini-Batch 151/200 - Loss: 0.0000
+  Elapsed time : 2700.1828
+  Mini-Batch 152/200 - Loss: 0.0000
+  Elapsed time : 2702.1599
+  Mini-Batch 153/200 - Loss: 0.0000
+  Elapsed time : 2703.6617
+  Mini-Batch 154/200 - Loss: 0.0000
+  Elapsed time : 2704.6098
+  Mini-Batch 155/200 - Loss: 0.0000
+  Elapsed time : 2706.0721
+  Mini-Batch 156/200 - Loss: 0.0000
+  Elapsed time : 2707.0596
+  Mini-Batch 157/200 - Loss: 0.0000
+  Elapsed time : 2709.0712
+  Mini-Batch 158/200 - Loss: 0.0000
+  Elapsed time : 2710.3529
+  Mini-Batch 159/200 - Loss: 0.0000
+  Elapsed time : 2712.1072
+  Mini-Batch 160/200 - Loss: 0.0000
+  Elapsed time : 2712.5859
+  Mini-Batch 161/200 - Loss: 0.0000
+  Elapsed time : 2713.7782
+  Mini-Batch 162/200 - Loss: 0.0000
+  Elapsed time : 2715.0589
+  Mini-Batch 163/200 - Loss: 0.0005
+  Elapsed time : 2716.2312
+  Mini-Batch 164/200 - Loss: 0.0000
+  Elapsed time : 2720.1303
+  Mini-Batch 165/200 - Loss: 0.0000
+  Elapsed time : 2724.3660
+  Mini-Batch 166/200 - Loss: 0.0000
+  Elapsed time : 2724.9191
+  Mini-Batch 167/200 - Loss: 0.0001
+  Elapsed time : 2728.5106
+  Mini-Batch 168/200 - Loss: 0.0000
+  Elapsed time : 2729.3979
+  Mini-Batch 169/200 - Loss: 0.0000
+  Elapsed time : 2729.8753
+  Mini-Batch 170/200 - Loss: 0.0000
+  Elapsed time : 2731.2537
+  Mini-Batch 171/200 - Loss: 0.0000
+  Elapsed time : 2733.6473
+  Mini-Batch 172/200 - Loss: 0.0000
+  Elapsed time : 2734.3920
+  Mini-Batch 173/200 - Loss: 0.0009
+  Elapsed time : 2735.5651
+  Mini-Batch 174/200 - Loss: 0.0067
+  Elapsed time : 2740.0810
+  Mini-Batch 175/200 - Loss: 0.0000
+  Elapsed time : 2742.0990
+  Mini-Batch 176/200 - Loss: 0.0000
+  Elapsed time : 2742.6228
+  Mini-Batch 177/200 - Loss: 0.0000
+  Elapsed time : 2743.3437
+  Mini-Batch 178/200 - Loss: 0.0000
+  Elapsed time : 2744.8805
+  Mini-Batch 179/200 - Loss: 0.0000
+  Elapsed time : 2746.8103
+  Mini-Batch 180/200 - Loss: 0.1015
+  Elapsed time : 2749.1235
+  Mini-Batch 181/200 - Loss: 0.0000
+  Elapsed time : 2751.7236
+  Mini-Batch 182/200 - Loss: 0.0000
+  Elapsed time : 2754.4803
+  Mini-Batch 183/200 - Loss: 0.0000
+  Elapsed time : 2755.9453
+  Mini-Batch 184/200 - Loss: 0.0007
+  Elapsed time : 2757.1018
+  Mini-Batch 185/200 - Loss: 0.0000
+  Elapsed time : 2759.2310
+  Mini-Batch 186/200 - Loss: 0.0000
+  Elapsed time : 2760.3660
+  Mini-Batch 187/200 - Loss: 0.0000
+  Elapsed time : 2761.3859
+  Mini-Batch 188/200 - Loss: 0.0003
+  Elapsed time : 2763.1599
+  Mini-Batch 189/200 - Loss: 0.0000
+  Elapsed time : 2765.2960
+  Mini-Batch 190/200 - Loss: 0.0000
+  Elapsed time : 2765.5128
+  Mini-Batch 191/200 - Loss: 0.0000
+  Elapsed time : 2769.1401
+  Mini-Batch 192/200 - Loss: 0.0000
+  Elapsed time : 2770.0412
+  Mini-Batch 193/200 - Loss: 0.0000
+  Elapsed time : 2771.7253
+  Mini-Batch 194/200 - Loss: 0.0000
+  Elapsed time : 3052.4324
+  Mini-Batch 195/200 - Loss: 0.0191
+  Elapsed time : 3071.8945
+  Mini-Batch 196/200 - Loss: 0.0000
+  Elapsed time : 3110.8700
+  Mini-Batch 197/200 - Loss: 0.0000
+  Elapsed time : 3138.1232
+  Mini-Batch 198/200 - Loss: 0.0000
+  Elapsed time : 3158.3588
+  Mini-Batch 199/200 - Loss: 0.0000
+  Elapsed time : 3166.9156
+  Mini-Batch 200/200 - Loss: 0.0001
+  Elapsed time : 3189.9199
+
+# ========== Train Epoch 4/100 ==========
+[Train] Loss: 0.0525 | Accuracy: 0.9894 | Precision: 0.9894 | Recall: 0.9894 | F1: 0.9894
+[Val]   Loss: 1.0770 | Accuracy: 0.8550 | Precision: 0.8873 | Recall: 0.8550 | F1: 0.8517
+Epoch Time: 3337.4807 seconds | Elapsed Time: 15788.0001 seconds
+  Mini-Batch 1/200 - Loss: 0.0000
+  Elapsed time : 7.1314
+  Mini-Batch 2/200 - Loss: 0.0000
+  Elapsed time : 8.0838
+  Mini-Batch 3/200 - Loss: 0.0000
+  Elapsed time : 9.0827
+  Mini-Batch 4/200 - Loss: 0.0040
+  Elapsed time : 10.1789
+  Mini-Batch 5/200 - Loss: 0.0002
+  Elapsed time : 10.7667
+  Mini-Batch 6/200 - Loss: 0.0066
+  Elapsed time : 11.8940
+  Mini-Batch 7/200 - Loss: 0.0033
+  Elapsed time : 13.3926
+  Mini-Batch 8/200 - Loss: 0.0000
+  Elapsed time : 69.8961
+  Mini-Batch 9/200 - Loss: 0.0001
+  Elapsed time : 121.6628
+  Mini-Batch 10/200 - Loss: 0.0000
+  Elapsed time : 133.8599
+  Mini-Batch 11/200 - Loss: 0.0000
+  Elapsed time : 151.4346
+  Mini-Batch 12/200 - Loss: 0.2232
+  Elapsed time : 169.3605
+  Mini-Batch 13/200 - Loss: 0.0000
+  Elapsed time : 183.0989
+  Mini-Batch 14/200 - Loss: 0.0000
+  Elapsed time : 220.1453
+  Mini-Batch 15/200 - Loss: 0.0000
+  Elapsed time : 242.4271
+  Mini-Batch 16/200 - Loss: 0.0015
+  Elapsed time : 276.4637
+  Mini-Batch 17/200 - Loss: 0.0000
+  Elapsed time : 303.4446
+  Mini-Batch 18/200 - Loss: 0.0014
+  Elapsed time : 345.4588
+  Mini-Batch 19/200 - Loss: 0.0000
+  Elapsed time : 442.3146
+  Mini-Batch 20/200 - Loss: 0.0003
+  Elapsed time : 481.1049
+  Mini-Batch 21/200 - Loss: 0.0000
+  Elapsed time : 493.4181
+  Mini-Batch 22/200 - Loss: 0.0000
+  Elapsed time : 516.8266
+  Mini-Batch 23/200 - Loss: 0.0000
+  Elapsed time : 520.1179
+  Mini-Batch 24/200 - Loss: 0.0000
+  Elapsed time : 533.7916
+  Mini-Batch 25/200 - Loss: 0.0000
+  Elapsed time : 557.2460
+  Mini-Batch 26/200 - Loss: 0.0000
+  Elapsed time : 568.9638
+  Mini-Batch 27/200 - Loss: 0.0000
+  Elapsed time : 794.3619
+  Mini-Batch 28/200 - Loss: 0.0000
+  Elapsed time : 797.0741
+  Mini-Batch 29/200 - Loss: 0.0000
+  Elapsed time : 797.9028
+  Mini-Batch 30/200 - Loss: 0.0000
+  Elapsed time : 799.1254
+  Mini-Batch 31/200 - Loss: 0.0001
+  Elapsed time : 801.1991
+  Mini-Batch 32/200 - Loss: 0.0000
+  Elapsed time : 802.5870
+  Mini-Batch 33/200 - Loss: 0.0000
+  Elapsed time : 804.0549
+  Mini-Batch 34/200 - Loss: 0.0000
+  Elapsed time : 806.1323
+  Mini-Batch 35/200 - Loss: 0.0464
+  Elapsed time : 807.2354
+  Mini-Batch 36/200 - Loss: 0.0000
+  Elapsed time : 809.1877
+  Mini-Batch 37/200 - Loss: 0.0000
+  Elapsed time : 811.6163
+  Mini-Batch 38/200 - Loss: 1.1990
+  Elapsed time : 812.5467
+  Mini-Batch 39/200 - Loss: 1.4530
+  Elapsed time : 814.1151
+  Mini-Batch 40/200 - Loss: 0.0000
+  Elapsed time : 815.4213
+  Mini-Batch 41/200 - Loss: 0.0000
+  Elapsed time : 818.4117
+  Mini-Batch 42/200 - Loss: 0.0000
+  Elapsed time : 819.4919
+  Mini-Batch 43/200 - Loss: 0.0000
+  Elapsed time : 820.6312
+  Mini-Batch 44/200 - Loss: 0.0000
+  Elapsed time : 822.4184
+  Mini-Batch 45/200 - Loss: 0.0000
+  Elapsed time : 824.9521
+  Mini-Batch 46/200 - Loss: 0.0001
+  Elapsed time : 826.2408
+  Mini-Batch 47/200 - Loss: 0.0000
+  Elapsed time : 826.8237
+  Mini-Batch 48/200 - Loss: 0.0001
+  Elapsed time : 829.4375
+  Mini-Batch 49/200 - Loss: 0.0000
+  Elapsed time : 837.0049
+  Mini-Batch 50/200 - Loss: 0.0000
+  Elapsed time : 837.7148
+  Mini-Batch 51/200 - Loss: 0.0000
+  Elapsed time : 840.1381
+  Mini-Batch 52/200 - Loss: 0.0000
+  Elapsed time : 841.1710
+  Mini-Batch 53/200 - Loss: 0.0000
+  Elapsed time : 845.1596
+  Mini-Batch 54/200 - Loss: 0.0000
+  Elapsed time : 846.8047
+  Mini-Batch 55/200 - Loss: 0.0008
+  Elapsed time : 848.4650
+  Mini-Batch 56/200 - Loss: 0.0001
+  Elapsed time : 849.2239
+  Mini-Batch 57/200 - Loss: 0.0000
+  Elapsed time : 850.1533
+  Mini-Batch 58/200 - Loss: 0.0000
+  Elapsed time : 851.3833
+  Mini-Batch 59/200 - Loss: 0.0000
+  Elapsed time : 853.3077
+  Mini-Batch 60/200 - Loss: 0.0002
+  Elapsed time : 854.6173
+  Mini-Batch 61/200 - Loss: 2.6399
+  Elapsed time : 857.8298
+  Mini-Batch 62/200 - Loss: 0.0000
+  Elapsed time : 858.4250
+  Mini-Batch 63/200 - Loss: 0.0000
+  Elapsed time : 859.2398
+  Mini-Batch 64/200 - Loss: 0.0000
+  Elapsed time : 859.6951
+  Mini-Batch 65/200 - Loss: 0.0000
+  Elapsed time : 861.9210
+  Mini-Batch 66/200 - Loss: 0.0000
+  Elapsed time : 863.8925
+  Mini-Batch 67/200 - Loss: 0.0000
+  Elapsed time : 865.4417
+  Mini-Batch 68/200 - Loss: 0.0005
+  Elapsed time : 868.2625
+  Mini-Batch 69/200 - Loss: 0.0000
+  Elapsed time : 871.6385
+  Mini-Batch 70/200 - Loss: 0.0001
+  Elapsed time : 872.1891
+  Mini-Batch 71/200 - Loss: 0.0000
+  Elapsed time : 873.8659
+  Mini-Batch 72/200 - Loss: 0.4551
+  Elapsed time : 880.3221
+  Mini-Batch 73/200 - Loss: 0.0000
+  Elapsed time : 881.1333
+  Mini-Batch 74/200 - Loss: 0.0000
+  Elapsed time : 881.4413
+  Mini-Batch 75/200 - Loss: 0.0000
+  Elapsed time : 883.4539
+  Mini-Batch 76/200 - Loss: 0.0000
+  Elapsed time : 885.6948
+  Mini-Batch 77/200 - Loss: 0.0000
+  Elapsed time : 887.0726
+  Mini-Batch 78/200 - Loss: 0.0000
+  Elapsed time : 887.7527
+  Mini-Batch 79/200 - Loss: 0.0014
+  Elapsed time : 888.9620
+  Mini-Batch 80/200 - Loss: 0.0092
+  Elapsed time : 890.4548
+  Mini-Batch 81/200 - Loss: 0.0000
+  Elapsed time : 890.8357
+  Mini-Batch 82/200 - Loss: 0.0000
+  Elapsed time : 892.9079
+  Mini-Batch 83/200 - Loss: 0.0004
+  Elapsed time : 898.4425
+  Mini-Batch 84/200 - Loss: 0.0000
+  Elapsed time : 902.4285
+  Mini-Batch 85/200 - Loss: 0.0000
+  Elapsed time : 905.7209
+  Mini-Batch 86/200 - Loss: 0.0000
+  Elapsed time : 906.2034
+  Mini-Batch 87/200 - Loss: 0.0000
+  Elapsed time : 907.3229
+  Mini-Batch 88/200 - Loss: 0.0033
+  Elapsed time : 910.5708
+  Mini-Batch 89/200 - Loss: 0.0000
+  Elapsed time : 911.4398
+  Mini-Batch 90/200 - Loss: 0.0000
+  Elapsed time : 913.0787
+  Mini-Batch 91/200 - Loss: 0.0000
+  Elapsed time : 914.3427
+  Mini-Batch 92/200 - Loss: 0.0000
+  Elapsed time : 915.4939
+  Mini-Batch 93/200 - Loss: 0.0000
+  Elapsed time : 916.4667
+  Mini-Batch 94/200 - Loss: 0.0000
+  Elapsed time : 917.4802
+  Mini-Batch 95/200 - Loss: 0.0000
+  Elapsed time : 919.2557
+  Mini-Batch 96/200 - Loss: 0.0000
+  Elapsed time : 921.9105
+  Mini-Batch 97/200 - Loss: 0.0167
+  Elapsed time : 922.8265
+  Mini-Batch 98/200 - Loss: 0.0000
+  Elapsed time : 925.6207
+  Mini-Batch 99/200 - Loss: 0.0000
+  Elapsed time : 928.3358
+  Mini-Batch 100/200 - Loss: 0.0000
+  Elapsed time : 929.4559
+  Mini-Batch 101/200 - Loss: 0.0000
+  Elapsed time : 929.9559
+  Mini-Batch 102/200 - Loss: 0.0000
+  Elapsed time : 931.4398
+  Mini-Batch 103/200 - Loss: 0.0000
+  Elapsed time : 932.3902
+  Mini-Batch 104/200 - Loss: 0.0000
+  Elapsed time : 933.0471
+  Mini-Batch 105/200 - Loss: 0.0000
+  Elapsed time : 933.8124
+  Mini-Batch 106/200 - Loss: 0.0000
+  Elapsed time : 934.2807
+  Mini-Batch 107/200 - Loss: 0.0000
+  Elapsed time : 935.3532
+  Mini-Batch 108/200 - Loss: 0.0000
+  Elapsed time : 937.6036
+  Mini-Batch 109/200 - Loss: 0.0000
+  Elapsed time : 939.7586
+  Mini-Batch 110/200 - Loss: 0.0038
+  Elapsed time : 940.7452
+  Mini-Batch 111/200 - Loss: 0.0018
+  Elapsed time : 941.5542
+  Mini-Batch 112/200 - Loss: 0.0001
+  Elapsed time : 943.0904
+  Mini-Batch 113/200 - Loss: 0.0000
+  Elapsed time : 944.2744
+  Mini-Batch 114/200 - Loss: 0.0000
+  Elapsed time : 945.1192
+  Mini-Batch 115/200 - Loss: 0.0000
+  Elapsed time : 945.9866
+  Mini-Batch 116/200 - Loss: 0.0000
+  Elapsed time : 949.2744
+  Mini-Batch 117/200 - Loss: 0.0000
+  Elapsed time : 950.0913
+  Mini-Batch 118/200 - Loss: 0.0000
+  Elapsed time : 952.4517
+  Mini-Batch 119/200 - Loss: 0.0000
+  Elapsed time : 956.6061
+  Mini-Batch 120/200 - Loss: 0.0000
+  Elapsed time : 957.8143
+  Mini-Batch 121/200 - Loss: 0.0002
+  Elapsed time : 959.4282
+  Mini-Batch 122/200 - Loss: 0.0023
+  Elapsed time : 961.0431
+  Mini-Batch 123/200 - Loss: 0.0000
+  Elapsed time : 962.1279
+  Mini-Batch 124/200 - Loss: 0.0000
+  Elapsed time : 963.5879
+  Mini-Batch 125/200 - Loss: 0.0000
+  Elapsed time : 965.3662
+  Mini-Batch 126/200 - Loss: 0.0000
+  Elapsed time : 970.2555
+  Mini-Batch 127/200 - Loss: 0.0000
+  Elapsed time : 970.7303
+  Mini-Batch 128/200 - Loss: 0.0000
+  Elapsed time : 972.4195
+  Mini-Batch 129/200 - Loss: 0.0000
+  Elapsed time : 973.7283
+  Mini-Batch 130/200 - Loss: 0.0000
+  Elapsed time : 974.7538
+  Mini-Batch 131/200 - Loss: 0.0000
+  Elapsed time : 977.0063
+  Mini-Batch 132/200 - Loss: 0.0000
+  Elapsed time : 978.6141
+  Mini-Batch 133/200 - Loss: 0.0000
+  Elapsed time : 979.9796
+  Mini-Batch 134/200 - Loss: 0.2007
+  Elapsed time : 985.6457
+  Mini-Batch 135/200 - Loss: 0.0000
+  Elapsed time : 988.2973
+  Mini-Batch 136/200 - Loss: 0.0000
+  Elapsed time : 989.6191
+  Mini-Batch 137/200 - Loss: 0.0000
+  Elapsed time : 990.8487
+  Mini-Batch 138/200 - Loss: 0.0001
+  Elapsed time : 991.4597
+  Mini-Batch 139/200 - Loss: 0.0000
+  Elapsed time : 992.6178
+  Mini-Batch 140/200 - Loss: 0.0000
+  Elapsed time : 994.1893
+  Mini-Batch 141/200 - Loss: 0.0005
+  Elapsed time : 995.7916
+  Mini-Batch 142/200 - Loss: 0.0000
+  Elapsed time : 997.8549
+  Mini-Batch 143/200 - Loss: 0.0017
+  Elapsed time : 999.4941
+  Mini-Batch 144/200 - Loss: 0.0000
+  Elapsed time : 1000.4478
+  Mini-Batch 145/200 - Loss: 0.0000
+  Elapsed time : 1001.6250
+  Mini-Batch 146/200 - Loss: 0.0000
+  Elapsed time : 1003.7740
+  Mini-Batch 147/200 - Loss: 0.0000
+  Elapsed time : 1005.1811
+  Mini-Batch 148/200 - Loss: 0.0008
+  Elapsed time : 1006.5459
+  Mini-Batch 149/200 - Loss: 0.0000
+  Elapsed time : 1011.2269
+  Mini-Batch 150/200 - Loss: 0.0000
+  Elapsed time : 1011.8151
+  Mini-Batch 151/200 - Loss: 0.0000
+  Elapsed time : 1012.2821
+  Mini-Batch 152/200 - Loss: 0.0001
+  Elapsed time : 1013.6351
+  Mini-Batch 153/200 - Loss: 0.0002
+  Elapsed time : 1014.8450
+  Mini-Batch 154/200 - Loss: 0.0000
+  Elapsed time : 1018.7096
+  Mini-Batch 155/200 - Loss: 0.0001
+  Elapsed time : 1019.2418
+  Mini-Batch 156/200 - Loss: 0.0000
+  Elapsed time : 1022.4027
+  Mini-Batch 157/200 - Loss: 0.0000
+  Elapsed time : 1024.1166
+  Mini-Batch 158/200 - Loss: 0.0000
+  Elapsed time : 1025.2528
+  Mini-Batch 159/200 - Loss: 0.0000
+  Elapsed time : 1027.2930
+  Mini-Batch 160/200 - Loss: 0.0000
+  Elapsed time : 1030.0466
+  Mini-Batch 161/200 - Loss: 0.0049
+  Elapsed time : 1032.8040
+  Mini-Batch 162/200 - Loss: 0.0007
+  Elapsed time : 1033.8105
+  Mini-Batch 163/200 - Loss: 0.0000
+  Elapsed time : 1035.5309
+  Mini-Batch 164/200 - Loss: 0.0000
+  Elapsed time : 1036.7821
+  Mini-Batch 165/200 - Loss: 0.1015
+  Elapsed time : 1037.7261
+  Mini-Batch 166/200 - Loss: 0.0000
+  Elapsed time : 1038.6949
+  Mini-Batch 167/200 - Loss: 0.0000
+  Elapsed time : 1039.9678
+  Mini-Batch 168/200 - Loss: 0.0000
+  Elapsed time : 1041.0218
+  Mini-Batch 169/200 - Loss: 1.1568
+  Elapsed time : 1045.5463
+  Mini-Batch 170/200 - Loss: 0.0000
+  Elapsed time : 1047.5927
+  Mini-Batch 171/200 - Loss: 0.0000
+  Elapsed time : 1049.0704
+  Mini-Batch 172/200 - Loss: 0.0000
+  Elapsed time : 1051.5246
+  Mini-Batch 173/200 - Loss: 0.0000
+  Elapsed time : 1055.7300
+  Mini-Batch 174/200 - Loss: 0.0000
+  Elapsed time : 1056.4154
+  Mini-Batch 175/200 - Loss: 0.0000
+  Elapsed time : 1057.5677
+  Mini-Batch 176/200 - Loss: 0.0000
+  Elapsed time : 1060.0205
+  Mini-Batch 177/200 - Loss: 0.0000
+  Elapsed time : 1061.0553
+  Mini-Batch 178/200 - Loss: 0.0000
+  Elapsed time : 1067.7320
+  Mini-Batch 179/200 - Loss: 0.0000
+  Elapsed time : 1068.2982
+  Mini-Batch 180/200 - Loss: 0.0000
+  Elapsed time : 1069.2686
+  Mini-Batch 181/200 - Loss: 0.0000
+  Elapsed time : 1070.2555
+  Mini-Batch 182/200 - Loss: 2.4897
+  Elapsed time : 1071.3247
+  Mini-Batch 183/200 - Loss: 0.0503
+  Elapsed time : 1071.7009
+  Mini-Batch 184/200 - Loss: 0.0000
+  Elapsed time : 1072.0582
+  Mini-Batch 185/200 - Loss: 0.0000
+  Elapsed time : 1074.3869
+  Mini-Batch 186/200 - Loss: 0.0000
+  Elapsed time : 1075.3708
+  Mini-Batch 187/200 - Loss: 0.0000
+  Elapsed time : 1076.8383
+  Mini-Batch 188/200 - Loss: 0.0016
+  Elapsed time : 1078.0774
+  Mini-Batch 189/200 - Loss: 0.0001
+  Elapsed time : 1079.6842
+  Mini-Batch 190/200 - Loss: 0.0000
+  Elapsed time : 1080.8340
+  Mini-Batch 191/200 - Loss: 0.0000
+  Elapsed time : 1082.0378
+  Mini-Batch 192/200 - Loss: 0.0000
+  Elapsed time : 1083.2271
+  Mini-Batch 193/200 - Loss: 1.9633
+  Elapsed time : 1084.8766
+  Mini-Batch 194/200 - Loss: 0.0000
+  Elapsed time : 1085.7739
+  Mini-Batch 195/200 - Loss: 0.0000
+  Elapsed time : 1087.8721
+  Mini-Batch 196/200 - Loss: 0.0000
+  Elapsed time : 1089.1201
+  Mini-Batch 197/200 - Loss: 0.0000
+  Elapsed time : 1091.8134
+  Mini-Batch 198/200 - Loss: 0.0000
+  Elapsed time : 1094.4609
+  Mini-Batch 199/200 - Loss: 0.0000
+  Elapsed time : 1096.1596
+  Mini-Batch 200/200 - Loss: 0.0000
+  Elapsed time : 1102.3671
+
+# ========== Train Epoch 5/100 ==========
+[Train] Loss: 0.0602 | Accuracy: 0.9900 | Precision: 0.9900 | Recall: 0.9900 | F1: 0.9900
+[Val]   Loss: 0.8366 | Accuracy: 0.8950 | Precision: 0.9131 | Recall: 0.8950 | F1: 0.8937
+Epoch Time: 1106.4122 seconds | Elapsed Time: 16894.4310 seconds
+  Mini-Batch 1/200 - Loss: 0.0000
+  Elapsed time : 0.7881
+  Mini-Batch 2/200 - Loss: 0.0000
+  Elapsed time : 2.0440
+  Mini-Batch 3/200 - Loss: 0.0000
+  Elapsed time : 2.7009
+  Mini-Batch 4/200 - Loss: 0.0000
+  Elapsed time : 3.7718
+  Mini-Batch 5/200 - Loss: 0.0000
+  Elapsed time : 4.4423
+  Mini-Batch 6/200 - Loss: 0.0000
+  Elapsed time : 4.8813
+  Mini-Batch 7/200 - Loss: 0.0000
+  Elapsed time : 5.3170
+  Mini-Batch 8/200 - Loss: 0.0000
+  Elapsed time : 7.7355
+  Mini-Batch 9/200 - Loss: 0.0000
+  Elapsed time : 15.3627
+  Mini-Batch 10/200 - Loss: 0.0000
+  Elapsed time : 16.1245
+  Mini-Batch 11/200 - Loss: 0.0015
+  Elapsed time : 16.7202
+  Mini-Batch 12/200 - Loss: 0.0000
+  Elapsed time : 28.4891
+  Mini-Batch 13/200 - Loss: 0.0001
+  Elapsed time : 30.0442
+  Mini-Batch 14/200 - Loss: 0.0000
+  Elapsed time : 35.8335
+  Mini-Batch 15/200 - Loss: 0.0000
+  Elapsed time : 38.0235
+  Mini-Batch 16/200 - Loss: 0.0005
+  Elapsed time : 39.1083
+  Mini-Batch 17/200 - Loss: 0.0000
+  Elapsed time : 40.0077
+  Mini-Batch 18/200 - Loss: 0.0001
+  Elapsed time : 40.4558
+  Mini-Batch 19/200 - Loss: 0.0000
+  Elapsed time : 62.6029
+  Mini-Batch 20/200 - Loss: 0.0000
+  Elapsed time : 63.6895
+  Mini-Batch 21/200 - Loss: 2.1204
+  Elapsed time : 63.9831
+  Mini-Batch 22/200 - Loss: 0.0000
+  Elapsed time : 66.1913
+  Mini-Batch 23/200 - Loss: 0.0000
+  Elapsed time : 67.6023
+  Mini-Batch 24/200 - Loss: 0.0000
+  Elapsed time : 68.8055
+  Mini-Batch 25/200 - Loss: 0.0005
+  Elapsed time : 70.3212
+  Mini-Batch 26/200 - Loss: 0.0000
+  Elapsed time : 70.7115
+  Mini-Batch 27/200 - Loss: 0.0000
+  Elapsed time : 81.5067
+  Mini-Batch 28/200 - Loss: 0.0000
+  Elapsed time : 82.1892
+  Mini-Batch 29/200 - Loss: 0.0000
+  Elapsed time : 83.1711
+  Mini-Batch 30/200 - Loss: 0.0001
+  Elapsed time : 85.5233
+  Mini-Batch 31/200 - Loss: 0.0668
+  Elapsed time : 86.3457
+  Mini-Batch 32/200 - Loss: 0.0000
+  Elapsed time : 86.7937
+  Mini-Batch 33/200 - Loss: 0.0005
+  Elapsed time : 87.8596
+  Mini-Batch 34/200 - Loss: 0.0000
+  Elapsed time : 88.7268
+  Mini-Batch 35/200 - Loss: 0.0000
+  Elapsed time : 91.0381
+  Mini-Batch 36/200 - Loss: 0.0000
+  Elapsed time : 92.0998
+  Mini-Batch 37/200 - Loss: 0.0000
+  Elapsed time : 93.5564
+  Mini-Batch 38/200 - Loss: 0.0000
+  Elapsed time : 102.4917
+  Mini-Batch 39/200 - Loss: 0.0000
+  Elapsed time : 103.5463
+  Mini-Batch 40/200 - Loss: 0.0000
+  Elapsed time : 104.4438
+  Mini-Batch 41/200 - Loss: 0.0000
+  Elapsed time : 105.9906
+  Mini-Batch 42/200 - Loss: 0.0040
+  Elapsed time : 107.2786
+  Mini-Batch 43/200 - Loss: 0.0000
+  Elapsed time : 108.7774
+  Mini-Batch 44/200 - Loss: 0.0000
+  Elapsed time : 110.3367
+  Mini-Batch 45/200 - Loss: 0.0000
+  Elapsed time : 111.9773
+  Mini-Batch 46/200 - Loss: 0.0000
+  Elapsed time : 124.3255
+  Mini-Batch 47/200 - Loss: 0.0000
+  Elapsed time : 124.8474
+  Mini-Batch 48/200 - Loss: 0.0000
+  Elapsed time : 126.9802
+  Mini-Batch 49/200 - Loss: 0.0001
+  Elapsed time : 127.8300
+  Mini-Batch 50/200 - Loss: 0.0012
+  Elapsed time : 128.8934
+  Mini-Batch 51/200 - Loss: 0.0000
+  Elapsed time : 130.5795
+  Mini-Batch 52/200 - Loss: 0.0001
+  Elapsed time : 141.0839
+  Mini-Batch 53/200 - Loss: 0.0000
+  Elapsed time : 142.7235
+  Mini-Batch 54/200 - Loss: 0.0000
+  Elapsed time : 143.8476
+  Mini-Batch 55/200 - Loss: 0.0000
+  Elapsed time : 144.7509
+  Mini-Batch 56/200 - Loss: 0.0000
+  Elapsed time : 145.6191
+  Mini-Batch 57/200 - Loss: 0.0000
+  Elapsed time : 154.4517
+  Mini-Batch 58/200 - Loss: 0.0000
+  Elapsed time : 155.8061
+  Mini-Batch 59/200 - Loss: 0.0000
+  Elapsed time : 161.7764
+  Mini-Batch 60/200 - Loss: 0.0016
+  Elapsed time : 162.8776
+  Mini-Batch 61/200 - Loss: 0.0000
+  Elapsed time : 163.6966
+  Mini-Batch 62/200 - Loss: 0.0072
+  Elapsed time : 165.3452
+  Mini-Batch 63/200 - Loss: 0.0000
+  Elapsed time : 167.3657
+  Mini-Batch 64/200 - Loss: 0.0000
+  Elapsed time : 168.2230
+  Mini-Batch 65/200 - Loss: 0.0010
+  Elapsed time : 180.7627
+  Mini-Batch 66/200 - Loss: 0.0000
+  Elapsed time : 182.4794
+  Mini-Batch 67/200 - Loss: 0.0000
+  Elapsed time : 184.2029
+  Mini-Batch 68/200 - Loss: 0.0000
+  Elapsed time : 185.3089
+  Mini-Batch 69/200 - Loss: 0.0000
+  Elapsed time : 185.9625
+  Mini-Batch 70/200 - Loss: 0.0000
+  Elapsed time : 187.2365
+  Mini-Batch 71/200 - Loss: 0.0000
+  Elapsed time : 188.5971
+  Mini-Batch 72/200 - Loss: 0.0001
+  Elapsed time : 189.7858
+  Mini-Batch 73/200 - Loss: 0.0000
+  Elapsed time : 191.3664
+  Mini-Batch 74/200 - Loss: 0.0000
+  Elapsed time : 191.9910
+  Mini-Batch 75/200 - Loss: 0.0001
+  Elapsed time : 192.8132
+  Mini-Batch 76/200 - Loss: 0.0000
+  Elapsed time : 201.1566
+  Mini-Batch 77/200 - Loss: 0.0000
+  Elapsed time : 203.3635
+  Mini-Batch 78/200 - Loss: 0.0000
+  Elapsed time : 211.7619
+  Mini-Batch 79/200 - Loss: 0.0000
+  Elapsed time : 213.7954
+  Mini-Batch 80/200 - Loss: 0.0000
+  Elapsed time : 226.4894
+  Mini-Batch 81/200 - Loss: 0.0000
+  Elapsed time : 227.7707
+  Mini-Batch 82/200 - Loss: 0.0000
+  Elapsed time : 229.9045
+  Mini-Batch 83/200 - Loss: 0.0000
+  Elapsed time : 230.8481
+  Mini-Batch 84/200 - Loss: 0.0000
+  Elapsed time : 236.6012
+  Mini-Batch 85/200 - Loss: 0.0000
+  Elapsed time : 238.4186
+  Mini-Batch 86/200 - Loss: 0.0001
+  Elapsed time : 240.3393
+  Mini-Batch 87/200 - Loss: 0.0000
+  Elapsed time : 241.2496
+  Mini-Batch 88/200 - Loss: 0.0001
+  Elapsed time : 248.1301
+  Mini-Batch 89/200 - Loss: 0.0000
+  Elapsed time : 463.0531
+  Mini-Batch 90/200 - Loss: 0.0000
+  Elapsed time : 473.8845
+  Mini-Batch 91/200 - Loss: 0.0000
+  Elapsed time : 496.9759
+  Mini-Batch 92/200 - Loss: 0.0000
+  Elapsed time : 512.9280
+  Mini-Batch 93/200 - Loss: 0.0000
+  Elapsed time : 520.5077
+  Mini-Batch 94/200 - Loss: 0.0000
+  Elapsed time : 535.4137
+  Mini-Batch 95/200 - Loss: 0.0002
+  Elapsed time : 562.4228
+  Mini-Batch 96/200 - Loss: 0.0000
+  Elapsed time : 583.3821
+  Mini-Batch 97/200 - Loss: 0.0000
+  Elapsed time : 594.2883
+  Mini-Batch 98/200 - Loss: 0.0000
+  Elapsed time : 619.5629
+  Mini-Batch 99/200 - Loss: 0.0000
+  Elapsed time : 628.8758
+  Mini-Batch 100/200 - Loss: 0.0000
+  Elapsed time : 638.2980
+  Mini-Batch 101/200 - Loss: 0.0000
+  Elapsed time : 659.1621
+  Mini-Batch 102/200 - Loss: 0.0000
+  Elapsed time : 670.2080
+  Mini-Batch 103/200 - Loss: 0.0000
+  Elapsed time : 675.6535
+  Mini-Batch 104/200 - Loss: 0.0001
+  Elapsed time : 698.2610
+  Mini-Batch 105/200 - Loss: 0.0000
+  Elapsed time : 712.2133
+  Mini-Batch 106/200 - Loss: 0.0039
+  Elapsed time : 756.7472
+  Mini-Batch 107/200 - Loss: 0.0000
+  Elapsed time : 850.0998
+  Mini-Batch 108/200 - Loss: 0.0000
+  Elapsed time : 853.6152
+  Mini-Batch 109/200 - Loss: 0.0000
+  Elapsed time : 862.4052
+  Mini-Batch 110/200 - Loss: 0.0000
+  Elapsed time : 882.8970
+  Mini-Batch 111/200 - Loss: 0.0008
+  Elapsed time : 890.0627
+  Mini-Batch 112/200 - Loss: 0.0000
+  Elapsed time : 910.5889
+  Mini-Batch 113/200 - Loss: 0.0073
+  Elapsed time : 961.9860
+  Mini-Batch 114/200 - Loss: 0.0000
+  Elapsed time : 982.8194
+  Mini-Batch 115/200 - Loss: 0.0000
+  Elapsed time : 993.1304
+  Mini-Batch 116/200 - Loss: 0.0006
+  Elapsed time : 1034.9823
+  Mini-Batch 117/200 - Loss: 0.0010
+  Elapsed time : 1064.2522
+  Mini-Batch 118/200 - Loss: 0.0000
+  Elapsed time : 1069.0339
+  Mini-Batch 119/200 - Loss: 0.0000
+  Elapsed time : 1083.5004
+  Mini-Batch 120/200 - Loss: 0.0113
+  Elapsed time : 1104.5374
+  Mini-Batch 121/200 - Loss: 0.0000
+  Elapsed time : 1108.8243
+  Mini-Batch 122/200 - Loss: 0.0003
+  Elapsed time : 1118.5988
+  Mini-Batch 123/200 - Loss: 0.0000
+  Elapsed time : 1121.1305
+  Mini-Batch 124/200 - Loss: 0.0019
+  Elapsed time : 1145.3274
+  Mini-Batch 125/200 - Loss: 0.0000
+  Elapsed time : 1167.2278
+  Mini-Batch 126/200 - Loss: 0.0000
+  Elapsed time : 1187.5241
+  Mini-Batch 127/200 - Loss: 0.0000
+  Elapsed time : 1196.3501
+  Mini-Batch 128/200 - Loss: 0.0000
+  Elapsed time : 1208.5020
+  Mini-Batch 129/200 - Loss: 0.0000
+  Elapsed time : 1212.9779
+  Mini-Batch 130/200 - Loss: 0.0000
+  Elapsed time : 1223.2808
+  Mini-Batch 131/200 - Loss: 0.0000
+  Elapsed time : 1315.8306
+  Mini-Batch 132/200 - Loss: 0.0000
+  Elapsed time : 1332.2046
+  Mini-Batch 133/200 - Loss: 0.0000
+  Elapsed time : 1363.5885
+  Mini-Batch 134/200 - Loss: 0.0000
+  Elapsed time : 1380.0796
+  Mini-Batch 135/200 - Loss: 0.0000
+  Elapsed time : 1402.5868
+  Mini-Batch 136/200 - Loss: 0.0000
+  Elapsed time : 1417.2505
+  Mini-Batch 137/200 - Loss: 0.0002
+  Elapsed time : 1427.9120
+  Mini-Batch 138/200 - Loss: 0.0000
+  Elapsed time : 1436.4703
+  Mini-Batch 139/200 - Loss: 0.0030
+  Elapsed time : 1447.3056
+  Mini-Batch 140/200 - Loss: 0.0000
+  Elapsed time : 1539.2525
+  Mini-Batch 141/200 - Loss: 0.0000
+  Elapsed time : 1548.4239
+  Mini-Batch 142/200 - Loss: 0.0000
+  Elapsed time : 1551.3653
+  Mini-Batch 143/200 - Loss: 0.1972
+  Elapsed time : 1560.6324
+  Mini-Batch 144/200 - Loss: 0.0000
+  Elapsed time : 1581.5286
+  Mini-Batch 145/200 - Loss: 0.0001
+  Elapsed time : 1586.8508
+  Mini-Batch 146/200 - Loss: 0.0000
+  Elapsed time : 1600.4003
+  Mini-Batch 147/200 - Loss: 0.0000
+  Elapsed time : 1607.6878
+  Mini-Batch 148/200 - Loss: 0.0000
+  Elapsed time : 1651.0287
+  Mini-Batch 149/200 - Loss: 0.0000
+  Elapsed time : 1658.5043
+  Mini-Batch 150/200 - Loss: 0.0000
+  Elapsed time : 1679.5680
+  Mini-Batch 151/200 - Loss: 0.0000
+  Elapsed time : 1699.5283
+  Mini-Batch 152/200 - Loss: 0.0000
+  Elapsed time : 1712.3739
+  Mini-Batch 153/200 - Loss: 0.0000
+  Elapsed time : 1732.2909
+  Mini-Batch 154/200 - Loss: 0.0000
+  Elapsed time : 1755.7699
+  Mini-Batch 155/200 - Loss: 0.0000
+  Elapsed time : 1763.4109
+  Mini-Batch 156/200 - Loss: 0.0000
+  Elapsed time : 1765.8688
+  Mini-Batch 157/200 - Loss: 0.0000
+  Elapsed time : 1782.2368
+  Mini-Batch 158/200 - Loss: 0.0000
+  Elapsed time : 1802.1598
+  Mini-Batch 159/200 - Loss: 0.0000
+  Elapsed time : 1813.3980
+  Mini-Batch 160/200 - Loss: 0.0000
+  Elapsed time : 1833.1579
+  Mini-Batch 161/200 - Loss: 0.1797
+  Elapsed time : 1854.0154
+  Mini-Batch 162/200 - Loss: 0.0000
+  Elapsed time : 1858.5986
+  Mini-Batch 163/200 - Loss: 0.0000
+  Elapsed time : 1862.7638
+  Mini-Batch 164/200 - Loss: 0.0000
+  Elapsed time : 1891.7892
+  Mini-Batch 165/200 - Loss: 0.0000
+  Elapsed time : 1898.0082
+  Mini-Batch 166/200 - Loss: 0.0000
+  Elapsed time : 1906.2229
+  Mini-Batch 167/200 - Loss: 0.0000
+  Elapsed time : 1913.8301
+  Mini-Batch 168/200 - Loss: 0.0000
+  Elapsed time : 1927.5853
+  Mini-Batch 169/200 - Loss: 0.0000
+  Elapsed time : 1938.7846
+  Mini-Batch 170/200 - Loss: 0.0000
+  Elapsed time : 1949.5353
+  Mini-Batch 171/200 - Loss: 0.0000
+  Elapsed time : 1964.6608
+  Mini-Batch 172/200 - Loss: 0.0000
+  Elapsed time : 1972.4330
+  Mini-Batch 173/200 - Loss: 0.0000
+  Elapsed time : 1985.8000
+  Mini-Batch 174/200 - Loss: 0.0000
+  Elapsed time : 1998.1384
+  Mini-Batch 175/200 - Loss: 0.0000
+  Elapsed time : 2002.7855
+  Mini-Batch 176/200 - Loss: 0.0000
+  Elapsed time : 2007.7627
+  Mini-Batch 177/200 - Loss: 0.0000
+  Elapsed time : 2028.4440
+  Mini-Batch 178/200 - Loss: 0.0000
+  Elapsed time : 2049.5052
+  Mini-Batch 179/200 - Loss: 0.0000
+  Elapsed time : 2060.4950
+  Mini-Batch 180/200 - Loss: 0.0000
+  Elapsed time : 2079.9039
+  Mini-Batch 181/200 - Loss: 0.0000
+  Elapsed time : 2101.5870
+  Mini-Batch 182/200 - Loss: 0.0000
+  Elapsed time : 2113.3582
+  Mini-Batch 183/200 - Loss: 0.0000
+  Elapsed time : 2127.8861
+  Mini-Batch 184/200 - Loss: 0.0000
+  Elapsed time : 2139.0966
+  Mini-Batch 185/200 - Loss: 0.0000
+  Elapsed time : 2147.7097
+  Mini-Batch 186/200 - Loss: 0.0000
+  Elapsed time : 2155.7051
+  Mini-Batch 187/200 - Loss: 0.0000
+  Elapsed time : 2245.2266
+  Mini-Batch 188/200 - Loss: 0.0000
+  Elapsed time : 2258.2451
+  Mini-Batch 189/200 - Loss: 0.0000
+  Elapsed time : 2270.8111
+  Mini-Batch 190/200 - Loss: 0.0000
+  Elapsed time : 2279.4184
+  Mini-Batch 191/200 - Loss: 0.0000
+  Elapsed time : 2376.2554
+  Mini-Batch 192/200 - Loss: 0.0000
+  Elapsed time : 2386.4946
+  Mini-Batch 193/200 - Loss: 0.0000
+  Elapsed time : 2431.5543
+  Mini-Batch 194/200 - Loss: 0.0000
+  Elapsed time : 2435.1218
+  Mini-Batch 195/200 - Loss: 0.0000
+  Elapsed time : 2441.3072
+  Mini-Batch 196/200 - Loss: 0.0000
+  Elapsed time : 2453.3806
+  Mini-Batch 197/200 - Loss: 0.0413
+  Elapsed time : 2474.0063
+  Mini-Batch 198/200 - Loss: 0.0000
+  Elapsed time : 2494.1224
+  Mini-Batch 199/200 - Loss: 0.0010
+  Elapsed time : 2506.9206
+  Mini-Batch 200/200 - Loss: 0.0000
+  Elapsed time : 2508.6189
+
+# ========== Train Epoch 6/100 ==========
+[Train] Loss: 0.0133 | Accuracy: 0.9969 | Precision: 0.9969 | Recall: 0.9969 | F1: 0.9969
+[Val]   Loss: 0.8282 | Accuracy: 0.8900 | Precision: 0.8938 | Recall: 0.8900 | F1: 0.8897
+Epoch Time: 2593.1076 seconds | Elapsed Time: 19487.5568 seconds
+Early stopping triggered
+
+** Training done in 19487.5569 seconds
+
+Confusion Matrix:
+[[86 13]
+ [ 7 94]]
+
+# ========== Test ==========
+Loss: 0.3960 | Accuracy: 0.9000 | Precision: 0.9014 | Recall: 0.9000 | F1: 0.8999
+Test done in 7.5006 seconds
+
+🏃 View run run_2025-02-10T10-00-09 at: http://127.0.0.1:5000/#/experiments/546606987956002885/runs/14c1ac485c4f48449338537440c877f9
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/546606987956002885

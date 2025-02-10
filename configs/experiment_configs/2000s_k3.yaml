@@ -1,9 +1,9 @@
 dataset:
   # Tamaño de los k-mers (subsecuencias de nucleótidos) utilizados en el preprocesamiento de los datos.
-  k_mers_size: 5
+  k_mers_size: 3
 
   # Número total de muestras que se generarán o seleccionarán para el experimento.
-  num_samples: 1000
+  num_samples: 2000
 
   # Tamaño de la ventana en la que se segmentan las señales para su procesamiento.
   window_size: 1500

@@ -9,7 +9,7 @@ CONFIG_DIR="configs/experiment_configs"
 
 # Lista de archivos específicos a ejecutar
 CONFIG_FILES=(
-    "1000s_k3.yaml"
+    "2000s_k3.yaml"
 )
 
 # Activar Conda
@@ -49,7 +49,7 @@ for CONFIG in "${CONFIG_FILES[@]}"; do
     # Lanzar el script en segundo plano con nohup
     nohup python -u $TRAIN_SCRIPT --config "$CONFIG_PATH" > "$LOG_FILE" 2>&1 &
 
-    echo "🔄 Experimento con $CONFIG_PATH en ejecución. Revisa $LOG_FILE para ver el progreso."
+    echo "🔄 Experimento con $CONFIG_PATH en ejecución. Revisa tail -f $LOG_FILE para ver el progreso."
 done
 
 echo "✅ Todos los experimentos han sido lanzados en segundo plano."
