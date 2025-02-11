@@ -1,6 +1,7 @@
 import time as time
 import argparse
 import torch
+import json
 import yaml
 from pathlib import Path
 from torch.utils.data import DataLoader
@@ -91,6 +92,10 @@ if __name__ == "__main__":
         # Cargar experimento
         experiment_config = yaml.safe_load(open(experiment_config_file, "r"))
         experiment_name = Path(args.config).name.strip(".yaml")
+
+        print(f"Running experiment: {experiment_name}")
+        print(f"Experiment config: {json.dumps(experiment_config, indent=4)}")
+
     except:
         raise FileNotFoundError 
 

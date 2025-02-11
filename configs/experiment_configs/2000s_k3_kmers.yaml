@@ -54,7 +54,7 @@ model:
   max_seq_length: 512
 
   # Configuración de prueba para la arquitectura del modelo:
-  use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
+  use_signals: False   # Si True, utiliza la rama que procesa señales eléctricas.
   use_sequences: True  # Si True, utiliza la rama que procesa secuencias de ADN.
 
 train:

@@ -1,55 +1,56 @@
-CONFIG:
-dataset:
-  k_mers_size: 3
-  num_samples: 2000
-  window_size: 1500
-  step_ratio: 0.5 
-  bases_per_second: 400
-  sampling_rate: 4000
-  train_split: 0.8
-  val_split: 0.1
-  test_split: 0.1
-  base_probs: []
-  real_dataset:
-    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5"
-    - "/home/diz-wsl/personal_repos/tfm/data/mm39/fast5.h5"
-
-model:
-  num_classes: 2
-  input_channels: 1000
-  embed_dim: 128
-  num_heads: 4
-  num_layers: 2
-  max_seq_length: 512
-  use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
-  use_sequences: True  # Si True, utiliza la rama que procesa secuencias de ADN.
-
-train:
-  batch_size: 8
-  learning_rate: 0.0001
-  epochs: 100
-  seed: 42
-
-  optimizer:
-    type: Adam
-    weight_decay: 0.00001
-
-  scheduler:
-    step_size: 10
-    gamma: 0.1
-
-  early_stopping:
-    patience: 5
-    min_delta: 0.0001
-
-  gradient_clipping:
-    max_grad_norm: 1.0
-
-  mlflow:
-    # Dirección del servidor de MLflow para registrar experimentos y métricas.
-    tracking_uri: "http://127.0.0.1:5000"
-
-
+Running experiment: 2000s_k3
+Experiment config: {
+    "dataset": {
+        "k_mers_size": 3,
+        "num_samples": 2000,
+        "window_size": 1500,
+        "step_ratio": 0.5,
+        "bases_per_second": 400,
+        "sampling_rate": 4000,
+        "train_split": 0.8,
+        "val_split": 0.1,
+        "test_split": 0.1,
+        "base_probs": [],
+        "real_dataset": [
+            "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5",
+            "/home/diz-wsl/personal_repos/tfm/data/mm39/fast5.h5"
+        ]
+    },
+    "model": {
+        "num_classes": 2,
+        "input_channels": 1000,
+        "embed_dim": 128,
+        "num_heads": 4,
+        "num_layers": 2,
+        "max_seq_length": 512,
+        "use_signals": true,
+        "use_sequences": true
+    },
+    "train": {
+        "batch_size": 8,
+        "learning_rate": 0.0001,
+        "epochs": 100,
+        "seed": 42,
+        "optimizer": {
+            "type": "Adam",
+            "weight_decay": 1e-05
+        },
+        "scheduler": {
+            "step_size": 10,
+            "gamma": 0.1
+        },
+        "early_stopping": {
+            "patience": 5,
+            "min_delta": 0.0001
+        },
+        "gradient_clipping": {
+            "max_grad_norm": 1.0
+        },
+        "mlflow": {
+            "tracking_uri": "http://127.0.0.1:5000"
+        }
+    }
+}
 
 H5 cargado desde /home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5 | Done in 2.5561 secs
 Preprocessing done in 30.0162 secs

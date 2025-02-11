@@ -55,7 +55,7 @@ model:
 
   # Configuración de prueba para la arquitectura del modelo:
   use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
-  use_sequences: True  # Si True, utiliza la rama que procesa secuencias de ADN.
+  use_sequences: False  # Si True, utiliza la rama que procesa secuencias de ADN.
 
 train:
   # Tamaño del batch para el entrenamiento (número de muestras por paso de entrenamiento).

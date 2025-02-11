@@ -9,7 +9,7 @@ CONFIG_DIR="configs/experiment_configs"
 
 # Lista de archivos específicos a ejecutar
 CONFIG_FILES=(
-    "2000s_k3.yaml"
+    "2000s_k3_signals.yaml"
 )
 
 # Activar Conda
