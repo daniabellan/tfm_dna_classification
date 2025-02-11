@@ -1,0 +1,100 @@
+dataset:
+  # Tamaño de los k-mers (subsecuencias de nucleótidos) utilizados en el preprocesamiento de los datos.
+  k_mers_size: 3
+
+  # Número total de muestras que se generarán o seleccionarán para el experimento.
+  num_samples: 5000
+
+  # Tamaño de la ventana en la que se segmentan las señales para su procesamiento.
+  window_size: 1500
+
+  # Ratio de solapamiento entre señales (0-1)
+  step_ratio: 0.5 
+
+  # Número de bases (nucleótidos) que se leen por segundo en la secuenciación.
+  bases_per_second: 400
+
+  # Frecuencia de muestreo de la señal en Hz (muestras por segundo).
+  sampling_rate: 4000
+
+  # Proporción de datos utilizada para el entrenamiento del modelo.
+  train_split: 0.8
+
+  # Proporción de datos utilizada para la validación del modelo.
+  val_split: 0.1
+
+  # Proporción de datos utilizada para la prueba final del modelo.
+  test_split: 0.1
+
+  # Lista de probabilidades de cada base en el dataset sintético (vacío si no se usa un dataset artificial).
+  base_probs: []
+
+  # Lista de rutas a los archivos HDF5 que contienen el dataset real utilizado en el experimento.
+  real_dataset:
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/mm39/fast5.h5"
+
+model:
+  # Número de clases en el problema de clasificación (por ejemplo, 2 para clasificación binaria).
+  num_classes: 2
+
+  # Número de ventanas de señal que se toman como entrada en el modelo.
+  input_channels: 1000
+
+  # Dimensión del embedding para representar secuencias de nucleótidos en el modelo.
+  embed_dim: 128
+
+  # Número de cabezas de atención en la capa de Multi-Head Attention del Transformer.
+  num_heads: 4
+
+  # Número de capas en el Transformer Encoder para modelar la secuencia.
+  num_layers: 2
+
+  # Longitud máxima de la secuencia de entrada que se procesará.
+  max_seq_length: 512
+
+  # Configuración de prueba para la arquitectura del modelo:
+  use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
+  use_sequences: False  # Si True, utiliza la rama que procesa secuencias de ADN.
+
+train:
+  # Tamaño del batch para el entrenamiento (número de muestras por paso de entrenamiento).
+  batch_size: 8
+
+  # Tasa de aprendizaje inicial del optimizador.
+  learning_rate: 0.0001
+
+  # Número de épocas (iteraciones completas sobre el dataset) para el entrenamiento.
+  epochs: 100
+
+  # Semilla aleatoria para la reproducibilidad de los experimentos.
+  seed: 42
+
+  optimizer:
+    # Tipo de optimizador utilizado en el entrenamiento (Adam en este caso).
+    type: Adam
+
+    # Factor de decaimiento de los pesos para regularización L2 (evita sobreajuste).
+    weight_decay: 0.00001
+
+  scheduler:
+    # Frecuencia (en número de épocas) con la que se reduce la tasa de aprendizaje.
+    step_size: 10
+
+    # Factor por el cual se reduce la tasa de aprendizaje en cada `step_size` épocas.
+    gamma: 0.1
+
+  early_stopping:
+    # Número de épocas sin mejora en la métrica de validación antes de detener el entrenamiento.
+    patience: 3
+
+    # Diferencia mínima en la métrica de validación para considerar una mejora.
+    min_delta: 0.0001
+
+  gradient_clipping:
+    # Valor máximo de la norma del gradiente para evitar explosiones de gradiente.
+    max_grad_norm: 1.0
+
+  mlflow:
+    # Dirección del servidor de MLflow para registrar experimentos y métricas.
+    tracking_uri: "http://127.0.0.1:5000"
