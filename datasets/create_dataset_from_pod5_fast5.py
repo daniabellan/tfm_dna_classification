@@ -3,20 +3,12 @@ from ont_fast5_api.fast5_interface import get_fast5_file
 import pysam
 import h5py
 import numpy as np
+import os
+import argparse
 from pathlib import Path
 
 
 def read_sam_file(sam_file_path: str, verbose: bool = False) -> dict:
-    """
-    Lee un archivo SAM/BAM y extrae las secuencias de los reads en un diccionario.
-
-    Args:
-        sam_file_path (str): Ruta al archivo SAM/BAM.
-        verbose (bool): Si es True, imprime mensajes de progreso.
-
-    Returns:
-        dict: Diccionario con 'read_id' como clave y diccionario con 'sequence' y 'signal_pa' como valores.
-    """
     if verbose:
         print(f"Abriendo archivo SAM: {sam_file_path}")
 
@@ -25,7 +17,7 @@ def read_sam_file(sam_file_path: str, verbose: bool = False) -> dict:
     reads_dict = {
         read.query_name: {
             "sequence": read.query_sequence,
-            "signal_pa": None  # Campo vacío para la señal eléctrica
+            "signal_pa": None
         }
         for read in samfile.fetch(until_eof=True)
     }
@@ -37,17 +29,6 @@ def read_sam_file(sam_file_path: str, verbose: bool = False) -> dict:
 
 
 def process_pod5_file(file: Path, reads_dict: dict, verbose: bool = False) -> int:
-    """
-    Procesa un archivo POD5 y actualiza el diccionario con las señales correspondientes.
-
-    Args:
-        file (Path): Ruta al archivo POD5.
-        reads_dict (dict): Diccionario con la información de los reads.
-        verbose (bool): Si es True, imprime mensajes de progreso.
-
-    Returns:
-        int: Número de reads no detectados en el archivo POD5.
-    """
     not_detected = 0
     detected = 0
     if verbose:
@@ -82,20 +63,14 @@ def process_fast5_file(file: Path, reads_dict: dict, verbose: bool = False) -> i
         read = f5.get_read(read_id)
 
         if read_id in reads_dict:
-            # Raw data en int16
             raw_data = read.get_raw_data()
-
-            
-            # Scale offset
             metadata = read.get_channel_info()
             offset = metadata["offset"]
             range_scaling = metadata["range"]
             digitisation = metadata["digitisation"]
 
-            # Convert signal to pA (picoAmpers)
             raw_signals_pa = (raw_data + offset) * range_scaling / digitisation
             
-            # Add signal to dictionary
             reads_dict[read_id]["signal_pa"] = raw_signals_pa
             detected += 1
         
@@ -109,20 +84,6 @@ def process_fast5_file(file: Path, reads_dict: dict, verbose: bool = False) -> i
 
 
 def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False) -> dict:
-    """
-    Procesa archivos POD5 para actualizar el campo 'signal_pa' en reads_dict y retorna
-    un nuevo diccionario con los reads que contienen tanto 'sequence' como 'signal_pa'.
-
-    Args:
-        nanopore_data_path (str): Ruta al directorio que contiene archivos .pod5 o fast5.
-        reads_dict (dict): Diccionario con información de reads.
-        verbose (bool): Si es True, imprime mensajes de progreso.
-
-    Returns:
-        dict: Nuevo diccionario con solo los reads que contienen 'sequence' y 'signal_pa'.
-    """
-    
-
     pod5_files = list(Path(nanopore_data_path).rglob('*.pod5'))
     fast5_files = list(Path(nanopore_data_path).rglob('*.fast5'))
 
@@ -131,8 +92,6 @@ def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False
         print(f"Se encontraron {len(pod5_files)} archivos POD5 en el directorio: {nanopore_data_path}")
         print(f"Se encontraron {len(fast5_files)} archivos FAST5 en el directorio: {nanopore_data_path}")
 
-    
-    # Procesamos los archivos y contamos los reads no detectados 
     if len(fast5_files) > 0:
         for file in fast5_files:
             not_detected += process_fast5_file(file, reads_dict, verbose)
@@ -141,7 +100,6 @@ def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False
         for file in pod5_files:
             not_detected += process_pod5_file(file, reads_dict, verbose)
 
-    # Filtrar los reads que tienen tanto 'sequence' como 'signal_pa'
     filtered_dict = {
         read_id: data
         for read_id, data in reads_dict.items()
@@ -156,20 +114,14 @@ def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False
 
 
 def save_dict_h5(dictionary, file_path, verbose: bool = False):
-    """
-    Guarda el diccionario en un archivo HDF5.
-
-    Args:
-        dictionary (dict): Diccionario a guardar.
-        file_path (str): Ruta al archivo HDF5 donde se guardarán los datos.
-        verbose (bool): Si es True, imprime mensajes de progreso.
-    """
     if verbose:
         print(f"Guardando diccionario en {file_path}...")
 
+    # Crear el directorio si no existe
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
     with h5py.File(file_path, 'w') as f:
         for read_id, data in dictionary.items():
-            # Guardar la secuencia y la señal como datasets separados
             f.create_dataset(f"{read_id}/sequence", data=data["sequence"])
             f.create_dataset(f"{read_id}/signal_pa", data=np.array(data["signal_pa"], dtype=np.float32))
 
@@ -178,18 +130,21 @@ def save_dict_h5(dictionary, file_path, verbose: bool = False):
 
 
 if __name__ == '__main__':
-    sam_file_path = "data/mm39/reads.sam"
-    nanopore_data_path = "data/mm39/fast5"
-    
-    # Establecer verbose en True para mostrar más detalles
-    verbose = True
-    
+    # Configurar argparse para aceptar los argumentos de línea de comandos
+    parser = argparse.ArgumentParser(description="Procesar archivos SAM y FAST5/POD5.")
+    parser.add_argument('sam_file_path', type=str, help="Ruta al archivo SAM")
+    parser.add_argument('nanopore_data_path', type=str, help="Ruta al directorio de datos nanopore (.fast5 o .pod5)")
+    parser.add_argument('output_h5_path', type=str, help="Ruta al archivo HDF5 de salida")
+    parser.add_argument('--verbose', action='store_true', help="Mostrar detalles del proceso")
+
+    # Parsear los argumentos
+    args = parser.parse_args()
+
     # Leer el archivo SAM para obtener el diccionario de reads
-    reads_dict = read_sam_file(sam_file_path, verbose)
+    reads_dict = read_sam_file(args.sam_file_path, args.verbose)
     
     # Procesar los archivos POD5 y actualizar el diccionario con las señales
-    filtered_dict = match_reads(nanopore_data_path, reads_dict, verbose)
+    filtered_dict = match_reads(args.nanopore_data_path, reads_dict, args.verbose)
     
-    # Guardar el diccionario resultante en un archivo HDF5 con el mismo nombre que el directorio POD5
-    h5_file_path = nanopore_data_path.rstrip('/') + '.h5'  # Crear el nombre del archivo HDF5
-    save_dict_h5(filtered_dict, h5_file_path, verbose)
+    # Guardar el diccionario resultante en el archivo HDF5
+    save_dict_h5(filtered_dict, args.output_h5_path, args.verbose)
