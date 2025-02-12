@@ -1,4 +1,5 @@
 import time
+import json
 import mlflow
 from datetime import datetime
 
@@ -47,7 +48,11 @@ class MLFlowLogger():
                 for sub_key, sub_value in value.items():
                     mlflow.log_param(f"{prefix}_{key}_{sub_key}", sub_value)
             elif isinstance(value, list):  
-                mlflow.log_param(f"{prefix}_{key}", str(value))  # Convertir listas a strings para MLflow
+                if key == "real_dataset":  # Si la clave es "real_dataset", aplicamos el formato especial
+                    formatted_data = [{"label": i, "data": path} for i, path in enumerate(value)]
+                    mlflow.log_param(f"{prefix}_{key}", json.dumps(formatted_data))  # Guardar como JSON string
+                else:
+                    mlflow.log_param(f"{prefix}_{key}", str(value))  # Convertir listas normales a strings
             else:
                 mlflow.log_param(f"{prefix}_{key}", value)
 
