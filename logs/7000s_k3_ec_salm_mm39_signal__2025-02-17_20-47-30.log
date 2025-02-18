@@ -1,0 +1,1104 @@
+Running experiment: 7000s_k3_ec_salm_mm39_sign
+Experiment config: {
+    "dataset": {
+        "k_mers_size": 3,
+        "num_samples": 7000,
+        "window_size": 1500,
+        "step_ratio": 0.5,
+        "bases_per_second": 400,
+        "sampling_rate": 4000,
+        "train_split": 0.8,
+        "val_split": 0.1,
+        "test_split": 0.1,
+        "base_probs": [],
+        "real_dataset": [
+            "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/final_data/matched_data.h5",
+            "/home/diz-wsl/personal_repos/tfm/data/salmonella_enterica/final_data/matched_data.h5",
+            "/home/diz-wsl/personal_repos/tfm/data/mm39/final_data/matched_data.h5"
+        ]
+    },
+    "model": {
+        "num_classes": 3,
+        "input_channels": 1000,
+        "embed_dim": 32,
+        "num_heads": 2,
+        "num_layers": 2,
+        "use_signals": true,
+        "use_sequences": false
+    },
+    "train": {
+        "batch_size": 128,
+        "learning_rate": 0.0001,
+        "epochs": 100,
+        "seed": 42,
+        "optimizer": {
+            "type": "Adam",
+            "weight_decay": 0.001
+        },
+        "scheduler": {
+            "step_size": 10,
+            "gamma": 0.1
+        },
+        "early_stopping": {
+            "patience": 3,
+            "min_delta": 0.0001
+        },
+        "gradient_clipping": {
+            "max_grad_norm": 1.0
+        },
+        "mlflow": {
+            "tracking_uri": "http://127.0.0.1:5000"
+        }
+    }
+}
+H5 cargado desde /home/diz-wsl/personal_repos/tfm/data/ecoli_k12/final_data/matched_data.h5 | Done in 1.0179 secs
+H5 cargado desde /home/diz-wsl/personal_repos/tfm/data/salmonella_enterica/final_data/matched_data.h5 | Done in 1.1950 secs
+H5 cargado desde /home/diz-wsl/personal_repos/tfm/data/mm39/final_data/matched_data.h5 | Done in 1.1419 secs
+Preprocessing done in 51.6319 secs
+Data loaded in 54.9988 seconds
+  Mini-Batch 1/44 - Loss: 1.0972
+  Elapsed time : 0.8672
+  Mini-Batch 2/44 - Loss: 1.1004
+  Elapsed time : 1.3201
+  Mini-Batch 3/44 - Loss: 1.0989
+  Elapsed time : 1.8901
+  Mini-Batch 4/44 - Loss: 1.1020
+  Elapsed time : 2.2584
+  Mini-Batch 5/44 - Loss: 1.1029
+  Elapsed time : 2.6157
+  Mini-Batch 6/44 - Loss: 1.1006
+  Elapsed time : 3.0251
+  Mini-Batch 7/44 - Loss: 1.0993
+  Elapsed time : 3.4250
+  Mini-Batch 8/44 - Loss: 1.0982
+  Elapsed time : 3.9008
+  Mini-Batch 9/44 - Loss: 1.0983
+  Elapsed time : 4.3071
+  Mini-Batch 10/44 - Loss: 1.0981
+  Elapsed time : 4.6847
+  Mini-Batch 11/44 - Loss: 1.0979
+  Elapsed time : 5.0165
+  Mini-Batch 12/44 - Loss: 1.0984
+  Elapsed time : 5.4177
+  Mini-Batch 13/44 - Loss: 1.0977
+  Elapsed time : 5.8188
+  Mini-Batch 14/44 - Loss: 1.0976
+  Elapsed time : 6.2436
+  Mini-Batch 15/44 - Loss: 1.0979
+  Elapsed time : 6.6935
+  Mini-Batch 16/44 - Loss: 1.0985
+  Elapsed time : 7.1132
+  Mini-Batch 17/44 - Loss: 1.0977
+  Elapsed time : 7.5112
+  Mini-Batch 18/44 - Loss: 1.0987
+  Elapsed time : 7.9221
+  Mini-Batch 19/44 - Loss: 1.0993
+  Elapsed time : 8.3457
+  Mini-Batch 20/44 - Loss: 1.0974
+  Elapsed time : 8.7165
+  Mini-Batch 21/44 - Loss: 1.0985
+  Elapsed time : 9.1630
+  Mini-Batch 22/44 - Loss: 1.0983
+  Elapsed time : 9.5574
+  Mini-Batch 23/44 - Loss: 1.0994
+  Elapsed time : 9.9716
+  Mini-Batch 24/44 - Loss: 1.0965
+  Elapsed time : 10.4424
+  Mini-Batch 25/44 - Loss: 1.0994
+  Elapsed time : 10.8739
+  Mini-Batch 26/44 - Loss: 1.0973
+  Elapsed time : 11.3448
+  Mini-Batch 27/44 - Loss: 1.0997
+  Elapsed time : 11.7566
+  Mini-Batch 28/44 - Loss: 1.0991
+  Elapsed time : 12.1373
+  Mini-Batch 29/44 - Loss: 1.0973
+  Elapsed time : 12.5245
+  Mini-Batch 30/44 - Loss: 1.0973
+  Elapsed time : 13.1464
+  Mini-Batch 31/44 - Loss: 1.0981
+  Elapsed time : 13.5416
+  Mini-Batch 32/44 - Loss: 1.0967
+  Elapsed time : 13.9578
+  Mini-Batch 33/44 - Loss: 1.0958
+  Elapsed time : 14.3662
+  Mini-Batch 34/44 - Loss: 1.0984
+  Elapsed time : 14.7358
+  Mini-Batch 35/44 - Loss: 1.0960
+  Elapsed time : 15.1248
+  Mini-Batch 36/44 - Loss: 1.0989
+  Elapsed time : 15.5730
+  Mini-Batch 37/44 - Loss: 1.0987
+  Elapsed time : 15.9449
+  Mini-Batch 38/44 - Loss: 1.0994
+  Elapsed time : 16.2554
+  Mini-Batch 39/44 - Loss: 1.0966
+  Elapsed time : 16.6006
+  Mini-Batch 40/44 - Loss: 1.0964
+  Elapsed time : 17.0483
+  Mini-Batch 41/44 - Loss: 1.0988
+  Elapsed time : 17.6422
+  Mini-Batch 42/44 - Loss: 1.0953
+  Elapsed time : 18.0761
+  Mini-Batch 43/44 - Loss: 1.0965
+  Elapsed time : 18.4804
+  Mini-Batch 44/44 - Loss: 1.0953
+  Elapsed time : 18.7951
+Best model saved at epoch 0 with loss: 1.0977
+
+# ========== Train Epoch 1/100 ==========
+[Train] Loss: 1.0982 | Accuracy: 0.3455 | Precision: 0.3433 | Recall: 0.3455 | F1: 0.2867
+[Val]   Loss: 1.0977 | Accuracy: 0.3571 | Precision: 0.2531 | Recall: 0.3571 | F1: 0.2686
+Epoch Time: 21.3506 seconds | Elapsed Time: 21.3728 seconds
+  Mini-Batch 1/44 - Loss: 1.0959
+  Elapsed time : 0.6244
+  Mini-Batch 2/44 - Loss: 1.0971
+  Elapsed time : 1.2075
+  Mini-Batch 3/44 - Loss: 1.1000
+  Elapsed time : 1.6008
+  Mini-Batch 4/44 - Loss: 1.0918
+  Elapsed time : 2.0099
+  Mini-Batch 5/44 - Loss: 1.0993
+  Elapsed time : 2.4541
+  Mini-Batch 6/44 - Loss: 1.0951
+  Elapsed time : 2.8806
+  Mini-Batch 7/44 - Loss: 1.0947
+  Elapsed time : 3.3272
+  Mini-Batch 8/44 - Loss: 1.0956
+  Elapsed time : 3.7382
+  Mini-Batch 9/44 - Loss: 1.0888
+  Elapsed time : 4.1418
+  Mini-Batch 10/44 - Loss: 1.0937
+  Elapsed time : 4.5844
+  Mini-Batch 11/44 - Loss: 1.0944
+  Elapsed time : 4.9957
+  Mini-Batch 12/44 - Loss: 1.0951
+  Elapsed time : 5.3792
+  Mini-Batch 13/44 - Loss: 1.0907
+  Elapsed time : 5.7099
+  Mini-Batch 14/44 - Loss: 1.0886
+  Elapsed time : 6.1611
+  Mini-Batch 15/44 - Loss: 1.0907
+  Elapsed time : 6.5745
+  Mini-Batch 16/44 - Loss: 1.0936
+  Elapsed time : 7.0075
+  Mini-Batch 17/44 - Loss: 1.0946
+  Elapsed time : 7.6750
+  Mini-Batch 18/44 - Loss: 1.0935
+  Elapsed time : 8.0407
+  Mini-Batch 19/44 - Loss: 1.0862
+  Elapsed time : 8.3814
+  Mini-Batch 20/44 - Loss: 1.0845
+  Elapsed time : 8.8061
+  Mini-Batch 21/44 - Loss: 1.0838
+  Elapsed time : 9.2059
+  Mini-Batch 22/44 - Loss: 1.0920
+  Elapsed time : 9.6318
+  Mini-Batch 23/44 - Loss: 1.0804
+  Elapsed time : 10.0677
+  Mini-Batch 24/44 - Loss: 1.0908
+  Elapsed time : 10.4271
+  Mini-Batch 25/44 - Loss: 1.0816
+  Elapsed time : 10.7677
+  Mini-Batch 26/44 - Loss: 1.0906
+  Elapsed time : 11.1392
+  Mini-Batch 27/44 - Loss: 1.0836
+  Elapsed time : 11.4780
+  Mini-Batch 28/44 - Loss: 1.0825
+  Elapsed time : 12.1988
+  Mini-Batch 29/44 - Loss: 1.0783
+  Elapsed time : 12.5811
+  Mini-Batch 30/44 - Loss: 1.0701
+  Elapsed time : 13.0171
+  Mini-Batch 31/44 - Loss: 1.0672
+  Elapsed time : 13.4073
+  Mini-Batch 32/44 - Loss: 1.0633
+  Elapsed time : 13.7761
+  Mini-Batch 33/44 - Loss: 1.0690
+  Elapsed time : 14.1814
+  Mini-Batch 34/44 - Loss: 1.0801
+  Elapsed time : 14.5852
+  Mini-Batch 35/44 - Loss: 1.0540
+  Elapsed time : 14.9984
+  Mini-Batch 36/44 - Loss: 1.0502
+  Elapsed time : 15.3931
+  Mini-Batch 37/44 - Loss: 1.0497
+  Elapsed time : 15.7698
+  Mini-Batch 38/44 - Loss: 1.0702
+  Elapsed time : 16.1220
+  Mini-Batch 39/44 - Loss: 1.0207
+  Elapsed time : 16.6780
+  Mini-Batch 40/44 - Loss: 1.0123
+  Elapsed time : 17.1114
+  Mini-Batch 41/44 - Loss: 1.0065
+  Elapsed time : 17.5652
+  Mini-Batch 42/44 - Loss: 1.0102
+  Elapsed time : 17.9378
+  Mini-Batch 43/44 - Loss: 1.0086
+  Elapsed time : 18.2346
+  Mini-Batch 44/44 - Loss: 1.0118
+  Elapsed time : 18.4852
+Best model saved at epoch 1 with loss: 1.0485
+
+# ========== Train Epoch 2/100 ==========
+[Train] Loss: 1.0743 | Accuracy: 0.4323 | Precision: 0.4335 | Recall: 0.4323 | F1: 0.3557
+[Val]   Loss: 1.0485 | Accuracy: 0.4771 | Precision: 0.3728 | Recall: 0.4771 | F1: 0.3782
+Epoch Time: 21.1429 seconds | Elapsed Time: 42.5349 seconds
+  Mini-Batch 1/44 - Loss: 0.9788
+  Elapsed time : 0.5556
+  Mini-Batch 2/44 - Loss: 0.9467
+  Elapsed time : 0.9994
+  Mini-Batch 3/44 - Loss: 0.9425
+  Elapsed time : 1.3640
+  Mini-Batch 4/44 - Loss: 0.9054
+  Elapsed time : 1.6615
+  Mini-Batch 5/44 - Loss: 0.9360
+  Elapsed time : 2.0108
+  Mini-Batch 6/44 - Loss: 0.8866
+  Elapsed time : 2.4077
+  Mini-Batch 7/44 - Loss: 0.9495
+  Elapsed time : 2.8218
+  Mini-Batch 8/44 - Loss: 0.8866
+  Elapsed time : 3.1995
+  Mini-Batch 9/44 - Loss: 0.8867
+  Elapsed time : 3.5234
+  Mini-Batch 10/44 - Loss: 0.8369
+  Elapsed time : 3.8714
+  Mini-Batch 11/44 - Loss: 0.8609
+  Elapsed time : 4.3068
+  Mini-Batch 12/44 - Loss: 0.8694
+  Elapsed time : 4.8848
+  Mini-Batch 13/44 - Loss: 0.8245
+  Elapsed time : 5.3421
+  Mini-Batch 14/44 - Loss: 0.8639
+  Elapsed time : 5.7826
+  Mini-Batch 15/44 - Loss: 0.8425
+  Elapsed time : 6.2015
+  Mini-Batch 16/44 - Loss: 0.8698
+  Elapsed time : 6.6303
+  Mini-Batch 17/44 - Loss: 0.9625
+  Elapsed time : 7.0954
+  Mini-Batch 18/44 - Loss: 0.8703
+  Elapsed time : 7.5579
+  Mini-Batch 19/44 - Loss: 0.8937
+  Elapsed time : 7.9939
+  Mini-Batch 20/44 - Loss: 0.8210
+  Elapsed time : 8.4136
+  Mini-Batch 21/44 - Loss: 0.8937
+  Elapsed time : 8.8245
+  Mini-Batch 22/44 - Loss: 0.8049
+  Elapsed time : 9.3579
+  Mini-Batch 23/44 - Loss: 0.8045
+  Elapsed time : 9.7103
+  Mini-Batch 24/44 - Loss: 0.8352
+  Elapsed time : 10.0719
+  Mini-Batch 25/44 - Loss: 0.9284
+  Elapsed time : 10.4175
+  Mini-Batch 26/44 - Loss: 0.7322
+  Elapsed time : 10.8584
+  Mini-Batch 27/44 - Loss: 0.8238
+  Elapsed time : 11.2277
+  Mini-Batch 28/44 - Loss: 0.7418
+  Elapsed time : 11.6953
+  Mini-Batch 29/44 - Loss: 0.7240
+  Elapsed time : 12.1444
+  Mini-Batch 30/44 - Loss: 0.7495
+  Elapsed time : 12.5098
+  Mini-Batch 31/44 - Loss: 0.7277
+  Elapsed time : 12.8569
+  Mini-Batch 32/44 - Loss: 1.0143
+  Elapsed time : 13.2685
+  Mini-Batch 33/44 - Loss: 0.8875
+  Elapsed time : 13.8477
+  Mini-Batch 34/44 - Loss: 0.8293
+  Elapsed time : 14.2467
+  Mini-Batch 35/44 - Loss: 0.8117
+  Elapsed time : 14.6355
+  Mini-Batch 36/44 - Loss: 0.7831
+  Elapsed time : 15.0433
+  Mini-Batch 37/44 - Loss: 0.8449
+  Elapsed time : 15.4859
+  Mini-Batch 38/44 - Loss: 0.8013
+  Elapsed time : 15.9223
+  Mini-Batch 39/44 - Loss: 0.9141
+  Elapsed time : 16.3464
+  Mini-Batch 40/44 - Loss: 0.7043
+  Elapsed time : 16.7851
+  Mini-Batch 41/44 - Loss: 0.8180
+  Elapsed time : 17.2229
+  Mini-Batch 42/44 - Loss: 0.7412
+  Elapsed time : 17.6180
+  Mini-Batch 43/44 - Loss: 0.7909
+  Elapsed time : 18.0496
+  Mini-Batch 44/44 - Loss: 0.8645
+  Elapsed time : 18.3322
+Best model saved at epoch 2 with loss: 0.9280
+
+# ========== Train Epoch 3/100 ==========
+[Train] Loss: 0.8501 | Accuracy: 0.5827 | Precision: 0.5698 | Recall: 0.5827 | F1: 0.5688
+[Val]   Loss: 0.9280 | Accuracy: 0.5671 | Precision: 0.6237 | Recall: 0.5671 | F1: 0.5315
+Epoch Time: 20.9103 seconds | Elapsed Time: 63.4658 seconds
+  Mini-Batch 1/44 - Loss: 0.7429
+  Elapsed time : 0.4561
+  Mini-Batch 2/44 - Loss: 0.7797
+  Elapsed time : 0.8514
+  Mini-Batch 3/44 - Loss: 0.8800
+  Elapsed time : 1.1817
+  Mini-Batch 4/44 - Loss: 0.8093
+  Elapsed time : 1.6270
+  Mini-Batch 5/44 - Loss: 0.7980
+  Elapsed time : 1.9944
+  Mini-Batch 6/44 - Loss: 0.6510
+  Elapsed time : 2.3847
+  Mini-Batch 7/44 - Loss: 0.6642
+  Elapsed time : 2.7845
+  Mini-Batch 8/44 - Loss: 0.7706
+  Elapsed time : 3.2437
+  Mini-Batch 9/44 - Loss: 0.7558
+  Elapsed time : 3.6384
+  Mini-Batch 10/44 - Loss: 0.7314
+  Elapsed time : 3.9627
+  Mini-Batch 11/44 - Loss: 0.7141
+  Elapsed time : 4.3375
+  Mini-Batch 12/44 - Loss: 0.7874
+  Elapsed time : 4.6725
+  Mini-Batch 13/44 - Loss: 0.6765
+  Elapsed time : 5.1233
+  Mini-Batch 14/44 - Loss: 0.7180
+  Elapsed time : 5.4766
+  Mini-Batch 15/44 - Loss: 0.6934
+  Elapsed time : 5.8317
+  Mini-Batch 16/44 - Loss: 0.7228
+  Elapsed time : 6.2330
+  Mini-Batch 17/44 - Loss: 0.7542
+  Elapsed time : 6.6219
+  Mini-Batch 18/44 - Loss: 0.7059
+  Elapsed time : 7.0251
+  Mini-Batch 19/44 - Loss: 0.6812
+  Elapsed time : 7.4005
+  Mini-Batch 20/44 - Loss: 0.7090
+  Elapsed time : 7.7811
+  Mini-Batch 21/44 - Loss: 0.7403
+  Elapsed time : 8.3084
+  Mini-Batch 22/44 - Loss: 0.6954
+  Elapsed time : 8.6808
+  Mini-Batch 23/44 - Loss: 0.6904
+  Elapsed time : 9.1123
+  Mini-Batch 24/44 - Loss: 0.7066
+  Elapsed time : 9.5248
+  Mini-Batch 25/44 - Loss: 0.6584
+  Elapsed time : 9.9605
+  Mini-Batch 26/44 - Loss: 0.6922
+  Elapsed time : 10.4384
+  Mini-Batch 27/44 - Loss: 0.7397
+  Elapsed time : 10.8628
+  Mini-Batch 28/44 - Loss: 0.7685
+  Elapsed time : 11.2977
+  Mini-Batch 29/44 - Loss: 0.7345
+  Elapsed time : 11.6950
+  Mini-Batch 30/44 - Loss: 0.6623
+  Elapsed time : 12.1013
+  Mini-Batch 31/44 - Loss: 0.6884
+  Elapsed time : 12.5642
+  Mini-Batch 32/44 - Loss: 0.7199
+  Elapsed time : 12.9625
+  Mini-Batch 33/44 - Loss: 0.7710
+  Elapsed time : 13.3699
+  Mini-Batch 34/44 - Loss: 0.6805
+  Elapsed time : 13.7904
+  Mini-Batch 35/44 - Loss: 0.6808
+  Elapsed time : 14.2333
+  Mini-Batch 36/44 - Loss: 0.7137
+  Elapsed time : 14.6758
+  Mini-Batch 37/44 - Loss: 0.6839
+  Elapsed time : 15.0433
+  Mini-Batch 38/44 - Loss: 0.6458
+  Elapsed time : 15.3777
+  Mini-Batch 39/44 - Loss: 0.6926
+  Elapsed time : 15.7320
+  Mini-Batch 40/44 - Loss: 0.6692
+  Elapsed time : 16.0451
+  Mini-Batch 41/44 - Loss: 0.6452
+  Elapsed time : 16.3759
+  Mini-Batch 42/44 - Loss: 0.6759
+  Elapsed time : 16.8055
+  Mini-Batch 43/44 - Loss: 0.8962
+  Elapsed time : 17.2201
+  Mini-Batch 44/44 - Loss: 0.7303
+  Elapsed time : 17.5039
+Best model saved at epoch 3 with loss: 0.8022
+
+# ========== Train Epoch 4/100 ==========
+[Train] Loss: 0.7211 | Accuracy: 0.6286 | Precision: 0.6170 | Recall: 0.6286 | F1: 0.6197
+[Val]   Loss: 0.8022 | Accuracy: 0.6029 | Precision: 0.6005 | Recall: 0.6029 | F1: 0.5983
+Epoch Time: 20.0399 seconds | Elapsed Time: 83.5270 seconds
+  Mini-Batch 1/44 - Loss: 0.6010
+  Elapsed time : 0.4682
+  Mini-Batch 2/44 - Loss: 0.6458
+  Elapsed time : 0.9077
+  Mini-Batch 3/44 - Loss: 0.6500
+  Elapsed time : 1.3321
+  Mini-Batch 4/44 - Loss: 0.5640
+  Elapsed time : 1.6464
+  Mini-Batch 5/44 - Loss: 0.6343
+  Elapsed time : 1.9686
+  Mini-Batch 6/44 - Loss: 0.5537
+  Elapsed time : 2.3405
+  Mini-Batch 7/44 - Loss: 0.5804
+  Elapsed time : 2.6703
+  Mini-Batch 8/44 - Loss: 0.5885
+  Elapsed time : 3.0088
+  Mini-Batch 9/44 - Loss: 0.6311
+  Elapsed time : 3.3305
+  Mini-Batch 10/44 - Loss: 0.5437
+  Elapsed time : 3.6856
+  Mini-Batch 11/44 - Loss: 0.6296
+  Elapsed time : 4.0276
+  Mini-Batch 12/44 - Loss: 0.5719
+  Elapsed time : 4.3198
+  Mini-Batch 13/44 - Loss: 0.5819
+  Elapsed time : 4.7002
+  Mini-Batch 14/44 - Loss: 0.6332
+  Elapsed time : 5.0201
+  Mini-Batch 15/44 - Loss: 0.6450
+  Elapsed time : 5.3731
+  Mini-Batch 16/44 - Loss: 0.6250
+  Elapsed time : 5.8506
+  Mini-Batch 17/44 - Loss: 0.6259
+  Elapsed time : 6.2981
+  Mini-Batch 18/44 - Loss: 0.6295
+  Elapsed time : 6.7188
+  Mini-Batch 19/44 - Loss: 0.5758
+  Elapsed time : 7.1135
+  Mini-Batch 20/44 - Loss: 0.6554
+  Elapsed time : 7.5084
+  Mini-Batch 21/44 - Loss: 0.6481
+  Elapsed time : 7.9770
+  Mini-Batch 22/44 - Loss: 0.6226
+  Elapsed time : 8.4186
+  Mini-Batch 23/44 - Loss: 0.5702
+  Elapsed time : 8.7836
+  Mini-Batch 24/44 - Loss: 0.6352
+  Elapsed time : 9.1878
+  Mini-Batch 25/44 - Loss: 0.7144
+  Elapsed time : 9.6056
+  Mini-Batch 26/44 - Loss: 0.6154
+  Elapsed time : 10.0153
+  Mini-Batch 27/44 - Loss: 0.5905
+  Elapsed time : 10.3893
+  Mini-Batch 28/44 - Loss: 0.5450
+  Elapsed time : 10.8145
+  Mini-Batch 29/44 - Loss: 0.6771
+  Elapsed time : 11.2013
+  Mini-Batch 30/44 - Loss: 0.5716
+  Elapsed time : 11.5437
+  Mini-Batch 31/44 - Loss: 0.6402
+  Elapsed time : 11.9509
+  Mini-Batch 32/44 - Loss: 0.5636
+  Elapsed time : 12.4647
+  Mini-Batch 33/44 - Loss: 0.5478
+  Elapsed time : 12.8882
+  Mini-Batch 34/44 - Loss: 0.6744
+  Elapsed time : 13.2837
+  Mini-Batch 35/44 - Loss: 0.7584
+  Elapsed time : 13.7184
+  Mini-Batch 36/44 - Loss: 0.6075
+  Elapsed time : 14.1587
+  Mini-Batch 37/44 - Loss: 0.6496
+  Elapsed time : 14.5631
+  Mini-Batch 38/44 - Loss: 0.5952
+  Elapsed time : 14.9648
+  Mini-Batch 39/44 - Loss: 0.5653
+  Elapsed time : 15.3392
+  Mini-Batch 40/44 - Loss: 0.6472
+  Elapsed time : 15.6429
+  Mini-Batch 41/44 - Loss: 0.6996
+  Elapsed time : 16.0251
+  Mini-Batch 42/44 - Loss: 0.5563
+  Elapsed time : 16.3934
+  Mini-Batch 43/44 - Loss: 0.6671
+  Elapsed time : 16.8122
+  Mini-Batch 44/44 - Loss: 0.5342
+  Elapsed time : 17.0947
+Best model saved at epoch 4 with loss: 0.7790
+
+# ========== Train Epoch 5/100 ==========
+[Train] Loss: 0.6150 | Accuracy: 0.6718 | Precision: 0.6649 | Recall: 0.6718 | F1: 0.6678
+[Val]   Loss: 0.7790 | Accuracy: 0.5943 | Precision: 0.5901 | Recall: 0.5943 | F1: 0.5794
+Epoch Time: 19.6326 seconds | Elapsed Time: 103.1802 seconds
+  Mini-Batch 1/44 - Loss: 0.6298
+  Elapsed time : 0.4888
+  Mini-Batch 2/44 - Loss: 0.6061
+  Elapsed time : 0.9585
+  Mini-Batch 3/44 - Loss: 0.5513
+  Elapsed time : 1.3776
+  Mini-Batch 4/44 - Loss: 0.6084
+  Elapsed time : 2.0164
+  Mini-Batch 5/44 - Loss: 0.5469
+  Elapsed time : 2.4536
+  Mini-Batch 6/44 - Loss: 0.6121
+  Elapsed time : 2.9001
+  Mini-Batch 7/44 - Loss: 0.5073
+  Elapsed time : 3.2587
+  Mini-Batch 8/44 - Loss: 0.5630
+  Elapsed time : 3.5934
+  Mini-Batch 9/44 - Loss: 0.5673
+  Elapsed time : 4.0127
+  Mini-Batch 10/44 - Loss: 0.5153
+  Elapsed time : 4.4423
+  Mini-Batch 11/44 - Loss: 0.7043
+  Elapsed time : 4.8881
+  Mini-Batch 12/44 - Loss: 0.5137
+  Elapsed time : 5.2953
+  Mini-Batch 13/44 - Loss: 0.5377
+  Elapsed time : 5.6647
+  Mini-Batch 14/44 - Loss: 0.5836
+  Elapsed time : 6.0378
+  Mini-Batch 15/44 - Loss: 0.6270
+  Elapsed time : 6.4959
+  Mini-Batch 16/44 - Loss: 0.5265
+  Elapsed time : 6.9002
+  Mini-Batch 17/44 - Loss: 0.5271
+  Elapsed time : 7.2966
+  Mini-Batch 18/44 - Loss: 0.5013
+  Elapsed time : 7.7050
+  Mini-Batch 19/44 - Loss: 0.5654
+  Elapsed time : 8.1214
+  Mini-Batch 20/44 - Loss: 0.5560
+  Elapsed time : 8.6579
+  Mini-Batch 21/44 - Loss: 0.5808
+  Elapsed time : 9.0333
+  Mini-Batch 22/44 - Loss: 0.4713
+  Elapsed time : 9.3804
+  Mini-Batch 23/44 - Loss: 0.5982
+  Elapsed time : 9.8129
+  Mini-Batch 24/44 - Loss: 0.5266
+  Elapsed time : 10.1900
+  Mini-Batch 25/44 - Loss: 0.5308
+  Elapsed time : 10.5714
+  Mini-Batch 26/44 - Loss: 0.5018
+  Elapsed time : 10.9620
+  Mini-Batch 27/44 - Loss: 0.5562
+  Elapsed time : 11.3069
+  Mini-Batch 28/44 - Loss: 0.5110
+  Elapsed time : 11.7021
+  Mini-Batch 29/44 - Loss: 0.5712
+  Elapsed time : 12.1062
+  Mini-Batch 30/44 - Loss: 0.5512
+  Elapsed time : 12.4712
+  Mini-Batch 31/44 - Loss: 0.5220
+  Elapsed time : 12.8139
+  Mini-Batch 32/44 - Loss: 0.5341
+  Elapsed time : 13.1523
+  Mini-Batch 33/44 - Loss: 0.5781
+  Elapsed time : 13.4915
+  Mini-Batch 34/44 - Loss: 0.5228
+  Elapsed time : 13.8661
+  Mini-Batch 35/44 - Loss: 0.5387
+  Elapsed time : 14.2420
+  Mini-Batch 36/44 - Loss: 0.5198
+  Elapsed time : 14.6186
+  Mini-Batch 37/44 - Loss: 0.4865
+  Elapsed time : 15.0447
+  Mini-Batch 38/44 - Loss: 0.5614
+  Elapsed time : 15.5154
+  Mini-Batch 39/44 - Loss: 0.5074
+  Elapsed time : 15.9189
+  Mini-Batch 40/44 - Loss: 0.5451
+  Elapsed time : 16.3256
+  Mini-Batch 41/44 - Loss: 0.4953
+  Elapsed time : 16.7335
+  Mini-Batch 42/44 - Loss: 0.5696
+  Elapsed time : 17.1709
+  Mini-Batch 43/44 - Loss: 0.5655
+  Elapsed time : 17.6260
+  Mini-Batch 44/44 - Loss: 0.5094
+  Elapsed time : 17.8681
+Best model saved at epoch 5 with loss: 0.7296
+
+# ========== Train Epoch 6/100 ==========
+[Train] Loss: 0.5501 | Accuracy: 0.6836 | Precision: 0.6799 | Recall: 0.6836 | F1: 0.6749
+[Val]   Loss: 0.7296 | Accuracy: 0.6271 | Precision: 0.6321 | Recall: 0.6271 | F1: 0.6250
+Epoch Time: 20.3442 seconds | Elapsed Time: 123.5459 seconds
+  Mini-Batch 1/44 - Loss: 0.5211
+  Elapsed time : 0.4726
+  Mini-Batch 2/44 - Loss: 0.4988
+  Elapsed time : 0.8816
+  Mini-Batch 3/44 - Loss: 0.4661
+  Elapsed time : 1.2243
+  Mini-Batch 4/44 - Loss: 0.5118
+  Elapsed time : 1.7089
+  Mini-Batch 5/44 - Loss: 0.4732
+  Elapsed time : 2.1506
+  Mini-Batch 6/44 - Loss: 0.4695
+  Elapsed time : 2.5465
+  Mini-Batch 7/44 - Loss: 0.4680
+  Elapsed time : 2.9033
+  Mini-Batch 8/44 - Loss: 0.4680
+  Elapsed time : 3.2163
+  Mini-Batch 9/44 - Loss: 0.4864
+  Elapsed time : 3.5316
+  Mini-Batch 10/44 - Loss: 0.4933
+  Elapsed time : 3.9268
+  Mini-Batch 11/44 - Loss: 0.4823
+  Elapsed time : 4.3308
+  Mini-Batch 12/44 - Loss: 0.5882
+  Elapsed time : 4.7380
+  Mini-Batch 13/44 - Loss: 0.6098
+  Elapsed time : 5.1656
+  Mini-Batch 14/44 - Loss: 0.5036
+  Elapsed time : 5.6195
+  Mini-Batch 15/44 - Loss: 0.5906
+  Elapsed time : 6.0704
+  Mini-Batch 16/44 - Loss: 0.4886
+  Elapsed time : 6.4577
+  Mini-Batch 17/44 - Loss: 0.5588
+  Elapsed time : 6.7473
+  Mini-Batch 18/44 - Loss: 0.5186
+  Elapsed time : 7.0857
+  Mini-Batch 19/44 - Loss: 0.5680
+  Elapsed time : 7.5281
+  Mini-Batch 20/44 - Loss: 0.4840
+  Elapsed time : 7.9084
+  Mini-Batch 21/44 - Loss: 0.5686
+  Elapsed time : 8.3624
+  Mini-Batch 22/44 - Loss: 0.5284
+  Elapsed time : 8.8005
+  Mini-Batch 23/44 - Loss: 0.4860
+  Elapsed time : 9.2071
+  Mini-Batch 24/44 - Loss: 0.5073
+  Elapsed time : 9.6487
+  Mini-Batch 25/44 - Loss: 0.5267
+  Elapsed time : 10.0477
+  Mini-Batch 26/44 - Loss: 0.5817
+  Elapsed time : 10.4844
+  Mini-Batch 27/44 - Loss: 0.5036
+  Elapsed time : 10.9265
+  Mini-Batch 28/44 - Loss: 0.5283
+  Elapsed time : 11.3395
+  Mini-Batch 29/44 - Loss: 0.4977
+  Elapsed time : 11.8037
+  Mini-Batch 30/44 - Loss: 0.5222
+  Elapsed time : 12.2184
+  Mini-Batch 31/44 - Loss: 0.4599
+  Elapsed time : 12.6004
+  Mini-Batch 32/44 - Loss: 0.5427
+  Elapsed time : 12.9512
+  Mini-Batch 33/44 - Loss: 0.4631
+  Elapsed time : 13.3495
+  Mini-Batch 34/44 - Loss: 0.5220
+  Elapsed time : 13.6983
+  Mini-Batch 35/44 - Loss: 0.5038
+  Elapsed time : 14.1399
+  Mini-Batch 36/44 - Loss: 0.4430
+  Elapsed time : 14.5489
+  Mini-Batch 37/44 - Loss: 0.4607
+  Elapsed time : 15.1196
+  Mini-Batch 38/44 - Loss: 0.5743
+  Elapsed time : 15.5189
+  Mini-Batch 39/44 - Loss: 0.5193
+  Elapsed time : 15.9598
+  Mini-Batch 40/44 - Loss: 0.3961
+  Elapsed time : 16.3079
+  Mini-Batch 41/44 - Loss: 0.5155
+  Elapsed time : 16.6929
+  Mini-Batch 42/44 - Loss: 0.4534
+  Elapsed time : 17.1436
+  Mini-Batch 43/44 - Loss: 0.5071
+  Elapsed time : 17.5876
+  Mini-Batch 44/44 - Loss: 0.4442
+  Elapsed time : 17.8674
+Best model saved at epoch 6 with loss: 0.6517
+
+# ========== Train Epoch 7/100 ==========
+[Train] Loss: 0.5069 | Accuracy: 0.7125 | Precision: 0.7091 | Recall: 0.7125 | F1: 0.7104
+[Val]   Loss: 0.6517 | Accuracy: 0.6886 | Precision: 0.6889 | Recall: 0.6886 | F1: 0.6784
+Epoch Time: 20.3896 seconds | Elapsed Time: 143.9569 seconds
+  Mini-Batch 1/44 - Loss: 0.4662
+  Elapsed time : 0.4252
+  Mini-Batch 2/44 - Loss: 0.5048
+  Elapsed time : 0.8415
+  Mini-Batch 3/44 - Loss: 0.5188
+  Elapsed time : 1.2668
+  Mini-Batch 4/44 - Loss: 0.6189
+  Elapsed time : 1.6574
+  Mini-Batch 5/44 - Loss: 0.4732
+  Elapsed time : 2.0503
+  Mini-Batch 6/44 - Loss: 0.4668
+  Elapsed time : 2.4588
+  Mini-Batch 7/44 - Loss: 0.4314
+  Elapsed time : 2.9010
+  Mini-Batch 8/44 - Loss: 0.5144
+  Elapsed time : 3.3501
+  Mini-Batch 9/44 - Loss: 0.4195
+  Elapsed time : 3.7732
+  Mini-Batch 10/44 - Loss: 0.4346
+  Elapsed time : 4.2108
+  Mini-Batch 11/44 - Loss: 0.4448
+  Elapsed time : 4.5860
+  Mini-Batch 12/44 - Loss: 0.5133
+  Elapsed time : 4.9224
+  Mini-Batch 13/44 - Loss: 0.5351
+  Elapsed time : 5.3060
+  Mini-Batch 14/44 - Loss: 0.4555
+  Elapsed time : 5.7466
+  Mini-Batch 15/44 - Loss: 0.4542
+  Elapsed time : 6.1011
+  Mini-Batch 16/44 - Loss: 0.4848
+  Elapsed time : 6.4646
+  Mini-Batch 17/44 - Loss: 0.4640
+  Elapsed time : 6.8738
+  Mini-Batch 18/44 - Loss: 0.4865
+  Elapsed time : 7.2477
+  Mini-Batch 19/44 - Loss: 0.4918
+  Elapsed time : 7.6064
+  Mini-Batch 20/44 - Loss: 0.4562
+  Elapsed time : 8.2031
+  Mini-Batch 21/44 - Loss: 0.4487
+  Elapsed time : 8.6223
+  Mini-Batch 22/44 - Loss: 0.4472
+  Elapsed time : 9.0120
+  Mini-Batch 23/44 - Loss: 0.4691
+  Elapsed time : 9.4498
+  Mini-Batch 24/44 - Loss: 0.5139
+  Elapsed time : 9.8730
+  Mini-Batch 25/44 - Loss: 0.4496
+  Elapsed time : 10.4921
+  Mini-Batch 26/44 - Loss: 0.4500
+  Elapsed time : 10.8859
+  Mini-Batch 27/44 - Loss: 0.4284
+  Elapsed time : 11.2588
+  Mini-Batch 28/44 - Loss: 0.5043
+  Elapsed time : 11.5675
+  Mini-Batch 29/44 - Loss: 0.4493
+  Elapsed time : 11.9105
+  Mini-Batch 30/44 - Loss: 0.4828
+  Elapsed time : 12.3362
+  Mini-Batch 31/44 - Loss: 0.4029
+  Elapsed time : 12.8891
+  Mini-Batch 32/44 - Loss: 0.5098
+  Elapsed time : 13.2622
+  Mini-Batch 33/44 - Loss: 0.4312
+  Elapsed time : 13.5600
+  Mini-Batch 34/44 - Loss: 0.4373
+  Elapsed time : 13.8769
+  Mini-Batch 35/44 - Loss: 0.4323
+  Elapsed time : 14.2528
+  Mini-Batch 36/44 - Loss: 0.4535
+  Elapsed time : 14.6168
+  Mini-Batch 37/44 - Loss: 0.4755
+  Elapsed time : 15.1033
+  Mini-Batch 38/44 - Loss: 0.5196
+  Elapsed time : 15.4924
+  Mini-Batch 39/44 - Loss: 0.4303
+  Elapsed time : 15.8498
+  Mini-Batch 40/44 - Loss: 0.4820
+  Elapsed time : 16.2040
+  Mini-Batch 41/44 - Loss: 0.4325
+  Elapsed time : 16.6548
+  Mini-Batch 42/44 - Loss: 0.4322
+  Elapsed time : 17.0719
+  Mini-Batch 43/44 - Loss: 0.4822
+  Elapsed time : 17.4309
+  Mini-Batch 44/44 - Loss: 0.6299
+  Elapsed time : 17.6846
+Best model saved at epoch 7 with loss: 0.6367
+
+# ========== Train Epoch 8/100 ==========
+[Train] Loss: 0.4734 | Accuracy: 0.7629 | Precision: 0.7626 | Recall: 0.7629 | F1: 0.7604
+[Val]   Loss: 0.6367 | Accuracy: 0.6900 | Precision: 0.6908 | Recall: 0.6900 | F1: 0.6900
+Epoch Time: 20.2638 seconds | Elapsed Time: 164.2409 seconds
+  Mini-Batch 1/44 - Loss: 0.3798
+  Elapsed time : 0.4826
+  Mini-Batch 2/44 - Loss: 0.5289
+  Elapsed time : 0.9260
+  Mini-Batch 3/44 - Loss: 0.4795
+  Elapsed time : 1.3715
+  Mini-Batch 4/44 - Loss: 0.4958
+  Elapsed time : 1.7241
+  Mini-Batch 5/44 - Loss: 0.4463
+  Elapsed time : 2.2062
+  Mini-Batch 6/44 - Loss: 0.4253
+  Elapsed time : 2.5924
+  Mini-Batch 7/44 - Loss: 0.4620
+  Elapsed time : 2.9541
+  Mini-Batch 8/44 - Loss: 0.4215
+  Elapsed time : 3.4096
+  Mini-Batch 9/44 - Loss: 0.3941
+  Elapsed time : 3.9059
+  Mini-Batch 10/44 - Loss: 0.4169
+  Elapsed time : 4.2763
+  Mini-Batch 11/44 - Loss: 0.4511
+  Elapsed time : 4.6894
+  Mini-Batch 12/44 - Loss: 0.4635
+  Elapsed time : 5.0618
+  Mini-Batch 13/44 - Loss: 0.3834
+  Elapsed time : 5.4080
+  Mini-Batch 14/44 - Loss: 0.4093
+  Elapsed time : 5.7791
+  Mini-Batch 15/44 - Loss: 0.4205
+  Elapsed time : 6.1690
+  Mini-Batch 16/44 - Loss: 0.3655
+  Elapsed time : 6.5954
+  Mini-Batch 17/44 - Loss: 0.3954
+  Elapsed time : 6.9993
+  Mini-Batch 18/44 - Loss: 0.4000
+  Elapsed time : 7.3981
+  Mini-Batch 19/44 - Loss: 0.3623
+  Elapsed time : 7.8143
+  Mini-Batch 20/44 - Loss: 0.3887
+  Elapsed time : 8.2550
+  Mini-Batch 21/44 - Loss: 0.3703
+  Elapsed time : 8.6106
+  Mini-Batch 22/44 - Loss: 0.4205
+  Elapsed time : 8.9235
+  Mini-Batch 23/44 - Loss: 0.3408
+  Elapsed time : 9.3105
+  Mini-Batch 24/44 - Loss: 0.4840
+  Elapsed time : 9.7211
+  Mini-Batch 25/44 - Loss: 0.4146
+  Elapsed time : 10.1216
+  Mini-Batch 26/44 - Loss: 0.3266
+  Elapsed time : 10.5904
+  Mini-Batch 27/44 - Loss: 0.5002
+  Elapsed time : 11.0035
+  Mini-Batch 28/44 - Loss: 0.3850
+  Elapsed time : 11.3786
+  Mini-Batch 29/44 - Loss: 0.3557
+  Elapsed time : 11.6902
+  Mini-Batch 30/44 - Loss: 0.3940
+  Elapsed time : 12.0767
+  Mini-Batch 31/44 - Loss: 0.3916
+  Elapsed time : 12.5052
+  Mini-Batch 32/44 - Loss: 0.4185
+  Elapsed time : 12.9595
+  Mini-Batch 33/44 - Loss: 0.3727
+  Elapsed time : 13.3803
+  Mini-Batch 34/44 - Loss: 0.3897
+  Elapsed time : 13.7614
+  Mini-Batch 35/44 - Loss: 0.3564
+  Elapsed time : 14.0797
+  Mini-Batch 36/44 - Loss: 0.3389
+  Elapsed time : 14.4378
+  Mini-Batch 37/44 - Loss: 0.3737
+  Elapsed time : 15.0376
+  Mini-Batch 38/44 - Loss: 0.4028
+  Elapsed time : 15.4441
+  Mini-Batch 39/44 - Loss: 0.3673
+  Elapsed time : 15.8897
+  Mini-Batch 40/44 - Loss: 0.3428
+  Elapsed time : 16.3443
+  Mini-Batch 41/44 - Loss: 0.3645
+  Elapsed time : 16.7625
+  Mini-Batch 42/44 - Loss: 0.3411
+  Elapsed time : 17.4015
+  Mini-Batch 43/44 - Loss: 0.4948
+  Elapsed time : 17.7641
+  Mini-Batch 44/44 - Loss: 0.4350
+  Elapsed time : 18.0060
+
+# ========== Train Epoch 9/100 ==========
+[Train] Loss: 0.4062 | Accuracy: 0.8246 | Precision: 0.8262 | Recall: 0.8246 | F1: 0.8226
+[Val]   Loss: 0.6680 | Accuracy: 0.7143 | Precision: 0.7187 | Recall: 0.7143 | F1: 0.7127
+Epoch Time: 20.3873 seconds | Elapsed Time: 184.6479 seconds
+  Mini-Batch 1/44 - Loss: 0.3567
+  Elapsed time : 0.5015
+  Mini-Batch 2/44 - Loss: 0.2965
+  Elapsed time : 0.9324
+  Mini-Batch 3/44 - Loss: 0.2716
+  Elapsed time : 1.4261
+  Mini-Batch 4/44 - Loss: 0.3278
+  Elapsed time : 1.7673
+  Mini-Batch 5/44 - Loss: 0.3393
+  Elapsed time : 2.2123
+  Mini-Batch 6/44 - Loss: 0.3556
+  Elapsed time : 2.6198
+  Mini-Batch 7/44 - Loss: 0.3510
+  Elapsed time : 3.0554
+  Mini-Batch 8/44 - Loss: 0.3590
+  Elapsed time : 3.5645
+  Mini-Batch 9/44 - Loss: 0.2941
+  Elapsed time : 4.0377
+  Mini-Batch 10/44 - Loss: 0.2795
+  Elapsed time : 4.4666
+  Mini-Batch 11/44 - Loss: 0.3162
+  Elapsed time : 4.9252
+  Mini-Batch 12/44 - Loss: 0.3309
+  Elapsed time : 5.3614
+  Mini-Batch 13/44 - Loss: 0.3110
+  Elapsed time : 5.9389
+  Mini-Batch 14/44 - Loss: 0.3380
+  Elapsed time : 6.3550
+  Mini-Batch 15/44 - Loss: 0.2798
+  Elapsed time : 6.7609
+  Mini-Batch 16/44 - Loss: 0.3006
+  Elapsed time : 7.1389
+  Mini-Batch 17/44 - Loss: 0.2961
+  Elapsed time : 7.5281
+  Mini-Batch 18/44 - Loss: 0.2961
+  Elapsed time : 7.9818
+  Mini-Batch 19/44 - Loss: 0.2971
+  Elapsed time : 8.4067
+  Mini-Batch 20/44 - Loss: 0.2817
+  Elapsed time : 8.8192
+  Mini-Batch 21/44 - Loss: 0.3457
+  Elapsed time : 9.2168
+  Mini-Batch 22/44 - Loss: 0.2988
+  Elapsed time : 9.5223
+  Mini-Batch 23/44 - Loss: 0.3484
+  Elapsed time : 9.8505
+  Mini-Batch 24/44 - Loss: 0.2460
+  Elapsed time : 10.2728
+  Mini-Batch 25/44 - Loss: 0.2813
+  Elapsed time : 10.6922
+  Mini-Batch 26/44 - Loss: 0.3306
+  Elapsed time : 11.1054
+  Mini-Batch 27/44 - Loss: 0.3287
+  Elapsed time : 11.5078
+  Mini-Batch 28/44 - Loss: 0.2824
+  Elapsed time : 11.8988
+  Mini-Batch 29/44 - Loss: 0.3763
+  Elapsed time : 12.3187
+  Mini-Batch 30/44 - Loss: 0.3978
+  Elapsed time : 12.7833
+  Mini-Batch 31/44 - Loss: 0.4219
+  Elapsed time : 13.1570
+  Mini-Batch 32/44 - Loss: 0.3695
+  Elapsed time : 13.4896
+  Mini-Batch 33/44 - Loss: 0.2869
+  Elapsed time : 13.8835
+  Mini-Batch 34/44 - Loss: 0.3250
+  Elapsed time : 14.3466
+  Mini-Batch 35/44 - Loss: 0.3527
+  Elapsed time : 14.8400
+  Mini-Batch 36/44 - Loss: 0.4436
+  Elapsed time : 15.1402
+  Mini-Batch 37/44 - Loss: 0.3448
+  Elapsed time : 15.4875
+  Mini-Batch 38/44 - Loss: 0.3542
+  Elapsed time : 15.9197
+  Mini-Batch 39/44 - Loss: 0.2664
+  Elapsed time : 16.3599
+  Mini-Batch 40/44 - Loss: 0.2480
+  Elapsed time : 16.8261
+  Mini-Batch 41/44 - Loss: 0.2849
+  Elapsed time : 17.2527
+  Mini-Batch 42/44 - Loss: 0.3204
+  Elapsed time : 17.6630
+  Mini-Batch 43/44 - Loss: 0.3376
+  Elapsed time : 18.0315
+  Mini-Batch 44/44 - Loss: 0.2703
+  Elapsed time : 18.2734
+
+# ========== Train Epoch 10/100 ==========
+[Train] Loss: 0.3214 | Accuracy: 0.8896 | Precision: 0.8913 | Recall: 0.8896 | F1: 0.8886
+[Val]   Loss: 0.7320 | Accuracy: 0.7129 | Precision: 0.7120 | Recall: 0.7129 | F1: 0.7047
+Epoch Time: 20.7047 seconds | Elapsed Time: 205.3725 seconds
+  Mini-Batch 1/44 - Loss: 0.2415
+  Elapsed time : 0.5265
+  Mini-Batch 2/44 - Loss: 0.2828
+  Elapsed time : 1.0663
+  Mini-Batch 3/44 - Loss: 0.2563
+  Elapsed time : 1.4646
+  Mini-Batch 4/44 - Loss: 0.2648
+  Elapsed time : 1.8363
+  Mini-Batch 5/44 - Loss: 0.2608
+  Elapsed time : 2.1849
+  Mini-Batch 6/44 - Loss: 0.2319
+  Elapsed time : 2.5961
+  Mini-Batch 7/44 - Loss: 0.2227
+  Elapsed time : 3.1809
+  Mini-Batch 8/44 - Loss: 0.2677
+  Elapsed time : 3.6151
+  Mini-Batch 9/44 - Loss: 0.2278
+  Elapsed time : 4.0254
+  Mini-Batch 10/44 - Loss: 0.2251
+  Elapsed time : 4.3993
+  Mini-Batch 11/44 - Loss: 0.2280
+  Elapsed time : 4.7368
+  Mini-Batch 12/44 - Loss: 0.3354
+  Elapsed time : 5.2181
+  Mini-Batch 13/44 - Loss: 0.3111
+  Elapsed time : 5.6573
+  Mini-Batch 14/44 - Loss: 0.2436
+  Elapsed time : 6.0597
+  Mini-Batch 15/44 - Loss: 0.2544
+  Elapsed time : 6.4750
+  Mini-Batch 16/44 - Loss: 0.2445
+  Elapsed time : 6.9182
+  Mini-Batch 17/44 - Loss: 0.2446
+  Elapsed time : 7.3256
+  Mini-Batch 18/44 - Loss: 0.2035
+  Elapsed time : 7.7166
+  Mini-Batch 19/44 - Loss: 0.2287
+  Elapsed time : 8.1272
+  Mini-Batch 20/44 - Loss: 0.2460
+  Elapsed time : 8.5189
+  Mini-Batch 21/44 - Loss: 0.2560
+  Elapsed time : 8.9601
+  Mini-Batch 22/44 - Loss: 0.2181
+  Elapsed time : 9.3792
+  Mini-Batch 23/44 - Loss: 0.2225
+  Elapsed time : 9.9320
+  Mini-Batch 24/44 - Loss: 0.1972
+  Elapsed time : 10.3416
+  Mini-Batch 25/44 - Loss: 0.1968
+  Elapsed time : 10.7074
+  Mini-Batch 26/44 - Loss: 0.2155
+  Elapsed time : 11.0471
+  Mini-Batch 27/44 - Loss: 0.1947
+  Elapsed time : 11.4552
+  Mini-Batch 28/44 - Loss: 0.2410
+  Elapsed time : 11.9980
+  Mini-Batch 29/44 - Loss: 0.2253
+  Elapsed time : 12.4053
+  Mini-Batch 30/44 - Loss: 0.2135
+  Elapsed time : 12.7741
+  Mini-Batch 31/44 - Loss: 0.2308
+  Elapsed time : 13.0916
+  Mini-Batch 32/44 - Loss: 0.2023
+  Elapsed time : 13.4378
+  Mini-Batch 33/44 - Loss: 0.1991
+  Elapsed time : 13.8242
+  Mini-Batch 34/44 - Loss: 0.2232
+  Elapsed time : 14.2451
+  Mini-Batch 35/44 - Loss: 0.2059
+  Elapsed time : 14.6279
+  Mini-Batch 36/44 - Loss: 0.1941
+  Elapsed time : 14.9775
+  Mini-Batch 37/44 - Loss: 0.1893
+  Elapsed time : 15.4211
+  Mini-Batch 38/44 - Loss: 0.2160
+  Elapsed time : 15.7921
+  Mini-Batch 39/44 - Loss: 0.2050
+  Elapsed time : 16.1898
+  Mini-Batch 40/44 - Loss: 0.2175
+  Elapsed time : 16.7377
+  Mini-Batch 41/44 - Loss: 0.2233
+  Elapsed time : 17.1970
+  Mini-Batch 42/44 - Loss: 0.1989
+  Elapsed time : 17.6337
+  Mini-Batch 43/44 - Loss: 0.2895
+  Elapsed time : 18.0584
+  Mini-Batch 44/44 - Loss: 0.1990
+  Elapsed time : 18.3476
+
+# ========== Train Epoch 11/100 ==========
+[Train] Loss: 0.2317 | Accuracy: 0.9473 | Precision: 0.9479 | Recall: 0.9473 | F1: 0.9470
+[Val]   Loss: 0.6900 | Accuracy: 0.7186 | Precision: 0.7312 | Recall: 0.7186 | F1: 0.7202
+Epoch Time: 21.0025 seconds | Elapsed Time: 226.3954 seconds
+Early stopping triggered
+
+** Training done in 226.3954 seconds
+
+Confusion Matrix:
+[[202  31   2]
+ [ 10 151  69]
+ [  7  96 132]]
+
+# ========== Test ==========
+Loss: 0.6778 | Accuracy: 0.6929 | Precision: 0.7064 | Recall: 0.6929 | F1: 0.6964
+Test done in 2.3873 seconds
+
+🏃 View run run_2025-02-17T20-48-27 at: http://127.0.0.1:5000/#/experiments/668628528360875030/runs/6375fbbc35d84ab4b9653799e8604101
+🧪 View experiment at: http://127.0.0.1:5000/#/experiments/668628528360875030

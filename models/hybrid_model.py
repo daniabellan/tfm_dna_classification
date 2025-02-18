@@ -13,7 +13,6 @@ class HybridSequenceClassifier(nn.Module):
                  num_heads, 
                  num_classes, 
                  num_layers, 
-                 max_seq_length, 
                  use_signals=True, 
                  use_sequences=True):
         super(HybridSequenceClassifier, self).__init__()
@@ -25,37 +24,52 @@ class HybridSequenceClassifier(nn.Module):
 
         # --- Configuración de la rama para señales eléctricas ---
         # Convolución inicial para extracción de características locales
-        self.conv1 = nn.Conv1d(input_channels, 32, kernel_size=5, stride=3)
+        self.conv1 = nn.Conv1d(input_channels, 64, kernel_size=5, stride=3, padding=2)
         self.pool1 = nn.MaxPool1d(kernel_size=3, stride=2)  # Reducción de dimensionalidad
 
         # Bloques residuales para aumentar la profundidad de la red
-        self.layer1 = ResidualBlock(32, 64, stride=2)
-        self.layer2 = ResidualBlock(64, 128, stride=2)
-        self.layer3 = ResidualBlock(128, 256, stride=2)
-        self.layer4 = ResidualBlock(256, 512, stride=2)
+        self.layer1 = ResidualBlock(64, 128, stride=2, dilation=1)
+        self.layer2 = ResidualBlock(128, 256, stride=2, dilation=2)
+        self.layer3 = ResidualBlock(256, 512, stride=2, dilation=4)
+        self.layer4 = ResidualBlock(512, 1024, stride=2, dilation=8)
 
         # Pooling global para obtener características fijas
         self.global_pool_signals = nn.AdaptiveMaxPool1d(8)
+
+        # LSTM/GRU
+        # Transformer en la rama de señales
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=1024,  # La dimensionalidad de la señal después del CNN
+            nhead=8,       # Número de cabezas de atención
+            dim_feedforward=2048,  
+            dropout=0.3, 
+            batch_first=True
+        )
+        self.signal_transformer = nn.TransformerEncoder(encoder_layer, num_layers=3)  # 3 capas de Transformer
 
         # --- Configuración de la rama para secuencias con Transformer ---
         # Embedding para representar tokens en un espacio d-dimensional
         self.kmer_padding_idx = vocab_size-1
         self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=self.kmer_padding_idx)
 
-        # Codificación posicional para incorporar información de posición en la secuencia
-        self.positional_encoding = nn.Parameter(torch.zeros(1, max_seq_length, embed_dim))
+        # Conv1D para captura de patrones locales en K-mers
+        self.seq_conv1 = nn.Conv1d(embed_dim, embed_dim, kernel_size=3, stride=1, padding=1)
+        self.seq_conv2 = nn.Conv1d(embed_dim, embed_dim, kernel_size=3, stride=1, padding=1)
 
         # Normalización antes del Transformer
         self.seq_norm = nn.LayerNorm(embed_dim)
         
         # Capas del Transformer Encoder
         encoder_layer = nn.TransformerEncoderLayer(
-            d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.5
+            d_model=embed_dim, nhead=num_heads, batch_first=True, dropout=0.3
         )
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
         # Dropout
         self.seq_dropout = nn.Dropout(0.1)
+
+        # Pooling de atención para reducir la dimensionalidad
+        self.seq_attention_pooling = nn.Linear(embed_dim, 1)
 
         # --- Clasificadores ---
         # Clasificador conjunto
@@ -64,12 +78,12 @@ class HybridSequenceClassifier(nn.Module):
         self.fc3 = nn.Linear(512, num_classes)
 
         # Clasificador para señales únicamente
-        self.fc1_signals = nn.Linear(512 * 8, 2048)
+        self.fc1_signals = nn.Linear(512 * 2, 2048)
         self.fc2_signals = nn.Linear(2048, 512)
         self.fc3_signals = nn.Linear(512, num_classes)
 
         # Clasificador para secuencias únicamente
-        self.fc1_sequences = nn.Linear(embed_dim * 8, 2048)
+        self.fc1_sequences = nn.Linear(embed_dim, 2048)
         self.fc2_sequences = nn.Linear(2048, 512)
         self.fc3_sequences = nn.Linear(512, num_classes)
         
@@ -95,7 +109,16 @@ class HybridSequenceClassifier(nn.Module):
 
             # Pooling global y aplanamiento
             x_signals = self.global_pool_signals(x_signals)
-            x_signals = x_signals.view(x_signals.size(0), -1)
+            # x_signals = x_signals.view(x_signals.size(0), -1)
+
+            # Transformar el tamaño a (batch, seq_len, feature_dim) para el Transformer
+            x_signals = x_signals.permute(0, 2, 1) 
+            
+            # Transformer Encoder
+            x_signals = self.signal_transformer(x_signals)
+
+            # Aplicamos mean pooling para obtener una representación global
+            x_signals = torch.mean(x_signals, dim=1)
 
             # --- Normalización L2 ---
             # Asegura que las características tengan una magnitud uniforme
@@ -105,28 +128,25 @@ class HybridSequenceClassifier(nn.Module):
             # --- Procesamiento de la rama de secuencias ---
             # Convertir -1 en máscara de padding (True donde hay padding)
             padding_mask = sequences == self.kmer_padding_idx
-            
-            # Embedding de secuencias y adición de codificación posicional
-            x_sequences = self.embedding(sequences) 
 
-            # Normalización de las sequencias
+            # Embedding de K-mers
+            x_sequences = self.embedding(sequences)
+
+            # Convoluciones para capturar patrones locales
+            x_sequences = x_sequences.permute(0, 2, 1)  # Cambiar a (batch_size, embed_dim, seq_length)
+            x_sequences = F.relu(self.seq_conv1(x_sequences))
+            x_sequences = F.relu(self.seq_conv2(x_sequences))
+            x_sequences = x_sequences.permute(0, 2, 1)  # Volver a (batch_size, seq_length, embed_dim)
+
+            # Normalización
             x_sequences = self.seq_norm(x_sequences)
-            
+
             # Transformer Encoder
             x_sequences = self.transformer(x_sequences, src_key_padding_mask=padding_mask)
 
-            # Dropout
-            x_sequences = self.seq_dropout(x_sequences)
-
-            # Pooling global sobre la salida del Transformer
-            x_sequences = x_sequences.permute(0, 2, 1)  # Cambiar a (batch_size, embed_dim, seq_length)
-            x_sequences = self.global_pool_signals(x_sequences)
-            x_sequences = x_sequences.reshape(x_sequences.size(0), -1)
-
-            # --- Normalización L2 ---
-            # Asegura que las características tengan una magnitud uniforme
-            x_sequences = F.normalize(x_sequences, p=2, dim=1)
-
+            # Attention Pooling para extraer características clave
+            attention_scores = F.softmax(self.seq_attention_pooling(x_sequences), dim=1)  # (batch_size, seq_length, 1)
+            x_sequences = (x_sequences * attention_scores).sum(dim=1)  # Sumar ponderadamente sobre la secuencia
 
         # --- Combinación y clasificación ---
         
@@ -157,8 +177,10 @@ class HybridSequenceClassifier(nn.Module):
             # Usar solo la rama de las secuencias
             x = F.relu(self.fc1_sequences(x_sequences))
             x = self.fc1_dropout(x)
+            
             x = F.relu(self.fc2_sequences(x))
             x = self.fc2_dropout(x)
+            
             x = self.fc3_sequences(x)  
 
         return x

@@ -9,7 +9,7 @@ CONFIG_DIR="configs/experiment_configs"
 
 # Lista de archivos específicos a ejecutar
 CONFIG_FILES=(
-    "2000s_k3_ecoli_salmonella_signal.yaml"
+    "10000s_k3_ec_salm_mm39_signal.yaml"
 )
 
 # Activar Conda

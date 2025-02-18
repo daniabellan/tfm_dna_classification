@@ -303,32 +303,31 @@ class RealSyntheticDataset:
         self.kmer_dict = self.generate_kmer_dict()
 
         # Cargar datos reales
-        real_data = self._load_fast5(fast5_path = config["real_dataset"])
+        real_data_raw = self._load_fast5(fast5_path = config["real_dataset"])
 
         # Crear una muestra de estos datos reales para evitar utilizar demasiados datos
-        real_data_sample = list(self.rng.choice(real_data, 
+        real_data_sample = list(self.rng.choice(real_data_raw, 
                                                 size = self.num_samples, 
                                                 replace = False))
         
-        # Añadir K-Mers a la muestra del dataset real
-        for sample in real_data_sample:
-            sample["k_mers"] = self.sequence_to_kmer_indices(sequence = sample["sequence"])
-        
+        # Preprocesar datos reales
+        real_data = self._preprocess_fast5(real_data_raw = real_data_sample)
+
         # Final dataset real
-        self.full_dataset = real_data_sample
+        self.full_dataset = real_data
 
         # Si se requiere generar dataset sintético
         if len(self.base_probs) > 0:
             # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
             # Media de la longitud de la secuencia
-            average_seq_length = np.average([len(x["sequence"]) for x in real_data_sample])
+            average_seq_length = np.average([len(x["sequence"]) for x in real_data])
             
             # Longitud mínima y máxima de la secuencia +- X%
             self.min_seq_length = average_seq_length - int(average_seq_length * seq_variation_perc)
             self.max_seq_length = average_seq_length + int(average_seq_length * seq_variation_perc)
             
             # Generar datos sintéticos 
-            synthetic_data = self._generate_data(real_data_sample)
+            synthetic_data = self._generate_data(real_data)
 
             # Unir datasets (real + sintético)
             self.full_dataset += synthetic_data
@@ -362,37 +361,51 @@ class RealSyntheticDataset:
 
     
     def _load_fast5(self, fast5_path:str):
-        real_data = []
+        real_data_raw = []
         for class_idx, file in enumerate(fast5_path):
-            start = time.time()
             reads = load_dict_h5(file)
             for read_idx, read_data in list(reads.items()):
-                if self.preprocess:
-                    processed_signal = self.prepr_fn.preprocess_signal(signal = read_data["signal_pa"])
-                    window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
-                else:
-                    processed_signal = []
-                    window_signal = self.prepr_fn.apply_sliding_window(signal = read_data["signal_pa"])
-
                 # Rellenar con datos el diccionario
                 signal_data = SIGNALDATA_KEYS.copy()  # Copiar la plantilla
                 signal_data["signal_pa"] = read_data["signal_pa"]
-                signal_data["processed_signal"] = processed_signal
-                signal_data["window_signal"] = window_signal
                 signal_data["sequence"] = read_data["sequence"]
                 signal_data["label"] = class_idx
+                signal_data["processed_signal"] = None
+                signal_data["window_signal"] = None
+                signal_data["k_mers"] = None
 
-                real_data.append(signal_data)
+                real_data_raw.append(signal_data)
         
-            print(f"Preprocessing done in {(time.time() - start):.4f} secs")
+        return real_data_raw
 
-        return real_data
+    def _preprocess_fast5(self, real_data_raw:list):
+        start = time.time()
+        for read_idx, read_data in enumerate(real_data_raw):
+            if self.preprocess:
+                processed_signal = self.prepr_fn.preprocess_signal(signal = read_data["signal_pa"])
+                window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
+            else:
+                processed_signal = []
+                window_signal = self.prepr_fn.apply_sliding_window(signal = read_data["signal_pa"])
 
+            # Rellenar con datos el diccionario
+            read_data["processed_signal"] = processed_signal
+            read_data["window_signal"] = window_signal
 
-    def _generate_data(self, real_data_sample):
+            # Añadir K-Mers a la muestra del dataset real
+            read_data["k_mers"] = self.sequence_to_kmer_indices(sequence = read_data["sequence"])
+
+            if read_idx % 100 == 0 or read_idx==len(real_data_raw)-1:
+                print(f"Preprocessed read {read_idx}/{len(real_data_raw)}")
+
+        print(f"Preprocessing done in {(time.time() - start):.4f} secs")
+
+        return real_data_raw 
+
+    def _generate_data(self, real_data):
         synthetic_data = []
         # Comprobar cuales son las etiquetas asignadas a los datos reales
-        last_label_class = max(list(Counter([x["label"] for x in real_data_sample]).keys()))
+        last_label_class = max(list(Counter([x["label"] for x in real_data]).keys()))
 
         # Generar secuencias en base a las probabilidades de bases
         for label_offset, probs in enumerate(self.base_probs):
