@@ -4,6 +4,31 @@ import torch.nn.functional as F
 from models.residual_block import ResidualBlock
 
 
+class PositionalEncoding(nn.Module):
+    def __init__(self, max_len: int, d_model: int):
+        """
+        Positional Encoding usando nn.Embedding para una implementación más eficiente.
+        
+        Args:
+        - max_len (int): Longitud máxima de la secuencia.
+        - d_model (int): Dimensión de la representación (debe coincidir con la salida del CNN antes del Transformer).
+        """
+        super(PositionalEncoding, self).__init__()
+        self.position_embedding = nn.Embedding(max_len, d_model)
+        self.register_buffer("positions", torch.arange(max_len).unsqueeze(0))  # Índices de posición
+
+    def forward(self, x):
+        """
+        Args:
+        - x (Tensor): Entrada de tamaño (batch, seq_len, d_model)
+
+        Returns:
+        - Tensor con Positional Encoding aplicado.
+        """
+        seq_len = x.size(1)  # Obtener la longitud de la secuencia
+        pos_enc = self.position_embedding(self.positions[:, :seq_len])  # Obtener las posiciones correspondientes
+        return x + pos_enc  # Sumar las posiciones embebidas a la entrada
+
 # Modelo Híbrido con Transformer para secuencias y procesamiento de señales eléctricas
 class HybridSequenceClassifier(nn.Module):
     def __init__(self, 
@@ -36,16 +61,17 @@ class HybridSequenceClassifier(nn.Module):
         # Pooling global para obtener características fijas
         self.global_pool_signals = nn.AdaptiveMaxPool1d(8)
 
-        # LSTM/GRU
         # Transformer en la rama de señales
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=1024,  # La dimensionalidad de la señal después del CNN
             nhead=8,       # Número de cabezas de atención
             dim_feedforward=2048,  
-            dropout=0.3, 
+            dropout=0.5, 
             batch_first=True
         )
-        self.signal_transformer = nn.TransformerEncoder(encoder_layer, num_layers=3)  # 3 capas de Transformer
+        self.signal_transformer = nn.TransformerEncoder(encoder_layer, num_layers=2) 
+        self.attention_layer = nn.Linear(1024, 1)
+        self.positional_encoding = PositionalEncoding(max_len=1500, d_model=1024)  # max_len basado en window_size
 
         # --- Configuración de la rama para secuencias con Transformer ---
         # Embedding para representar tokens en un espacio d-dimensional
@@ -88,8 +114,8 @@ class HybridSequenceClassifier(nn.Module):
         self.fc3_sequences = nn.Linear(512, num_classes)
         
         # Regularización con Dropout
-        self.fc1_dropout = nn.Dropout(0.5)
-        self.fc2_dropout = nn.Dropout(0.5)
+        self.fc1_dropout = nn.Dropout(0.6)
+        self.fc2_dropout = nn.Dropout(0.6)
 
         # Normalizar esclas después de la concatenación
         self.bn_combined = nn.BatchNorm1d(512 * 8 + embed_dim * 8)
@@ -113,6 +139,9 @@ class HybridSequenceClassifier(nn.Module):
 
             # Transformar el tamaño a (batch, seq_len, feature_dim) para el Transformer
             x_signals = x_signals.permute(0, 2, 1) 
+            
+            # Positional encoding
+            x_signals = self.positional_encoding(x_signals)  
             
             # Transformer Encoder
             x_signals = self.signal_transformer(x_signals)

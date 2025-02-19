@@ -39,7 +39,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "=== Generando señal eléctrica con Squigulator ==="
-squigulator "$GENOME_REF" -x dna-r9-min -o "${BASE_DIR}/blow5/reads.blow5" -n 4000 --seed 42
+squigulator "$GENOME_REF" -x dna-r9-min -o "${BASE_DIR}/blow5/reads.blow5" -n 12000 --seed 42
 if [ $? -ne 0 ]; then
     echo "Error al ejecutar Squigulator"
     exit 1
