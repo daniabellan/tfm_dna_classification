@@ -1,6 +1,7 @@
 import time as time
 import argparse
 import torch
+
 import json
 import yaml
 from pathlib import Path
@@ -31,10 +32,9 @@ def load_model_from_config(model_config, model_class):
 
 def create_synthetic_dataset(dataset_config: dict):
     # Cargar dataset reales y sintéticos
-    if "real_dataset" in dataset_config: 
-        start = time.time()
-        gen_dataset = RealSyntheticDataset(config = dataset_config)
-        print(f"Data loaded in {(time.time() - start):.4f} seconds")
+    start = time.time()
+    gen_dataset = RealSyntheticDataset(config = dataset_config)
+    print(f"Data loaded in {(time.time() - start):.4f} seconds")
 
     # Split estratificado para mantener el balance de las clases entre cada split
     train_dataset = StratifiedDataset(
@@ -208,7 +208,7 @@ if __name__ == "__main__":
         elapsed_time = time.time() - start_train
         print_epoch_summary(epoch, train_metrics, val_metrics, epoch_time, elapsed_time)
 
-        if early_stopping(val_metrics["loss"]):
+        if early_stopping(val_metrics["accuracy"]):
             print("Early stopping triggered")
             break
 

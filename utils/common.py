@@ -1,6 +1,7 @@
 import yaml
 import torch
 
+
 def load_yaml_config(config_file: str):
     """
     Carga un archivo YAML y lo devuelve como un diccionario.

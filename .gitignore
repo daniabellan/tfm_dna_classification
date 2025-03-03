@@ -7,3 +7,5 @@ checkpoints/*
 *.pod5
 *.sam
 dorado_models/*
+configs/old_experiment_configs
+logs/

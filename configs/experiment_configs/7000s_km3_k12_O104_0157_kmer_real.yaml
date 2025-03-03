@@ -31,9 +31,9 @@ dataset:
 
   # Lista de rutas a los archivos HDF5 que contienen el dataset real utilizado en el experimento.
   real_dataset:
-    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/final_data/matched_data.h5"
-    - "/home/diz-wsl/personal_repos/tfm/data/salmonella_enterica/final_data/matched_data.h5"
-    - "/home/diz-wsl/personal_repos/tfm/data/mm39/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_real/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O104H4/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O157H7/final_data/matched_data.h5"
 
 model:
   # Número de clases en el problema de clasificación
@@ -52,8 +52,8 @@ model:
   num_layers: 2
 
   # Configuración de prueba para la arquitectura del modelo:
-  use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
-  use_sequences: False  # Si True, utiliza la rama que procesa secuencias de ADN.
+  use_signals: False   # Si True, utiliza la rama que procesa señales eléctricas.
+  use_sequences: True  # Si True, utiliza la rama que procesa secuencias de ADN.
 
 train:
   # Tamaño del batch para el entrenamiento (número de muestras por paso de entrenamiento).
@@ -84,7 +84,7 @@ train:
 
   early_stopping:
     # Número de épocas sin mejora en la métrica de validación antes de detener el entrenamiento.
-    patience: 10
+    patience: 5
 
     # Diferencia mínima en la métrica de validación para considerar una mejora.
     min_delta: 0.0001

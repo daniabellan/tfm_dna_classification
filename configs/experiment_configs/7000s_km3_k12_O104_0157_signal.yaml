@@ -3,7 +3,7 @@ dataset:
   k_mers_size: 3
 
   # Número total de muestras que se generarán o seleccionarán para el experimento.
-  num_samples: 20000
+  num_samples: 7000
 
   # Tamaño de la ventana en la que se segmentan las señales para su procesamiento.
   window_size: 1500
@@ -31,9 +31,9 @@ dataset:
 
   # Lista de rutas a los archivos HDF5 que contienen el dataset real utilizado en el experimento.
   real_dataset:
-    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/final_data/matched_data.h5"
-    - "/home/diz-wsl/personal_repos/tfm/data/salmonella_enterica/final_data/matched_data.h5"
-    - "/home/diz-wsl/personal_repos/tfm/data/mm39/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_mg11655/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O104H4/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O157H7/final_data/matched_data.h5"
 
 model:
   # Número de clases en el problema de clasificación
@@ -43,7 +43,7 @@ model:
   input_channels: 1000
 
   # Dimensión del embedding para representar secuencias de nucleótidos en el modelo.
-  embed_dim: 32
+  embed_dim: 16
 
   # Número de cabezas de atención en la capa de Multi-Head Attention del Transformer.
   num_heads: 2

@@ -1,8 +1,9 @@
 import torch
+
+
 import torch.nn as nn
 import torch.nn.functional as F
-from models.residual_block import ResidualBlock  # Asegúrate de que la ruta sea la correcta
-
+from models.residual_block import ResidualBlock  
 
 ###########################################
 #            UTILIDADES                   #
@@ -101,64 +102,6 @@ class SignalBranch(nn.Module):
 #       RAMA DE SECUENCIAS (SEQUENCES)      #
 ###########################################
 
-class SequenceBranch(nn.Module):
-    def __init__(self, vocab_size, embed_dim, num_heads, num_layers, kmer_padding_idx=None):
-        """
-        Rama para el procesamiento de secuencias con Transformer.
-
-        Args:
-            vocab_size (int): Tamaño del vocabulario (número de tokens).
-            embed_dim (int): Dimensión del embedding.
-            num_heads (int): Número de cabezas de atención en el Transformer.
-            num_layers (int): Número de capas del Transformer.
-            kmer_padding_idx (int, opcional): Índice de padding para el embedding. 
-                                              Por defecto se toma vocab_size - 1.
-        """
-        super(SequenceBranch, self).__init__()
-
-        self.kmer_padding_idx = vocab_size - 1 if kmer_padding_idx is None else kmer_padding_idx
-
-        # Embedding y convoluciones para capturar patrones locales
-        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=self.kmer_padding_idx)
-        self.seq_conv1 = nn.Conv1d(embed_dim, embed_dim, kernel_size=3, stride=1, padding=1)
-        self.seq_conv2 = nn.Conv1d(embed_dim, embed_dim, kernel_size=3, stride=1, padding=1)
-        self.seq_norm = nn.LayerNorm(embed_dim)
-
-        # Transformer Encoder para capturar dependencias a larga distancia
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=embed_dim,
-            nhead=num_heads,
-            dropout=0.3,
-            batch_first=True
-        )
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
-
-        # Módulo de Attention Pooling para extraer características clave
-        self.seq_attention_pooling = nn.Linear(embed_dim, 1)
-        self.seq_dropout = nn.Dropout(0.1)
-
-    def forward(self, sequences):
-        # Crear máscara de padding
-        padding_mask = sequences == self.kmer_padding_idx
-
-        # Embedding
-        x = self.embedding(sequences)  # (batch, seq_len, embed_dim)
-
-        # Convoluciones (se necesita transponer para Conv1d)
-        x = x.permute(0, 2, 1)         # (batch, embed_dim, seq_len)
-        x = F.relu(self.seq_conv1(x))
-        x = F.relu(self.seq_conv2(x))
-        x = x.permute(0, 2, 1)         # (batch, seq_len, embed_dim)
-
-        # Normalización y Transformer Encoder
-        x = self.seq_norm(x)
-        x = self.transformer(x, src_key_padding_mask=padding_mask)
-
-        # Attention Pooling: extrae una representación global de la secuencia
-        attention_scores = F.softmax(self.seq_attention_pooling(x), dim=1)  # (batch, seq_len, 1)
-        x = (x * attention_scores).sum(dim=1)  # (batch, embed_dim)
-        return x
-
 
 class CNNKmerBranch(nn.Module):
     def __init__(self, vocab_size, embed_dim, num_filters, kernel_sizes=[3, 5, 7]):
@@ -193,6 +136,36 @@ class CNNKmerBranch(nn.Module):
         # x = self.fc(x)
         return x
 
+class BiLSTMKmerBranch(nn.Module):
+    def __init__(self, vocab_size, hidden_dim, embed_dim=128, num_layers=2):
+        super(BiLSTMKmerBranch, self).__init__()
+
+        # Embedding para representar los K-Mers
+        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=vocab_size - 1)
+        
+        # LSTM bidireccional
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, num_layers=num_layers, 
+                            batch_first=True, bidirectional=True, dropout=0.3)
+        
+        # Capa de proyección final
+        self.global_pool = nn.AdaptiveMaxPool1d(1)
+        self.fc = nn.Linear(hidden_dim * 2, hidden_dim)  # *2 porque es bidireccional
+
+    def forward(self, sequences):
+        x = self.embedding(sequences)  # (batch, seq_len, embed_dim)
+        x = x.contiguous()  # Ensure the tensor is contiguous before passing to LSTM
+        x, _ = self.lstm(x)  # (batch, seq_len, hidden_dim * 2)
+
+        # Pooling global sobre la dimensión de secuencia
+        x = x.permute(0,2,1).contiguous()
+        x = self.global_pool(x).squeeze(2)
+        # x = self.global_pool(x.permute(0, 2, 1)).squeeze(2)  # (batch, hidden_dim * 2)
+        
+        # Proyección final
+        x = self.fc(x)
+        return x
+    
+
 ###########################################
 #         CLASIFICADORES (HEADS)          #
 ###########################################
@@ -209,8 +182,8 @@ class CombinedClassifier(nn.Module):
         """
         super(CombinedClassifier, self).__init__()
         input_dim = signals_dim + sequences_dim
-        self.bn = nn.BatchNorm1d(1024 + 768)
-        self.fc1 = nn.Linear(1024 + 768, 2048)
+        self.bn = nn.BatchNorm1d(1024 + 256)
+        self.fc1 = nn.Linear(1024 + 256, 2048)
         self.fc2 = nn.Linear(2048, 512)
         self.fc3 = nn.Linear(512, num_classes)
         self.dropout1 = nn.Dropout(0.6)
@@ -253,18 +226,8 @@ class SignalsClassifier(nn.Module):
 
 class SequencesClassifier(nn.Module):
     def __init__(self, num_filters, kernel_sizes, num_classes):
-        """
-        Clasificador para usar solo la rama de secuencias con CNN.
-
-        Args:
-            num_filters (int): Número de filtros por cada tamaño de kernel en la CNN.
-            kernel_sizes (list): Lista con los tamaños de los kernels utilizados en la CNN.
-            num_classes (int): Número de clases de salida.
-        """
         super(SequencesClassifier, self).__init__()
         
-        # El tamaño de entrada es num_filters * len(kernel_sizes), 
-        # porque concatenamos todas las salidas de las convoluciones
         input_dim = num_filters * len(kernel_sizes)
 
         self.fc1 = nn.Linear(input_dim, 2048)
@@ -281,6 +244,25 @@ class SequencesClassifier(nn.Module):
         x = self.fc3(x)
         return x
 
+
+class BiLSTMKmerBranchClassifier(nn.Module):
+    def __init__(self, hidden_dim, num_classes):
+        super(BiLSTMKmerBranchClassifier, self).__init__()
+    
+
+        self.fc1 = nn.Linear(hidden_dim, 2048)
+        self.fc2 = nn.Linear(2048, 512)
+        self.fc3 = nn.Linear(512, num_classes)
+        self.dropout1 = nn.Dropout(0.6)
+        self.dropout2 = nn.Dropout(0.6)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.dropout1(x)
+        x = F.relu(self.fc2(x))
+        x = self.dropout2(x)
+        x = self.fc3(x)
+        return x
 
 ###########################################
 #     MODELO HIBRIDO COMPLETO           #
@@ -318,13 +300,14 @@ class HybridSequenceClassifier(nn.Module):
         if use_signals:
             self.signal_branch = SignalBranch(input_channels, max_len=max_len)
         if use_sequences:
-            # self.sequence_branch = SequenceBranch(vocab_size, embed_dim, num_heads, num_layers)
             self.num_filters=256
+            self.hidden_dim = 256
             self.kernel_sizes=[3, 5, 7]
-            self.sequence_branch = CNNKmerBranch(vocab_size=vocab_size, 
-                                                 embed_dim=embed_dim, 
-                                                 num_filters=self.num_filters,
-                                                 kernel_sizes=self.kernel_sizes)
+            # self.sequence_branch = CNNKmerBranch(vocab_size=vocab_size, 
+            #                                      embed_dim=embed_dim, 
+            #                                      num_filters=self.num_filters,
+            #                                      kernel_sizes=self.kernel_sizes)
+            self.sequence_branch = BiLSTMKmerBranch(vocab_size=vocab_size, hidden_dim=self.hidden_dim)
 
         # Seleccionar el clasificador según las ramas utilizadas
         if use_signals and use_sequences:
@@ -332,9 +315,12 @@ class HybridSequenceClassifier(nn.Module):
         elif use_signals:
             self.classifier = SignalsClassifier(signals_dim=1024, num_classes=num_classes)
         elif use_sequences:
-            self.classifier = SequencesClassifier(num_filters=self.num_filters,
-                                                  kernel_sizes=self.kernel_sizes,
-                                                  num_classes=num_classes)
+            # self.classifier = SequencesClassifier(num_filters=self.num_filters,
+            #                                       kernel_sizes=self.kernel_sizes,
+            #                                       num_classes=num_classes)
+            self.classifier = BiLSTMKmerBranchClassifier(hidden_dim=self.hidden_dim,
+                                                         num_classes=num_classes)
+
 
     def forward(self, signals, sequences, padding_mask=None):
         outputs = []

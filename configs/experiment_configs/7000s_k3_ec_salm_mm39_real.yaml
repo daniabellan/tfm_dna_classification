@@ -31,7 +31,7 @@ dataset:
 
   # Lista de rutas a los archivos HDF5 que contienen el dataset real utilizado en el experimento.
   real_dataset:
-    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_real/final_data/matched_data.h5"
     - "/home/diz-wsl/personal_repos/tfm/data/salmonella_enterica/final_data/matched_data.h5"
     - "/home/diz-wsl/personal_repos/tfm/data/mm39/final_data/matched_data.h5"
 

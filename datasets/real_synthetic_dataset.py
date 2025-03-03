@@ -202,30 +202,11 @@ class SignalPreprocess:
         
         # Paso 4: Transformada Wavelet para reducción de ruido
         preprocessed_signal = self.wavelet_transform(preprocessed_signal)
-        
-        # Paso 5: Filtro de Kalman para suavizado adicional
-        # preprocessed_signal = self.kalman_filter(preprocessed_signal)
 
         # Paso 6: Aplicar Z-score para normalizar la señal
         preprocessed_signal = self.modified_zscore(preprocessed_signal)
 
         return np.array(preprocessed_signal, dtype=np.float32)
-
-    # def apply_sliding_window(self, signal):
-    #     segmented_signal = []
-
-    #     step_size = self.window_size
-
-    #     for start in range(0, len(signal), step_size):
-    #         end = start + step_size
-
-    #         signal_segment = signal[start:end]
-    #         if len(signal_segment) < step_size:
-    #             signal_segment = np.pad(signal_segment, (0, step_size - len(signal_segment)), constant_values=0)
-
-    #         segmented_signal.append(np.array(signal_segment, dtype=np.float32))
-
-    #     return segmented_signal
 
     def apply_sliding_window(self, signal):
         if self.window_size > len(signal) or self.window_size <= 0:
@@ -239,6 +220,69 @@ class SignalPreprocess:
         
         return np.array([signal[i : i + self.window_size] for i in range(0, len(signal) - self.window_size + 1, step)])
 
+class SynthetiDataset:
+    ############################
+    # TO BE IMPLEMENTED AGAIN
+    ############################
+    # # Si se requiere generar dataset sintético
+    # if len(self.base_probs) > 0:
+    #     # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
+    #     # Media de la longitud de la secuencia
+    #     average_seq_length = np.average([len(x["sequence"]) for x in real_data])
+        
+    #     # Longitud mínima y máxima de la secuencia +- X%
+    #     self.min_seq_length = average_seq_length - int(average_seq_length * seq_variation_perc)
+    #     self.max_seq_length = average_seq_length + int(average_seq_length * seq_variation_perc)
+        
+    #     # Generar datos sintéticos 
+    #     synthetic_data = self._generate_data(real_data)
+
+    #     # Unir datasets (real + sintético)
+    #     self.full_dataset += synthetic_data
+
+    def _generate_data(self, real_data):
+        synthetic_data = []
+        # Comprobar cuales son las etiquetas asignadas a los datos reales
+        last_label_class = max(list(Counter([x["label"] for x in real_data]).keys()))
+
+        # Generar secuencias en base a las probabilidades de bases
+        for label_offset, probs in enumerate(self.base_probs):
+            # Hacer que el label comience desde last_label_class + 1
+            label = last_label_class + 1 + label_offset
+            
+            for _ in range(self.num_samples):
+                # Generar secuencia
+                seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
+                sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
+                
+                # Generar K-Mers usando la secuencia
+                k_mers = self.sequence_to_kmer_indices(sequence = sequence)
+
+                # Generar señal
+                signal = self.signal_gen_fn.generate_signal(sequence = sequence)
+
+                # Pre-procesar señal y aplicar sliding window
+                if self.preprocess:
+                    processed_signal = self.prepr_fn.preprocess_signal(signal = signal)
+                    window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
+                else:
+                    processed_signal = []
+                    window_signal = self.prepr_fn.apply_sliding_window(signal = signal)
+
+                # Rellenar con datos el diccionario
+                signal_data = SIGNALDATA_KEYS.copy()  # Copiar la plantilla
+                signal_data["signal_pa"] = signal
+                signal_data["processed_signal"] = processed_signal
+                signal_data["window_signal"] = window_signal
+                signal_data["sequence"] = sequence
+                signal_data["label"] = label
+                signal_data["k_mers"] = k_mers
+
+                synthetic_data.append(signal_data)
+
+                pass
+        
+        return synthetic_data
 
 
 class RealSyntheticDataset:
@@ -246,7 +290,6 @@ class RealSyntheticDataset:
                  config:dict, 
                  seed:int=42, 
                  mode:str="default", 
-                 seq_variation_perc:float=0.3,
                  preprocess:bool=True):
 
         # Crear un generador de números aleatorios con una semilla fija
@@ -310,29 +353,64 @@ class RealSyntheticDataset:
                                                 size = self.num_samples, 
                                                 replace = False))
         
+        ##### 
+        # PCA
+        #####
+        min_label_count = np.inf
+        for cls_num in range(self.num_classes):
+            min_label = [x["label"] for x in real_data_sample].count(cls_num)
+            if min_label < min_label_count:
+                min_label_count = min_label
+
+        balanced_samples = []
+        for cls_num in range(self.num_classes):
+            cls_samples = self.rng.choice([x for x in real_data_sample if x["label"]==cls_num], 
+                            size = min_label_count, 
+                            replace = False)
+            [balanced_samples.append(x) for x in cls_samples]
+            
+        # Encontrar la longitud máxima
+        max_length = max(len(sig) for sig in [x["signal_pa"] for x in balanced_samples])
+
+        # Aplicar padding con ceros para normalizar todas las señales a la misma longitud
+        signals_padded = np.array([np.pad(sig, (0, max_length - len(sig)), 'constant') for sig in [x["signal_pa"] for x in balanced_samples]])
+
+        # Normalizar las señales
+        from sklearn.decomposition import PCA
+        from sklearn.preprocessing import StandardScaler
+        import matplotlib.pyplot as plt
+        scaler = StandardScaler()
+        signals_scaled = scaler.fit_transform(signals_padded)
+
+        # Aplicar PCA
+        pca = PCA(n_components=2)
+        X_pca = pca.fit_transform(signals_scaled)
+
+        # Visualizar los datos (simulación de etiquetas para ejemplo)
+        labels = [x["label"] for x in balanced_samples]
+
+
+        plt.figure(figsize=(8, 6))
+        for label in np.unique(labels):
+            idx = labels == label
+            plt.scatter(X_pca[idx, 0], X_pca[idx, 1], label=label, alpha=0.7)
+
+        plt.xlabel("Componente Principal 1")
+        plt.ylabel("Componente Principal 2")
+        plt.title("PCA con señales normalizadas (padding)")
+        plt.legend()
+        plt.grid()
+        plt.show()
+
+
+
+
         # Preprocesar datos reales
         real_data = self._preprocess_fast5(real_data_raw = real_data_sample)
 
         # Final dataset real
         self.full_dataset = real_data
 
-        # Si se requiere generar dataset sintético
-        if len(self.base_probs) > 0:
-            # Configuracion para los datasets sintéticos utilizando los parámetros de la muestra real
-            # Media de la longitud de la secuencia
-            average_seq_length = np.average([len(x["sequence"]) for x in real_data])
-            
-            # Longitud mínima y máxima de la secuencia +- X%
-            self.min_seq_length = average_seq_length - int(average_seq_length * seq_variation_perc)
-            self.max_seq_length = average_seq_length + int(average_seq_length * seq_variation_perc)
-            
-            # Generar datos sintéticos 
-            synthetic_data = self._generate_data(real_data)
-
-            # Unir datasets (real + sintético)
-            self.full_dataset += synthetic_data
-
-        pass
 
     def generate_kmer_dict(self):
         """Genera un diccionario de K-mers con sus índices únicos."""
@@ -395,56 +473,14 @@ class RealSyntheticDataset:
             # Añadir K-Mers a la muestra del dataset real
             read_data["k_mers"] = self.sequence_to_kmer_indices(sequence = read_data["sequence"])
 
-            if read_idx % 100 == 0 or read_idx==len(real_data_raw)-1:
+            if read_idx % 100 == 0 or read_idx==len(real_data_raw):
                 print(f"Preprocessed read {read_idx}/{len(real_data_raw)}")
 
         print(f"Preprocessing done in {(time.time() - start):.4f} secs")
 
         return real_data_raw 
 
-    def _generate_data(self, real_data):
-        synthetic_data = []
-        # Comprobar cuales son las etiquetas asignadas a los datos reales
-        last_label_class = max(list(Counter([x["label"] for x in real_data]).keys()))
 
-        # Generar secuencias en base a las probabilidades de bases
-        for label_offset, probs in enumerate(self.base_probs):
-            # Hacer que el label comience desde last_label_class + 1
-            label = last_label_class + 1 + label_offset
-            
-            for _ in range(self.num_samples):
-                # Generar secuencia
-                seq_length = self.rng.integers(self.min_seq_length, self.max_seq_length + 1)
-                sequence = ''.join(self.rng.choice(self.bases, seq_length, p=probs))
-                
-                # Generar K-Mers usando la secuencia
-                k_mers = self.sequence_to_kmer_indices(sequence = sequence)
-
-                # Generar señal
-                signal = self.signal_gen_fn.generate_signal(sequence = sequence)
-
-                # Pre-procesar señal y aplicar sliding window
-                if self.preprocess:
-                    processed_signal = self.prepr_fn.preprocess_signal(signal = signal)
-                    window_signal = self.prepr_fn.apply_sliding_window(signal = processed_signal)
-                else:
-                    processed_signal = []
-                    window_signal = self.prepr_fn.apply_sliding_window(signal = signal)
-
-                # Rellenar con datos el diccionario
-                signal_data = SIGNALDATA_KEYS.copy()  # Copiar la plantilla
-                signal_data["signal_pa"] = signal
-                signal_data["processed_signal"] = processed_signal
-                signal_data["window_signal"] = window_signal
-                signal_data["sequence"] = sequence
-                signal_data["label"] = label
-                signal_data["k_mers"] = k_mers
-
-                synthetic_data.append(signal_data)
-
-                pass
-        
-        return synthetic_data
 
 
 class StratifiedDataset(Dataset):

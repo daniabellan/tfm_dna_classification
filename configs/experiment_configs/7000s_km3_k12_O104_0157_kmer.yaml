@@ -3,7 +3,7 @@ dataset:
   k_mers_size: 3
 
   # Número total de muestras que se generarán o seleccionarán para el experimento.
-  num_samples: 5000
+  num_samples: 7000
 
   # Tamaño de la ventana en la que se segmentan las señales para su procesamiento.
   window_size: 1500
@@ -31,41 +31,39 @@ dataset:
 
   # Lista de rutas a los archivos HDF5 que contienen el dataset real utilizado en el experimento.
   real_dataset:
-    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12/pod5_1.h5"
-    - "/home/diz-wsl/personal_repos/tfm/data/mm39/fast5.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_mg11655/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O104H4/final_data/matched_data.h5"
+    - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O157H7/final_data/matched_data.h5"
 
 model:
-  # Número de clases en el problema de clasificación (por ejemplo, 2 para clasificación binaria).
-  num_classes: 2
+  # Número de clases en el problema de clasificación
+  num_classes: 3
 
   # Número de ventanas de señal que se toman como entrada en el modelo.
   input_channels: 1000
 
   # Dimensión del embedding para representar secuencias de nucleótidos en el modelo.
-  embed_dim: 128
+  embed_dim: 16
 
   # Número de cabezas de atención en la capa de Multi-Head Attention del Transformer.
-  num_heads: 4
+  num_heads: 2
 
   # Número de capas en el Transformer Encoder para modelar la secuencia.
   num_layers: 2
 
-  # Longitud máxima de la secuencia de entrada que se procesará.
-  max_seq_length: 512
-
   # Configuración de prueba para la arquitectura del modelo:
-  use_signals: True   # Si True, utiliza la rama que procesa señales eléctricas.
-  use_sequences: False  # Si True, utiliza la rama que procesa secuencias de ADN.
+  use_signals: False   # Si True, utiliza la rama que procesa señales eléctricas.
+  use_sequences: True  # Si True, utiliza la rama que procesa secuencias de ADN.
 
 train:
   # Tamaño del batch para el entrenamiento (número de muestras por paso de entrenamiento).
-  batch_size: 8
+  batch_size: 16
 
   # Tasa de aprendizaje inicial del optimizador.
   learning_rate: 0.0001
 
   # Número de épocas (iteraciones completas sobre el dataset) para el entrenamiento.
-  epochs: 100
+  epochs: 200
 
   # Semilla aleatoria para la reproducibilidad de los experimentos.
   seed: 42
@@ -75,18 +73,18 @@ train:
     type: Adam
 
     # Factor de decaimiento de los pesos para regularización L2 (evita sobreajuste).
-    weight_decay: 0.00001
+    weight_decay: 0.0001
 
   scheduler:
     # Frecuencia (en número de épocas) con la que se reduce la tasa de aprendizaje.
     step_size: 10
 
-    # Factor por el cual se reduce la tasa de aprendizaje en cada `step_size` épocas.
+    # Factor por el cual se reduce la tasa de aprendizaje en cada step_size épocas.
     gamma: 0.1
 
   early_stopping:
     # Número de épocas sin mejora en la métrica de validación antes de detener el entrenamiento.
-    patience: 3
+    patience: 10
 
     # Diferencia mínima en la métrica de validación para considerar una mejora.
     min_delta: 0.0001
