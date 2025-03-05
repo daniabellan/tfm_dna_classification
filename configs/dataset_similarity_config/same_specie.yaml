@@ -1,0 +1,5 @@
+ecoli_k12_real: "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_real/"
+
+ecoli_O104H4: "/home/diz-wsl/personal_repos/tfm/data/ecoli_O104H4"
+
+ecoli_O157H7: "/home/diz-wsl/personal_repos/tfm/data/ecoli_O157H7"

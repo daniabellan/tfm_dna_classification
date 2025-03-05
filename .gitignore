@@ -3,6 +3,7 @@ mlruns/*
 mlartifacts/*
 __pycache__/
 data/*
+data_back/*
 checkpoints/*
 *.pod5
 *.sam

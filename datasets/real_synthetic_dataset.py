@@ -350,21 +350,27 @@ class RealSyntheticDataset:
 
         # Crear una muestra de estos datos reales para evitar utilizar demasiados datos
         real_data_sample = list(self.rng.choice(real_data_raw, 
-                                                size = self.num_samples, 
+                                                size = 1000, 
                                                 replace = False))
-        
+
+        # Preprocesar datos reales
+        real_data = self._preprocess_fast5(real_data_raw = real_data_sample)
+
+        # Final dataset real
+        self.full_dataset = real_data
+
         ##### 
         # PCA
         #####
         min_label_count = np.inf
         for cls_num in range(self.num_classes):
-            min_label = [x["label"] for x in real_data_sample].count(cls_num)
+            min_label = [x["label"] for x in real_data].count(cls_num)
             if min_label < min_label_count:
                 min_label_count = min_label
 
         balanced_samples = []
         for cls_num in range(self.num_classes):
-            cls_samples = self.rng.choice([x for x in real_data_sample if x["label"]==cls_num], 
+            cls_samples = self.rng.choice([x for x in real_data if x["label"]==cls_num], 
                             size = min_label_count, 
                             replace = False)
             [balanced_samples.append(x) for x in cls_samples]
@@ -374,6 +380,9 @@ class RealSyntheticDataset:
 
         # Aplicar padding con ceros para normalizar todas las señales a la misma longitud
         signals_padded = np.array([np.pad(sig, (0, max_length - len(sig)), 'constant') for sig in [x["signal_pa"] for x in balanced_samples]])
+
+        # Visualizar los datos (simulación de etiquetas para ejemplo)
+        labels = [x["label"] for x in balanced_samples]
 
         # Normalizar las señales
         from sklearn.decomposition import PCA
@@ -386,10 +395,6 @@ class RealSyntheticDataset:
         pca = PCA(n_components=2)
         X_pca = pca.fit_transform(signals_scaled)
 
-        # Visualizar los datos (simulación de etiquetas para ejemplo)
-        labels = [x["label"] for x in balanced_samples]
-
-
         plt.figure(figsize=(8, 6))
         for label in np.unique(labels):
             idx = labels == label
@@ -401,16 +406,6 @@ class RealSyntheticDataset:
         plt.legend()
         plt.grid()
         plt.show()
-
-
-
-
-        # Preprocesar datos reales
-        real_data = self._preprocess_fast5(real_data_raw = real_data_sample)
-
-        # Final dataset real
-        self.full_dataset = real_data
-
 
     def generate_kmer_dict(self):
         """Genera un diccionario de K-mers con sus índices únicos."""

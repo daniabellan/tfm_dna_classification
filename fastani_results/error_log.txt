@@ -1,0 +1,420 @@
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Query = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 371301
+INFO [thread 0], skch::Sketch::index, unique minimizers = 361568
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 357382) ... (59, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.241509 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.614184 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.000124639 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Query = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 447197
+INFO [thread 0], skch::Sketch::index, unique minimizers = 421155
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 408568) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.309085 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.617676 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.000139177 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Query = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 396164
+INFO [thread 0], skch::Sketch::index, unique minimizers = 387728
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 382421) ... (50, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.309347 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.339367 sec
+INFO [thread 0], skch::main, Time spent post mapping : 5.8602e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/mm39/genome_reference/genome_reference.fa]
+Query = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 214567826
+INFO [thread 0], skch::Sketch::index, unique minimizers = 74323464
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 40224915) ... (695006, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 164.893 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 1.06386 sec
+INFO [thread 0], skch::main, Time spent post mapping : 5.6849e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Query = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 434732
+INFO [thread 0], skch::Sketch::index, unique minimizers = 416418
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 406392) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.28227 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.584316 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.000130621 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Query = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 447197
+INFO [thread 0], skch::Sketch::index, unique minimizers = 421155
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 408568) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.318446 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.611675 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.000110312 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Query = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 396164
+INFO [thread 0], skch::Sketch::index, unique minimizers = 387728
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 382421) ... (50, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.288948 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.32267 sec
+INFO [thread 0], skch::main, Time spent post mapping : 7.0034e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/mm39/genome_reference/genome_reference.fa]
+Query = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 214567826
+INFO [thread 0], skch::Sketch::index, unique minimizers = 74323464
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 40224915) ... (695006, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 162.721 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.561347 sec
+INFO [thread 0], skch::main, Time spent post mapping : 5.5526e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Query = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 434732
+INFO [thread 0], skch::Sketch::index, unique minimizers = 416418
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 406392) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.285046 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.626494 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.00012526 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Query = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 371301
+INFO [thread 0], skch::Sketch::index, unique minimizers = 361568
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 357382) ... (59, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.261956 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.647139 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.000112987 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Query = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 396164
+INFO [thread 0], skch::Sketch::index, unique minimizers = 387728
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 382421) ... (50, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.276744 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.377105 sec
+INFO [thread 0], skch::main, Time spent post mapping : 6.0647e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/mm39/genome_reference/genome_reference.fa]
+Query = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 214567826
+INFO [thread 0], skch::Sketch::index, unique minimizers = 74323464
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 40224915) ... (695006, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 164.545 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.727752 sec
+INFO [thread 0], skch::main, Time spent post mapping : 5.5436e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Query = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 434732
+INFO [thread 0], skch::Sketch::index, unique minimizers = 416418
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 406392) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.451966 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.332059 sec
+INFO [thread 0], skch::main, Time spent post mapping : 6.0236e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Query = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 371301
+INFO [thread 0], skch::Sketch::index, unique minimizers = 361568
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 357382) ... (59, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.275357 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.34073 sec
+INFO [thread 0], skch::main, Time spent post mapping : 6.7569e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Query = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 447197
+INFO [thread 0], skch::Sketch::index, unique minimizers = 421155
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 408568) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.299847 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.327883 sec
+INFO [thread 0], skch::main, Time spent post mapping : 5.3072e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/mm39/genome_reference/genome_reference.fa]
+Query = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 214567826
+INFO [thread 0], skch::Sketch::index, unique minimizers = 74323464
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 40224915) ... (695006, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 163.897 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 0.530381 sec
+INFO [thread 0], skch::main, Time spent post mapping : 4.4335e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O104H4/genome_reference/GCF_000299255.1_ASM29925v1_genomic.fna]
+Query = [data/mm39/genome_reference/genome_reference.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 434732
+INFO [thread 0], skch::Sketch::index, unique minimizers = 416418
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 406392) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.283851 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 87.0271 sec
+INFO [thread 0], skch::main, Time spent post mapping : 0.000117215 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_k12_real/genome_reference/Ecoli_K12_MG1655.fa]
+Query = [data/mm39/genome_reference/genome_reference.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 371301
+INFO [thread 0], skch::Sketch::index, unique minimizers = 361568
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 357382) ... (59, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.275194 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 86.8659 sec
+INFO [thread 0], skch::main, Time spent post mapping : 9.7317e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/ecoli_O157H7/genome_reference/GCF_000008865.2_ASM886v2_genomic.fna]
+Query = [data/mm39/genome_reference/genome_reference.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 447197
+INFO [thread 0], skch::Sketch::index, unique minimizers = 421155
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 408568) ... (34, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.313075 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 87.031 sec
+INFO [thread 0], skch::main, Time spent post mapping : 8.3771e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
+>>>>>>>>>>>>>>>>>>
+Reference = [data/salmonella_enterica/genome_reference/GCF_000006945.2_ASM694v2_genomic.fna]
+Query = [data/mm39/genome_reference/genome_reference.fa]
+Kmer size = 16
+Fragment length = 3000
+Threads = 1
+ANI output file = fastani_results/temp_output.txt
+Sanity Check  = 0
+>>>>>>>>>>>>>>>>>>
+INFO [thread 0], skch::main, Count of threads executing parallel_for : 1
+INFO [thread 0], skch::Sketch::build, window size for minimizer sampling  = 24
+INFO [thread 0], skch::Sketch::build, minimizers picked from reference = 396164
+INFO [thread 0], skch::Sketch::index, unique minimizers = 387728
+INFO [thread 0], skch::Sketch::computeFreqHist, Frequency histogram of minimizers = (1, 382421) ... (50, 1)
+INFO [thread 0], skch::Sketch::computeFreqHist, consider all minimizers during lookup.
+INFO [thread 0], skch::main, Time spent sketching the reference : 0.298009 sec
+INFO [thread 0], skch::main, Start Map 1
+INFO [thread 0], skch::main, Time spent mapping fragments in query #1 : 87.2668 sec
+INFO [thread 0], skch::main, Time spent post mapping : 7.9713e-05 sec
+INFO [thread 0], skch::main, ready to exit the loop
+INFO, skch::main, parallel_for execution finished
