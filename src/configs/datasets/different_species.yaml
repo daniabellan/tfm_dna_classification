@@ -1,0 +1,16 @@
+num_samples: 100
+
+kmers_size: 3
+preprocess: True
+window_size: 1500
+step_ratio: 0.5
+
+train_ratio: 0.8
+val_ratio: 0.1
+test_ratio: 0.1
+
+dataset_paths:
+  - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_real/final_data/matched_data.h5"
+  - "/home/diz-wsl/personal_repos/tfm/data/salmonella_enterica/final_data/matched_data.h5"
+  - "/home/diz-wsl/personal_repos/tfm/data/mm39/final_data/matched_data.h5"
+

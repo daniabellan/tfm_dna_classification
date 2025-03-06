@@ -1,0 +1,7 @@
+name: "Experiment 1"
+description: "Experiment number 1"
+
+dataset: "src/configs/datasets/different_species.yaml"
+training: "src/configs/training/default_params.yaml"
+model: "src/configs/models/transformers_cnn.yaml"
+logging: "src/configs/logging/localhost.yaml"
