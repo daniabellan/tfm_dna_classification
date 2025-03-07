@@ -1,0 +1,6 @@
+# Número de ventanas de señal que se toman como entrada en el modelo.
+input_channels: 1000
+
+use_signals: False
+use_sequences: True
+sequence_branch: 'cnn'

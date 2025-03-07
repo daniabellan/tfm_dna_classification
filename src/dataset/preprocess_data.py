@@ -2,7 +2,7 @@ import pywt
 import time
 import numpy as np
 from scipy.signal import butter, filtfilt, medfilt, fftconvolve
-from src.dataset.domain.utils import generate_kmer_dict
+from src.dataset.domain.kmer_utils import generate_kmer_dict
 
 class PreprocessData:
     def __init__(self,
@@ -10,6 +10,7 @@ class PreprocessData:
                  step_ratio:float,
                  window_size:int,
                  kmers_size:int,
+                 moving_average_window:int = 10,
                  sampling_rate:int=4000,
                  cutoff:int = 1000,
                  median_kernel_size:int = 5):
@@ -24,6 +25,8 @@ class PreprocessData:
         self.cutoff = cutoff
 
         self.window_size = window_size
+
+        self.moving_average_window = moving_average_window
 
         self.median_kernel_size = median_kernel_size
 
@@ -228,48 +231,27 @@ class PreprocessData:
         if not hasattr(self, "median_kernel_size") or not hasattr(self, "window_size"):
             raise ValueError("Attributes 'median_kernel_size' and 'window_size' must be defined in the class.")
 
-        start = time.time()
         # Step 1: Apply low-pass filter to remove high-frequency noise
         preprocessed_signal = self.lowpass_filter(signal)
-        # print(f"Step 1: {time.time() - start:.4f} secs")
 
-        start = time.time()
         # Step 2: Apply median filter to remove impulsive noise
         preprocessed_signal = medfilt(preprocessed_signal, self.median_kernel_size)
-        # print(f"Step 2: {time.time() - start:.4f} secs")
-
-        start = time.time()
        
-        # # Step 3: Apply moving average smoothing
-        # preprocessed_signal = np.convolve(
-        #     preprocessed_signal, 
-        #     np.ones(self.window_size) / self.window_size, 
-        #     mode="same"
-        # )
-        
         # Step 3: Apply moving average smoothing
-        # Faster moving average using FFT-based convolution
-        preprocessed_signal = fftconvolve(
+        preprocessed_signal = np.convolve(
             preprocessed_signal, 
-            np.ones(self.window_size) / self.window_size, 
+            np.ones(self.moving_average_window) / self.moving_average_window, 
             mode="same"
         )
-        # print(f"Step 3: {time.time() - start:.4f} secs")
-
-        start = time.time()
+        
         # Step 4: Apply wavelet transform for noise reduction
         preprocessed_signal = self.wavelet_transform(preprocessed_signal)
-        # print(f"Step 4: {time.time() - start:.4f} secs")
 
-        start = time.time()
-        # Step 5: Normalize using the modified Z-score
+        # # Step 5: Normalize using the modified Z-score
         preprocessed_signal = np.array(self.modified_zscore(preprocessed_signal), dtype=np.float32)
-        # print(f"Step 5: {time.time() - start:.4f} secs")
 
-        start = time.time()
         # Step 6: Apply sliding window segmentation
         window_signal = self.apply_sliding_window(signal=preprocessed_signal)
-        # print(f"Step 6: {time.time() - start:.4f} secs")
 
         return preprocessed_signal, window_signal
 

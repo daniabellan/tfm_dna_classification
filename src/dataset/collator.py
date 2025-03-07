@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-from src.dataset.domain.utils import generate_kmer_dict
+from src.dataset.domain.kmer_utils import generate_kmer_dict
 
 class SequenceSignalsCollator:
     """
@@ -19,8 +19,8 @@ class SequenceSignalsCollator:
 
     def __init__(self, 
                  kmers_size: int,
-                 max_signal_length: int = 1000,
-                 max_kmers_length: int = 45000):
+                 max_signal_length: int,
+                 max_kmers_length: int):
         """
         Initializes the collator.
 
@@ -100,10 +100,6 @@ class SequenceSignalsCollator:
             if len(signal) > max_signal_length:
                 max_signal_length = len(signal)
 
-        if cut_signals > 0:
-            print(f"Cut {cut_signals} signals to max length {self.max_signal_length}")
-        else:
-            print(max_signal_length)
         padded_signals = np.array(padded_signals, dtype=np.float32)
 
         return torch.tensor(padded_signals, dtype=torch.float32)
@@ -135,8 +131,5 @@ class SequenceSignalsCollator:
                 kmers = np.pad(kmers, (0, self.max_kmers_length - length), constant_values=self.padding_idx)
 
             padded_kmers[i, :] = kmers  # Assign processed sequence
-
-        if num_truncated > 0:
-            print(f"Truncated {num_truncated} k-mer sequences to max length {self.max_kmers_length}")
 
         return torch.tensor(padded_kmers, dtype=torch.long)

@@ -1,1 +1,36 @@
+# Tamaño del batch para el entrenamiento (número de muestras por paso de entrenamiento).
 batch_size: 16
+
+# Tasa de aprendizaje inicial del optimizador.
+learning_rate: 0.0001
+
+# Número de épocas (iteraciones completas sobre el dataset) para el entrenamiento.
+epochs: 20
+
+# Semilla aleatoria para la reproducibilidad de los experimentos.
+seed: 42
+
+optimizer:
+  # Tipo de optimizador utilizado en el entrenamiento (Adam en este caso).
+  type: Adam
+
+  # Factor de decaimiento de los pesos para regularización L2 (evita sobreajuste).
+  weight_decay: 0.0001
+
+scheduler:
+  # Frecuencia (en número de épocas) con la que se reduce la tasa de aprendizaje.
+  step_size: 10
+
+  # Factor por el cual se reduce la tasa de aprendizaje en cada step_size épocas.
+  gamma: 0.1
+
+early_stopping:
+  # Número de épocas sin mejora en la métrica de validación antes de detener el entrenamiento.
+  patience: 5
+
+  # Diferencia mínima en la métrica de validación para considerar una mejora.
+  min_delta: 0.0001
+
+gradient_clipping:
+  # Valor máximo de la norma del gradiente para evitar explosiones de gradiente.
+  max_grad_norm: 1.0

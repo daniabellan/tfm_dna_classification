@@ -101,7 +101,6 @@ class RealDataset(Dataset):
             # Store raw data if preprocessing is disabled
             self.data = dataset
 
-        pass
 
     def __len__(self) -> int:
         """
