@@ -1,17 +1,18 @@
 import time
 import torch
+import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from src.models.hybrid_model import HybridSequenceClassifier
 
-def train_one_epoch(model:HybridSequenceClassifier, 
-                    data_loader:torch.utils.data.DataLoader, 
-                    criterion:torch.nn.modules.loss, 
-                    optimizer:torch.optim.Optimizer, 
-                    device:torch.device, 
-                    max_grad_norm:float=1.0, 
-                    log_interval:int=1) -> dict:
+def train_one_epoch(model: HybridSequenceClassifier, 
+                    data_loader: torch.utils.data.DataLoader, 
+                    criterion: torch.nn.modules.loss, 
+                    optimizer: torch.optim.Optimizer, 
+                    device: torch.device, 
+                    max_grad_norm: float = 1.0, 
+                    log_interval: int = 1) -> dict:
     """
-    Trains the model for one epoch.
+    Trains the model for one epoch with multi-class evaluation metrics.
 
     Args:
         model (torch.nn.Module): The neural network model to train.
@@ -23,7 +24,7 @@ def train_one_epoch(model:HybridSequenceClassifier,
         log_interval (int, optional): Frequency (in batches) of logging training progress. Default is 1.
 
     Returns:
-        dict: A dictionary containing training metrics: loss, accuracy, precision, recall, and F1-score.
+        dict: A dictionary containing training loss, accuracy, precision, recall, and F1-score.
     """
 
     model.train()  # Set the model to training mode
@@ -60,13 +61,35 @@ def train_one_epoch(model:HybridSequenceClassifier,
             print(f"  Batch {batch_idx + 1}/{len(data_loader)} - Loss: {loss.item():.4f}")
             print(f"  Elapsed Time: {elapsed_time:.4f} sec")
 
-    # Compute evaluation metrics
+    # Convert lists to numpy arrays
+    all_labels = np.array(all_labels)
+    all_preds = np.array(all_preds)
+
+    # Compute multi-class metrics
+    accuracy = accuracy_score(all_labels, all_preds)
+    precision_macro = precision_score(all_labels, all_preds, average="macro", zero_division=0)
+    recall_macro = recall_score(all_labels, all_preds, average="macro", zero_division=0)
+    f1_macro = f1_score(all_labels, all_preds, average="macro", zero_division=0)
+
+    precision_weighted = precision_score(all_labels, all_preds, average="weighted", zero_division=0)
+    recall_weighted = recall_score(all_labels, all_preds, average="weighted", zero_division=0)
+    f1_weighted = f1_score(all_labels, all_preds, average="weighted", zero_division=0)
+
+    # Aggregate all metrics
     metrics = {
-        "loss": running_loss / len(data_loader),
-        "accuracy": accuracy_score(all_labels, all_preds),
-        "precision": precision_score(all_labels, all_preds, average="weighted", zero_division=0),
-        "recall": recall_score(all_labels, all_preds, average="weighted", zero_division=0),
-        "f1": f1_score(all_labels, all_preds, average="weighted", zero_division=0),
+        "train_loss": running_loss / len(data_loader),
+        "train_accuracy": accuracy,
+        "train_precision_macro": precision_macro,
+        "train_recall_macro": recall_macro,
+        "train_f1_macro": f1_macro,
+        "train_precision_weighted": precision_weighted,
+        "train_recall_weighted": recall_weighted,
+        "train_f1_weighted": f1_weighted,
     }
+
+    # Log Training Summary in the Required Format
+    print(f"\n[Train] Loss: {metrics['train_loss']:.4f} | Accuracy: {metrics['train_accuracy']:.4f} | "
+          f"Precision: {metrics['train_precision_macro']:.4f} | Recall: {metrics['train_recall_macro']:.4f} | "
+          f"F1: {metrics['train_f1_macro']:.4f}")
 
     return metrics

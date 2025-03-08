@@ -10,6 +10,8 @@ epochs: 20
 # Semilla aleatoria para la reproducibilidad de los experimentos.
 seed: 42
 
+mlflow_tracking_uri: "http://localhost:5001"
+
 optimizer:
   # Tipo de optimizador utilizado en el entrenamiento (Adam en este caso).
   type: Adam

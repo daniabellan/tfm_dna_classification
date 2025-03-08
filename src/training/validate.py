@@ -1,5 +1,7 @@
 import torch
+import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
 from src.models.hybrid_model import HybridSequenceClassifier
 
 def validate(model: HybridSequenceClassifier, 
@@ -16,7 +18,7 @@ def validate(model: HybridSequenceClassifier,
         device (torch.device): Device to perform computations (e.g., 'cuda' or 'cpu').
 
     Returns:
-        dict: A dictionary containing validation metrics: loss, accuracy, precision, recall, and F1-score.
+        dict: A dictionary containing validation loss, accuracy, precision, recall, and F1-score.
     """
     
     model.eval()  # Set the model to evaluation mode
@@ -40,14 +42,36 @@ def validate(model: HybridSequenceClassifier,
             all_preds.extend(preds.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
 
-    # Compute evaluation metrics
+    # Convert lists to numpy arrays
+    all_labels = np.array(all_labels)
+    all_preds = np.array(all_preds)
+
+    # Compute multi-class metrics
+    accuracy = accuracy_score(all_labels, all_preds)
+    precision_macro = precision_score(all_labels, all_preds, average="macro", zero_division=0)
+    recall_macro = recall_score(all_labels, all_preds, average="macro", zero_division=0)
+    f1_macro = f1_score(all_labels, all_preds, average="macro", zero_division=0)
+
+    precision_weighted = precision_score(all_labels, all_preds, average="weighted", zero_division=0)
+    recall_weighted = recall_score(all_labels, all_preds, average="weighted", zero_division=0)
+    f1_weighted = f1_score(all_labels, all_preds, average="weighted", zero_division=0)
+
+    # Aggregate metrics into a dictionary
     metrics = {
-        "loss": running_loss / len(data_loader),
-        "accuracy": accuracy_score(all_labels, all_preds),
-        "precision": precision_score(all_labels, all_preds, average="weighted", zero_division=0),
-        "recall": recall_score(all_labels, all_preds, average="weighted", zero_division=0),
-        "f1": f1_score(all_labels, all_preds, average="weighted", zero_division=0),
+        "val_loss": running_loss / len(data_loader),
+        "val_accuracy": accuracy,
+        "val_precision_macro": precision_macro,
+        "val_recall_macro": recall_macro,
+        "val_f1_macro": f1_macro,
+        "val_precision_weighted": precision_weighted,
+        "val_recall_weighted": recall_weighted,
+        "val_f1_weighted": f1_weighted,
     }
+
+    # Log Validation Summary in the Required Format
+    print(f"[Val]   Loss: {metrics['val_loss']:.4f} | Accuracy: {metrics['val_accuracy']:.4f} | "
+          f"Precision: {metrics['val_precision_macro']:.4f} | Recall: {metrics['val_recall_macro']:.4f} | "
+          f"F1: {metrics['val_f1_macro']:.4f}")
 
     # Free up unused GPU memory
     torch.cuda.empty_cache()

@@ -1,70 +1,83 @@
 #!/bin/bash
 
-# Verifica si se proporciona la especie como argumento
+# This script processes genomic data for a given species.
+# It verifies the presence of a genome reference file, generates artificial signal data,
+# converts formats, performs basecalling, and preprocesses the data for further analysis.
+
+# Ensure that a species name is provided as an argument
 if [ "$#" -ne 1 ]; then
-    echo "Uso: $0 <nombre_especie>"
-    echo "Debe haber un archivo de referencia en: <nombre_especie>/genome_reference/ con extensión .fa o .fna"
+    echo "Usage: $0 <species_name>"
+    echo "A reference genome file must exist in: <species_name>/genome_reference/ with .fa or .fna extension"
     exit 1
 fi
 
-SPECIE=$1
-BASE_DIR="data/${SPECIE}"
+# Define variables
+SPECIES=$1
+BASE_DIR="data/${SPECIES}"
 GENOME_DIR="${BASE_DIR}/genome_reference"
 CONDA_ENV="tfm"
 
-# Buscar el archivo de referencia en genome_reference (extensiones .fa o .fna)
+# Locate the genome reference file (.fa or .fna)
 GENOME_REF=$(find "$GENOME_DIR" -maxdepth 1 -type f \( -name "*.fa" -o -name "*.fna" \) | head -n 1)
 
-# Verificar si se encontró un archivo válido
+# Check if a valid genome reference file was found
 if [ -z "$GENOME_REF" ]; then
-    echo "Error: No se encontró ningún archivo de referencia en $GENOME_DIR con extensión .fa o .fna"
+    echo "Error: No reference genome found in $GENOME_DIR with .fa or .fna extension"
     exit 1
 fi
 
-echo "=== Usando genoma de referencia: $GENOME_REF ==="
+echo "=== Using genome reference: $GENOME_REF ==="
 
-# Crear las carpetas necesarias
-mkdir -p "${BASE_DIR}/blow5" # Datos generados artificialmente con Squigulator
-mkdir -p "${BASE_DIR}/fast5" # Datos transformados de blow5 a fast5
-mkdir -p "${BASE_DIR}/basecalling_output" # Salida del basecalling de Dorado
-mkdir -p "${BASE_DIR}/final_data" # Archivo H5 para entrenamiento/test
+# Create necessary directories
+mkdir -p "${BASE_DIR}/blow5"        # Artificially generated data using Squigulator
+mkdir -p "${BASE_DIR}/fast5"        # Transformed data from BLOW5 to FAST5
+mkdir -p "${BASE_DIR}/basecalling_output" # Dorado basecalling output
+mkdir -p "${BASE_DIR}/final_data"    # H5 file for training/testing
 
-# Activar el entorno Conda tfm
-echo "=== Activando entorno Conda '$CONDA_ENV' ==="
+# Activate the Conda environment
+echo "=== Activating Conda environment '$CONDA_ENV' ==="
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate $CONDA_ENV
 if [ $? -ne 0 ]; then
-    echo "Error: No se pudo activar el entorno Conda 'tfm'"
+    echo "Error: Failed to activate Conda environment '$CONDA_ENV'"
     exit 1
 fi
 
-echo "=== Generando señal eléctrica con Squigulator ==="
-squigulator "$GENOME_REF" -x dna-r9-min -o "${BASE_DIR}/blow5/reads.blow5" --seed 42 -f 30 -r 12000 --prefix=yes --bps 400 --verbose 4
+# Generate electric signal using Squigulator
+echo "=== Generating electric signal with Squigulator ==="
+squigulator "$GENOME_REF" -x dna-r9-min -o "${BASE_DIR}/blow5/reads.blow5" \
+    --seed 42 -f 30 -r 12000 --prefix=yes --bps 400 --verbose 4
 if [ $? -ne 0 ]; then
-    echo "Error al ejecutar Squigulator"
+    echo "Error: Squigulator execution failed"
     exit 1
 fi
 
-echo "=== Convirtiendo BLOW5 a FAST5 con slow5tools ==="
+# Convert BLOW5 format to FAST5 using slow5tools
+echo "=== Converting BLOW5 to FAST5 with slow5tools ==="
 slow5tools s2f "${BASE_DIR}/blow5/" -d "${BASE_DIR}/fast5/"
 if [ $? -ne 0 ]; then
-    echo "Error al ejecutar slow5tools"
+    echo "Error: slow5tools execution failed"
     exit 1
 fi
 
-echo "=== Realizando basecalling con Dorado ==="
-dorado basecaller --emit-sam -b 768 dorado_models/dna_r9.4.1_e8_sup@v3.6 "${BASE_DIR}/fast5/" -v > "${BASE_DIR}/basecalling_output/basecalled_signal.sam"
+# Perform basecalling with Dorado
+echo "=== Performing basecalling with Dorado ==="
+dorado basecaller --emit-sam -b 768 dorado_models/dna_r9.4.1_e8_sup@v3.6 "${BASE_DIR}/fast5/" -v > \
+    "${BASE_DIR}/basecalling_output/basecalled_signal.sam"
 if [ $? -ne 0 ]; then
-    echo "Error al ejecutar Dorado"
+    echo "Error: Dorado execution failed"
     exit 1
 fi
 
-echo "=== Aplicando preprocesamiento con Python en entorno Conda (tfm) ==="
-# Ejecutar el script de Python con los argumentos correctos
-python datasets/create_dataset_from_pod5_fast5.py $BASE_DIR/basecalling_output/basecalled_signal.sam $BASE_DIR/fast5 $BASE_DIR/final_data/matched_data.h5 --verbose
+# Preprocess data using a Python script
+echo "=== Running preprocessing with Python in Conda environment (tfm) ==="
+python datasets/create_dataset_from_pod5_fast5.py \
+    "$BASE_DIR/basecalling_output/basecalled_signal.sam" \
+    "$BASE_DIR/fast5" \
+    "$BASE_DIR/final_data/matched_data.h5" --verbose
 if [ $? -ne 0 ]; then
-    echo "Error al ejecutar el preprocesamiento con Python"
+    echo "Error: Python preprocessing script execution failed"
     exit 1
 fi
 
-echo "=== Proceso completado con éxito ==="
+echo "=== Process completed successfully ==="

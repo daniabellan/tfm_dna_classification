@@ -34,5 +34,5 @@ if __name__ == "__main__":
     model = initialize_model(model_config, dataset_config, device)
 
     # Train and test the model
-    trainer = Trainer(model, train_loader, val_loader, test_loader, training_config, device)
+    trainer = Trainer(model, train_loader, val_loader, test_loader, training_config, device, config)
     test_metrics = trainer.train()

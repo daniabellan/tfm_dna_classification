@@ -10,7 +10,7 @@ from scipy.spatial.distance import mahalanobis
 from src.dataset.load_dataset import RealDataset
 from src.dataset.collator import SequenceSignalsCollator
 from src.utils.common import parse_args, load_config
-from src.dataset.domain.utils import generate_kmer_dict
+from src.dataset.domain.kmer_utils import generate_kmer_dict
 
 # Random generation seed
 seed = 42

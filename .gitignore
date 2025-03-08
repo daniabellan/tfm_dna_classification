@@ -7,6 +7,7 @@ data_back/*
 checkpoints/*
 *.pod5
 *.sam
+*.png
 dorado_models/*
 configs/old_experiment_configs
 logs/
