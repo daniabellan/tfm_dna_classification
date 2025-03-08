@@ -37,16 +37,3 @@ data/
     │── basecalling_output/      # Dorado basecalling results (SAM format)
     │── final_data/              # Processed H5 dataset for training/testing
 ```
-
-## Usage
-Run the script as follows:
-```bash
-./script.sh <species_name>
-```
-Ensure that the Conda environment (`tfm`) is activated and all dependencies are installed before execution.
-
-## Troubleshooting
-- If the script fails to find a genome reference file, verify the presence of `.fa` or `.fna` files inside `<species_name>/genome_reference/`
-- Ensure Squigulator, slow5tools, and Dorado are installed in the `tfm` Conda environment.
-- If Python preprocessing fails, check the logs for missing dependencies or incorrect input paths.
-
