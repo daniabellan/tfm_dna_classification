@@ -1,38 +1,52 @@
-# Tamaño del batch para el entrenamiento (número de muestras por paso de entrenamiento).
+# =============================
+# Training Configuration
+# =============================
+
+# Number of samples per training step (batch size).
 batch_size: 16
 
-# Tasa de aprendizaje inicial del optimizador.
+# Initial learning rate for the optimizer.
 learning_rate: 0.0001
 
-# Número de épocas (iteraciones completas sobre el dataset) para el entrenamiento.
-epochs: 20
+# Number of complete passes through the dataset during training.
+epochs: 1
 
-# Semilla aleatoria para la reproducibilidad de los experimentos.
+# Random seed for experiment reproducibility.
 seed: 42
 
-mlflow_tracking_uri: "http://localhost:5001"
-
+# =============================
+# Optimizer Settings
+# =============================
 optimizer:
-  # Tipo de optimizador utilizado en el entrenamiento (Adam en este caso).
+  # Type of optimizer used for training (Adam in this case).
   type: Adam
 
-  # Factor de decaimiento de los pesos para regularización L2 (evita sobreajuste).
+  # L2 weight decay factor for regularization (helps prevent overfitting).
   weight_decay: 0.0001
 
+# =============================
+# Learning Rate Scheduler
+# =============================
 scheduler:
-  # Frecuencia (en número de épocas) con la que se reduce la tasa de aprendizaje.
+  # Number of epochs after which the learning rate is reduced.
   step_size: 10
 
-  # Factor por el cual se reduce la tasa de aprendizaje en cada step_size épocas.
+  # Factor by which the learning rate is reduced every `step_size` epochs.
   gamma: 0.1
 
+# =============================
+# Early Stopping
+# =============================
 early_stopping:
-  # Número de épocas sin mejora en la métrica de validación antes de detener el entrenamiento.
+  # Number of epochs without improvement in validation metrics before stopping training.
   patience: 5
 
-  # Diferencia mínima en la métrica de validación para considerar una mejora.
+  # Minimum improvement in validation metric required to reset patience.
   min_delta: 0.0001
 
+# =============================
+# Gradient Clipping
+# =============================
 gradient_clipping:
-  # Valor máximo de la norma del gradiente para evitar explosiones de gradiente.
+  # Maximum gradient norm to prevent gradient explosion.
   max_grad_norm: 1.0

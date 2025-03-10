@@ -161,8 +161,6 @@ class PreprocessData:
         return signal  # If no outliers, return the original signal
 
 
-
-
     def apply_sliding_window(self, signal: np.ndarray) -> np.ndarray:
         """
         Applies a sliding window to the given signal.

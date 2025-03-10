@@ -1,0 +1,20 @@
+# =============================
+# Model Input Configuration
+# =============================
+
+# Number of signal windows used as input to the model.
+input_channels: 1000
+
+# =============================
+# Model Branch Settings
+# =============================
+
+# Whether to use raw signal data as input.
+use_signals: True
+
+# Whether to use sequence data (e.g., k-mers) as input.
+use_sequences: False
+
+# Type of sequence processing branch used in the model.
+# Options: 'bilstm' (Bidirectional LSTM), 'cnn' (Convolutional Neural Network)
+sequence_branch: ''

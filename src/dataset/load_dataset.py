@@ -6,6 +6,7 @@ from typing import List, Dict, Union
 from src.dataset.domain.dataclass import SignalSequenceData
 from src.dataset.preprocess_data import PreprocessData
 from src.dataset.load_h5_file import load_h5_file
+from src.utils.logging_config import logger
 
 class RealDataset(Dataset):
     """
@@ -96,7 +97,8 @@ class RealDataset(Dataset):
                 ))
 
             elapsed_time = time.time() - start_time
-            print(f"Preprocessing completed in {elapsed_time:.4f} seconds.")
+            print(f"** Preprocessing completed! Time elapsed: {elapsed_time:.4f} seconds.\n")
+            logger.info(f"** Preprocessing completed! Time elapsed: {elapsed_time:.4f} seconds.\n")
         else:
             # Store raw data if preprocessing is disabled
             self.data = dataset

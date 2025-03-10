@@ -13,6 +13,9 @@ if __name__ == "__main__":
     dataset_config = config["dataset"]
     training_config = config["training"]
     model_config = config["model"]
+    logging_config = config["logging"]
+    dataset_config = config["dataset"]
+    model_config = config["model"]
 
     # Load dataset
     full_dataset = load_dataset(dataset_config)
@@ -34,5 +37,13 @@ if __name__ == "__main__":
     model = initialize_model(model_config, dataset_config, device)
 
     # Train and test the model
-    trainer = Trainer(model, train_loader, val_loader, test_loader, training_config, device, config)
+    trainer = Trainer(model, 
+                      train_loader, 
+                      val_loader, 
+                      test_loader, 
+                      training_config, 
+                      device, config, 
+                      logging_config, 
+                      dataset_config, 
+                      model_config)
     test_metrics = trainer.train()

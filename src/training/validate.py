@@ -1,7 +1,9 @@
 import torch
+import mlflow
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
+from src.utils.logging_config import logger, get_log_file
 from src.models.hybrid_model import HybridSequenceClassifier
 
 def validate(model: HybridSequenceClassifier, 
@@ -52,24 +54,24 @@ def validate(model: HybridSequenceClassifier,
     recall_macro = recall_score(all_labels, all_preds, average="macro", zero_division=0)
     f1_macro = f1_score(all_labels, all_preds, average="macro", zero_division=0)
 
-    precision_weighted = precision_score(all_labels, all_preds, average="weighted", zero_division=0)
-    recall_weighted = recall_score(all_labels, all_preds, average="weighted", zero_division=0)
-    f1_weighted = f1_score(all_labels, all_preds, average="weighted", zero_division=0)
-
     # Aggregate metrics into a dictionary
     metrics = {
         "val_loss": running_loss / len(data_loader),
         "val_accuracy": accuracy,
         "val_precision_macro": precision_macro,
         "val_recall_macro": recall_macro,
-        "val_f1_macro": f1_macro,
-        "val_precision_weighted": precision_weighted,
-        "val_recall_weighted": recall_weighted,
-        "val_f1_weighted": f1_weighted,
+        "val_f1_macro": f1_macro
     }
+
+    
 
     # Log Validation Summary in the Required Format
     print(f"[Val]   Loss: {metrics['val_loss']:.4f} | Accuracy: {metrics['val_accuracy']:.4f} | "
+          f"Precision: {metrics['val_precision_macro']:.4f} | Recall: {metrics['val_recall_macro']:.4f} | "
+          f"F1: {metrics['val_f1_macro']:.4f}")
+
+    mlflow.log_artifact(str(get_log_file()))
+    logger.info(f"[Val]   Loss: {metrics['val_loss']:.4f} | Accuracy: {metrics['val_accuracy']:.4f} | "
           f"Precision: {metrics['val_precision_macro']:.4f} | Recall: {metrics['val_recall_macro']:.4f} | "
           f"F1: {metrics['val_f1_macro']:.4f}")
 

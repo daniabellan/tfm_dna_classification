@@ -1,55 +1,63 @@
 #!/bin/bash
 
-# Nombre del entorno de Conda
-CONDA_ENV="tfm"
-# Script Python que entrena la red neuronal
-TRAIN_SCRIPT="main.py"
-# Carpeta donde están los archivos de configuración
-CONFIG_DIR="configs/experiment_configs"
+# =============================
+# Experiment Execution Script
+# =============================
 
-# Lista de archivos específicos a ejecutar
+# Define paths
+PROJECT_ROOT="$PWD"  # Get the current project root directory
+CONDA_ENV="tfm"
+TRAIN_SCRIPT="src/main.py"
+CONFIG_DIR="src/configs/experiment"
+
+# List of configuration files
 CONFIG_FILES=(
-    "9000s_km3_k12_O104_0157_real.yaml"
+    "experiment_1_1.yaml"
 )
 
-# Activar Conda
+# =============================
+# Activate Conda Environment
+# =============================
+
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate $CONDA_ENV
 
-# Verificar que el entorno se activó correctamente
 if [[ $? -ne 0 ]]; then
-    echo "ERROR: No se pudo activar el entorno de Conda '$CONDA_ENV'."
+    echo "ERROR: Could not activate Conda environment '$CONDA_ENV'."
     exit 1
 fi
 
-# Ejecutar cada experimento en segundo plano con nohup
-for CONFIG in "${CONFIG_FILES[@]}"; do
-    CONFIG_PATH="$CONFIG_DIR/$CONFIG"
+# =============================
+# Execute Each Experiment
+# =============================
 
-    # Verificar si el archivo existe antes de ejecutarlo
+for CONFIG in "${CONFIG_FILES[@]}"; do
+    CONFIG_PATH="$PROJECT_ROOT/$CONFIG_DIR/$CONFIG"
+
     if [[ ! -f "$CONFIG_PATH" ]]; then
-        echo "WARNING: Archivo de configuración '$CONFIG_PATH' no encontrado. Saltando..."
+        echo "WARNING: Configuration file '$CONFIG_PATH' not found. Skipping..."
         continue
     fi
 
-    # Obtener timestamp en formato: YYYY-MM-DDTHH-MM-SS
     TIMESTAMP=$(date +"%Y-%m-%dT%H-%M-%S")
-
-    # Crear la carpeta de logs específica para este archivo de configuración
     BASE_NAME=$(basename "$CONFIG" .yaml)
-    LOG_DIR="logs/${BASE_NAME}"
+    LOG_DIR="$PROJECT_ROOT/logs/${BASE_NAME}"
     mkdir -p "$LOG_DIR"
-
-    # Archivo de log dentro de la subcarpeta
     LOG_FILE="${LOG_DIR}/run_${TIMESTAMP}.log"
 
-    echo "Ejecutando experimento con configuración: $CONFIG_PATH"
-    echo "Archivo de log: $LOG_FILE"
+    echo "Starting experiment with configuration: $CONFIG_PATH"
+    echo "Log file: $LOG_FILE"
 
-    # Lanzar el script en segundo plano con nohup
-    nohup python -u $TRAIN_SCRIPT --config "$CONFIG_PATH" > "$LOG_FILE" 2>&1 &
+    # =============================
+    # Set PYTHONPATH and Run Experiment
+    # =============================
 
-    echo "Experimento con $CONFIG_PATH en ejecución. Revisa 'tail -f $LOG_FILE' para ver el progreso."
+    export PYTHONPATH="$PROJECT_ROOT"
+    cd "$PROJECT_ROOT" || exit 1  # Ensure we are in the project root
+
+    nohup python -u "$TRAIN_SCRIPT" --config "$CONFIG_PATH" > "$LOG_FILE" 2>&1 &
+
+    echo "Experiment with $CONFIG_PATH is running. Check logs with: tail -f $LOG_FILE"
 done
 
-echo "Todos los experimentos han sido lanzados en segundo plano."
+echo "All experiments have been launched in the background."

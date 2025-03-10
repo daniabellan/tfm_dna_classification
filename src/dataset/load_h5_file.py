@@ -4,6 +4,7 @@ import h5py
 import time
 
 from src.dataset.domain.dataclass import SignalSequenceData
+from src.utils.logging_config import logger
 
 def load_h5_file(dataset_path:str,
                  num_samples:int,
@@ -36,5 +37,14 @@ def load_h5_file(dataset_path:str,
 
             h5_file.append(data)
 
-    print(f"H5 loaded from {dataset_path} | Done in {(time.time() - start):.4f} secs")
+    print(f"** HDF5 file loaded successfully! \n"
+        f"   Path: {dataset_path}\n"
+        f"   Time elapsed: {(time.time() - start):.4f} seconds\n"
+        f"   Samples loaded: {num_samples}")
+
+    logger.info(f"** HDF5 file loaded successfully! \n"
+        f"   Path: {dataset_path}\n"
+        f"   Time elapsed: {(time.time() - start):.4f} seconds\n"
+        f"   Samples loaded: {num_samples}")
+
     return h5_file

@@ -1,8 +1,11 @@
 import time
 import torch
+import mlflow
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from src.models.hybrid_model import HybridSequenceClassifier
+from src.utils.logging_config import logger, get_log_file
+
 
 def train_one_epoch(model: HybridSequenceClassifier, 
                     data_loader: torch.utils.data.DataLoader, 
@@ -10,7 +13,8 @@ def train_one_epoch(model: HybridSequenceClassifier,
                     optimizer: torch.optim.Optimizer, 
                     device: torch.device, 
                     max_grad_norm: float = 1.0, 
-                    log_interval: int = 1) -> dict:
+                    log_interval: int = 1
+                    ) -> dict:
     """
     Trains the model for one epoch with multi-class evaluation metrics.
 
@@ -22,7 +26,7 @@ def train_one_epoch(model: HybridSequenceClassifier,
         device (torch.device): Device to perform computations (e.g., 'cuda' or 'cpu').
         max_grad_norm (float, optional): Maximum norm for gradient clipping to prevent exploding gradients. Default is 1.0.
         log_interval (int, optional): Frequency (in batches) of logging training progress. Default is 1.
-
+        
     Returns:
         dict: A dictionary containing training loss, accuracy, precision, recall, and F1-score.
     """
@@ -60,6 +64,11 @@ def train_one_epoch(model: HybridSequenceClassifier,
             elapsed_time = time.time() - start_time
             print(f"  Batch {batch_idx + 1}/{len(data_loader)} - Loss: {loss.item():.4f}")
             print(f"  Elapsed Time: {elapsed_time:.4f} sec")
+            
+            logger.info(f"  Batch {batch_idx + 1}/{len(data_loader)} - Loss: {loss.item():.4f}")
+            logger.info(f"  Elapsed Time: {elapsed_time:.4f} sec")
+        
+        mlflow.log_artifact(str(get_log_file()))
 
     # Convert lists to numpy arrays
     all_labels = np.array(all_labels)
@@ -71,25 +80,23 @@ def train_one_epoch(model: HybridSequenceClassifier,
     recall_macro = recall_score(all_labels, all_preds, average="macro", zero_division=0)
     f1_macro = f1_score(all_labels, all_preds, average="macro", zero_division=0)
 
-    precision_weighted = precision_score(all_labels, all_preds, average="weighted", zero_division=0)
-    recall_weighted = recall_score(all_labels, all_preds, average="weighted", zero_division=0)
-    f1_weighted = f1_score(all_labels, all_preds, average="weighted", zero_division=0)
-
     # Aggregate all metrics
     metrics = {
         "train_loss": running_loss / len(data_loader),
         "train_accuracy": accuracy,
         "train_precision_macro": precision_macro,
         "train_recall_macro": recall_macro,
-        "train_f1_macro": f1_macro,
-        "train_precision_weighted": precision_weighted,
-        "train_recall_weighted": recall_weighted,
-        "train_f1_weighted": f1_weighted,
+        "train_f1_macro": f1_macro
     }
 
     # Log Training Summary in the Required Format
     print(f"\n[Train] Loss: {metrics['train_loss']:.4f} | Accuracy: {metrics['train_accuracy']:.4f} | "
           f"Precision: {metrics['train_precision_macro']:.4f} | Recall: {metrics['train_recall_macro']:.4f} | "
           f"F1: {metrics['train_f1_macro']:.4f}")
+
+    logger.info(f"[Train] Loss: {metrics['train_loss']:.4f} | Accuracy: {metrics['train_accuracy']:.4f} | "
+                f"Precision: {metrics['train_precision_macro']:.4f} | Recall: {metrics['train_recall_macro']:.4f} | "
+                f"F1: {metrics['train_f1_macro']:.4f}")
+    mlflow.log_artifact(str(get_log_file()))
 
     return metrics

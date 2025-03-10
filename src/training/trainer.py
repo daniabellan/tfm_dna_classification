@@ -1,15 +1,19 @@
 import time
 import torch
 import seaborn as sns
+import tempfile
 import mlflow
 import mlflow.pytorch
 from mlflow.models import infer_signature
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime
+from pathlib import Path
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 from torch.optim import Adam
 from torch.optim.lr_scheduler import StepLR
+from src.utils.logging_config import logger, get_log_file
 from src.training.train import train_one_epoch
 from src.training.validate import validate
 from src.training.early_stopping import EarlyStopping
@@ -18,14 +22,36 @@ class Trainer:
     """
     Trainer class to handle model training, validation, and logging with MLflow.
     """
-    def __init__(self, model, train_loader, val_loader, test_loader, training_config, device, config):
+    def __init__(self, 
+                 model, 
+                 train_loader, 
+                 val_loader, 
+                 test_loader, 
+                 training_config, 
+                 device, 
+                 config, 
+                 logging_config, 
+                 dataset_config, 
+                 model_config):
+        
         self.model = model
         self.train_loader = train_loader
         self.val_loader = val_loader
         self.test_loader = test_loader
         self.training_config = training_config
+        self.model_config = model_config
+        self.dataset_config = dataset_config
+        self.model_config = model_config
+        self.logging_config = logging_config
         self.device = device
         self.config = config  # Store full config to log
+
+        logger.info("Training started with configuration:")
+        logger.info(f"Training: {self.training_config}")
+        logger.info(f"Dataset: {self.dataset_config}")
+        logger.info(f"Model: {self.model_config}")
+        logger.info(f"Logging: {self.logging_config}")
+        logger.info(f"Description: {config['description']}")
 
         self.criterion = torch.nn.CrossEntropyLoss()
         self.optimizer = Adam(
@@ -47,8 +73,13 @@ class Trainer:
         )
 
         # Set MLflow tracking URI 
-        mlflow_tracking_uri = training_config.get("mlflow_tracking_uri", "http://localhost:5000")
+        mlflow_tracking_uri = logging_config.get("mlflow_tracking_uri", "http://localhost:5000")
         mlflow.set_tracking_uri(mlflow_tracking_uri)
+
+        # Create run name
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+        self.run_name = f"samples_{dataset_config['num_samples']}-{timestamp}"
+        self.experiment_name = config["name"]
 
         # Enable system metrics logging
         mlflow.enable_system_metrics_logging()
@@ -57,13 +88,15 @@ class Trainer:
         """
         Trains the model with MLflow logging and early stopping.
         """
-        with mlflow.start_run():
+        mlflow.set_experiment(self.experiment_name)
+        with mlflow.start_run(run_name=self.run_name):
             # Log configuration parameters
             mlflow.log_params(self.config["model"])
             mlflow.log_params(self.config["training"])
             mlflow.log_params(self.config["dataset"])
 
             start_train_time = time.time()
+            logger.info("Training started!")
 
             for epoch in range(self.training_config["epochs"]):
                 start_epoch_time = time.time()
@@ -74,7 +107,7 @@ class Trainer:
                     criterion=self.criterion, 
                     optimizer=self.optimizer, 
                     device=self.device, 
-                    max_grad_norm=self.training_config["gradient_clipping"]["max_grad_norm"]
+                    max_grad_norm=self.training_config["gradient_clipping"]["max_grad_norm"],
                 )
 
                 val_metrics = validate(
@@ -90,12 +123,18 @@ class Trainer:
                 print(f"\nEpoch time: {epoch_time:.4f} sec")
                 print(f"Elapsed time: {elapsed_time:.4f} sec\n")
 
+                logger.info(f"Epoch {epoch+1}/{self.training_config['epochs']} completed in {epoch_time:.4f} sec.")
+                logger.info(f"Total elapsed time: {elapsed_time:.4f} sec.")
+                
+                mlflow.log_artifact(str(get_log_file()))
+                
                 # Log train & validation metrics
                 mlflow.log_metrics(train_metrics, step=epoch)
                 mlflow.log_metrics(val_metrics, step=epoch)
 
                 # Check early stopping
                 if self.early_stopping(val_metrics["val_loss"], self.model):
+                    logger.warning("Early stopping triggered. Training stopped.")
                     print("Early stopping triggered. Stopping training.")
                     break
 
@@ -108,26 +147,53 @@ class Trainer:
         """
         Evaluates the trained model on the test set and logs test results & confusion matrix.
         """
-        test_metrics, y_true, y_pred, conf_matrix, class_report = self.evaluate_model_on_test()
+        logger.info("Running final evaluation on the test set...")
+        test_metrics, _, _, conf_matrix = self.evaluate_model_on_test()
 
         # Log All Metrics in MLflow
         mlflow.log_metrics(test_metrics)
-
-        # Log Per-Class Precision, Recall, F1
-        for class_label, metrics in class_report.items():
-            if isinstance(metrics, dict):  # Avoid logging 'accuracy' twice
-                mlflow.log_metric(f"test_precision_class_{class_label}", metrics["precision"])
-                mlflow.log_metric(f"test_recall_class_{class_label}", metrics["recall"])
-                mlflow.log_metric(f"test_f1_class_{class_label}", metrics["f1-score"])
 
         # Log Confusion Matrix
         self.log_confusion_matrix(conf_matrix)
 
         # Save the trained model as an artifact
-        # mlflow.pytorch.log_model(self.model, "model")
+        # Get data sample of test_loader
+        # sample_signals, sample_sequences, _ = next(iter(self.test_loader))
 
+        # Move sample date to model device
+        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # sample_signals = sample_signals.to(device)
+        # sample_sequences = sample_sequences.to(device)
+
+        # # Inference model
+        # self.model.eval()  
+        # with torch.no_grad():
+        #     predictions = self.model(sample_signals, sample_sequences)
+
+        # # Convert input to numpy
+        # sample_signals_np = sample_signals.cpu().numpy()
+        # sample_sequences_np = sample_sequences.cpu().numpy()
+        # predictions_np = predictions.cpu().numpy()
+
+        # # Convert inputs to lists
+        # model_input = {
+        #     "signals": sample_signals_np.tolist(),  
+        #     "sequences": sample_sequences_np.tolist() 
+        # }
+
+        # # Create signature using model input and output 
+        # signature = mlflow.models.infer_signature(
+        #     model_input=model_input,  
+        #     model_output=predictions_np.tolist() 
+        # )
+
+        # Log model to MLFlow
+        logger.success(f"Saving model...")
+        # mlflow.pytorch.log_model(pytorch_model = self.model, artifact_path="model", signature=signature)
+        logger.success(f"Model saved in MLFlow!")
+        
+        mlflow.log_artifact(str(get_log_file()))
         return test_metrics
-
 
 
     def evaluate_model_on_test(self):
@@ -153,52 +219,55 @@ class Trainer:
         recall_macro = recall_score(y_true, y_pred, average="macro", zero_division=0)
         f1_macro = f1_score(y_true, y_pred, average="macro", zero_division=0)
 
-        precision_weighted = precision_score(y_true, y_pred, average="weighted", zero_division=0)
-        recall_weighted = recall_score(y_true, y_pred, average="weighted", zero_division=0)
-        f1_weighted = f1_score(y_true, y_pred, average="weighted", zero_division=0)
-
         # Confusion Matrix
         conf_matrix = confusion_matrix(y_true, y_pred)
-
-        # Per-Class Report (with zero_division=0)
-        class_report = classification_report(y_true, y_pred, zero_division=0, output_dict=True)
-
+        
         # Aggregate Metrics Dictionary
         test_metrics = {
             "test_accuracy": accuracy,
             "test_precision_macro": precision_macro,
             "test_recall_macro": recall_macro,
-            "test_f1_macro": f1_macro,
-            "test_precision_weighted": precision_weighted,
-            "test_recall_weighted": recall_weighted,
-            "test_f1_weighted": f1_weighted,
+            "test_f1_macro": f1_macro
         }
 
         # Print Test Summary
         print(f"\n# ========== Test Set Evaluation ==========")
         print(f"[Test] Accuracy: {test_metrics['test_accuracy']:.4f} | "
-            f"Precision: {test_metrics['test_precision_macro']:.4f} | "
-            f"Recall: {test_metrics['test_recall_macro']:.4f} | "
-            f"F1: {test_metrics['test_f1_macro']:.4f}")
+              f"Precision: {test_metrics['test_precision_macro']:.4f} | "
+              f"Recall: {test_metrics['test_recall_macro']:.4f} | "
+              f"F1: {test_metrics['test_f1_macro']:.4f}")
 
-
-        return test_metrics, y_true, y_pred, conf_matrix, class_report
+        logger.success(f"[Test] Accuracy: {test_metrics['test_accuracy']:.4f} | "
+              f"Precision: {test_metrics['test_precision_macro']:.4f} | "
+              f"Recall: {test_metrics['test_recall_macro']:.4f} | "
+              f"F1: {test_metrics['test_f1_macro']:.4f}")
+        
+        logger.info(f"\n{conf_matrix}")
+        
+        return test_metrics, y_true, y_pred, conf_matrix
 
 
     def log_confusion_matrix(self, conf_matrix):
         """
         Saves the confusion matrix and logs it as an MLflow artifact.
         """
+        logger.info("Logging confusion matrix...")
+    
         fig, ax = plt.subplots(figsize=(8, 6))
         sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=np.arange(conf_matrix.shape[0]), yticklabels=np.arange(conf_matrix.shape[0]))
         plt.xlabel("Predicted")
         plt.ylabel("Actual")
         plt.title("Confusion Matrix")
 
-        # Save confusion matrix plot
-        conf_matrix_path = "conf_matrix.png"
-        plt.savefig(conf_matrix_path)
-        plt.close()
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            conf_matrix_path = Path(tmp_dir) / "conf_matrix.png"
+            
+            # Save image in temporal path
+            fig.savefig(conf_matrix_path)
+            plt.close(fig)  
 
-        # Log as MLflow artifact
-        mlflow.log_artifact(conf_matrix_path)
+            # Log as MLflow artifact
+            mlflow.log_artifact(str(conf_matrix_path))
+
+        logger.success(f"Confusion matrix saved as MLflow artifact: {conf_matrix_path}")
+        print(f"Confusion matrix saved as artifact: {conf_matrix_path}")

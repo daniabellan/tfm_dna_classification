@@ -1,0 +1,33 @@
+# =============================
+# Experiment Metadata
+# =============================
+
+# Unique name for the experiment.
+name: "Experiment 1_2"
+
+# Detailed description of the experiment.
+description: >
+  This experiment evaluates the performance of a hybrid model on three distinct datasets:
+  - Mus musculus (mm39)
+  - E. coli K12
+  - Salmonella enterica
+  
+  Model Configuration:
+  - Signal Branch: Used
+  - Sequence Branch: Not used
+
+# =============================
+# Configuration Files
+# =============================
+
+# Path to the dataset configuration file.
+dataset: "src/configs/datasets/different_species.yaml"
+
+# Path to the training parameters configuration file.
+training: "src/configs/training/default_params.yaml"
+
+# Path to the model architecture configuration file.
+model: "src/configs/models/only_signals.yaml"
+
+# Path to the logging configuration file.
+logging: "src/configs/logging/localhost.yaml"
