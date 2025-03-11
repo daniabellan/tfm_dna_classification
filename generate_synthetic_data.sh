@@ -29,10 +29,10 @@ fi
 echo "=== Using genome reference: $GENOME_REF ==="
 
 # Create necessary directories
-mkdir -p "${BASE_DIR}/blow5"        # Artificially generated data using Squigulator
-mkdir -p "${BASE_DIR}/fast5"        # Transformed data from BLOW5 to FAST5
-mkdir -p "${BASE_DIR}/basecalling_output" # Dorado basecalling output
-mkdir -p "${BASE_DIR}/final_data"    # H5 file for training/testing
+mkdir -p "${BASE_DIR}/blow5"                # Artificially generated data using Squigulator
+mkdir -p "${BASE_DIR}/fast5"                # Transformed data from BLOW5 to FAST5
+mkdir -p "${BASE_DIR}/basecalling_output"   # Dorado basecalling output
+mkdir -p "${BASE_DIR}/final_data"           # H5 file for training/testing
 
 # Activate the Conda environment
 echo "=== Activating Conda environment '$CONDA_ENV' ==="
@@ -46,7 +46,7 @@ fi
 # Generate electric signal using Squigulator
 echo "=== Generating electric signal with Squigulator ==="
 squigulator "$GENOME_REF" -x dna-r9-min -o "${BASE_DIR}/blow5/reads.blow5" \
-    --seed 42 -f 30 -r 12000 --prefix=yes --bps 400 --verbose 4
+    --seed 42 -f 30 -r 12000 --prefix=yes --bps 400 --verbose 4 -t 16
 if [ $? -ne 0 ]; then
     echo "Error: Squigulator execution failed"
     exit 1
@@ -70,8 +70,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Preprocess data using a Python script
-echo "=== Running preprocessing with Python in Conda environment (tfm) ==="
-python datasets/create_dataset_from_pod5_fast5.py \
+echo "=== Running preprocessing with Python ==="
+python create_dataset/nanopore_data_merger.py \
     "$BASE_DIR/basecalling_output/basecalled_signal.sam" \
     "$BASE_DIR/fast5" \
     "$BASE_DIR/final_data/matched_data.h5" --verbose

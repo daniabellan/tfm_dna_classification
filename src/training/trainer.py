@@ -78,7 +78,7 @@ class Trainer:
 
         # Create run name
         timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-        self.run_name = f"samples_{dataset_config['num_samples']}-{timestamp}"
+        self.run_name = f"{timestamp}_samples{dataset_config['num_samples']}"
         self.experiment_name = config["name"]
 
         # Enable system metrics logging
@@ -158,38 +158,42 @@ class Trainer:
 
         # Save the trained model as an artifact
         # Get data sample of test_loader
-        # sample_signals, sample_sequences, _ = next(iter(self.test_loader))
+        sample_signals, sample_sequences, _ = next(iter(self.test_loader))
 
         # Move sample date to model device
-        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        # sample_signals = sample_signals.to(device)
-        # sample_sequences = sample_sequences.to(device)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        sample_signals = sample_signals.to(device)
+        sample_sequences = sample_sequences.to(device)
 
-        # # Inference model
-        # self.model.eval()  
-        # with torch.no_grad():
-        #     predictions = self.model(sample_signals, sample_sequences)
+        # Inference model
+        logger.success(f"Saving model...")
+        mlflow.log_metrics(test_metrics)
 
-        # # Convert input to numpy
-        # sample_signals_np = sample_signals.cpu().numpy()
-        # sample_sequences_np = sample_sequences.cpu().numpy()
-        # predictions_np = predictions.cpu().numpy()
+        self.model.eval()  
+        with torch.no_grad():
+            predictions = self.model(sample_signals, sample_sequences)
 
-        # # Convert inputs to lists
-        # model_input = {
-        #     "signals": sample_signals_np.tolist(),  
-        #     "sequences": sample_sequences_np.tolist() 
-        # }
+        # Convert input to numpy
+        sample_signals_np = sample_signals.cpu().numpy()
+        sample_sequences_np = sample_sequences.cpu().numpy()
+        predictions_np = predictions.cpu().numpy()
 
-        # # Create signature using model input and output 
-        # signature = mlflow.models.infer_signature(
-        #     model_input=model_input,  
-        #     model_output=predictions_np.tolist() 
-        # )
+        # Convert inputs to lists
+        model_input = {
+            "signals": sample_signals_np.tolist(),  
+            "sequences": sample_sequences_np.tolist() 
+        }
+
+        # Create signature using model input and output 
+        signature = mlflow.models.infer_signature(
+            model_input=model_input,  
+            model_output=predictions_np.tolist() 
+        )
 
         # Log model to MLFlow
-        logger.success(f"Saving model...")
-        # mlflow.pytorch.log_model(pytorch_model = self.model, artifact_path="model", signature=signature)
+        mlflow.pytorch.log_model(pytorch_model = self.model, 
+                                 artifact_path="model", 
+                                 signature=signature)
         logger.success(f"Model saved in MLFlow!")
         
         mlflow.log_artifact(str(get_log_file()))
@@ -243,6 +247,7 @@ class Trainer:
               f"F1: {test_metrics['test_f1_macro']:.4f}")
         
         logger.info(f"\n{conf_matrix}")
+        mlflow.log_artifact(str(get_log_file()))
         
         return test_metrics, y_true, y_pred, conf_matrix
 

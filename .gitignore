@@ -12,3 +12,4 @@ dorado_models/*
 configs/old_experiment_configs
 logs/
 new_logs/
+*.env

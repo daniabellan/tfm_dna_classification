@@ -32,7 +32,7 @@ ERROR_LOG="$OUTPUT_DIR/error_log.txt"
 for query in "${GENOMES[@]}"; do
     for reference in "${GENOMES[@]}"; do
         if [[ "$query" != "$reference" ]]; then
-            echo "🔍 Comparing: $query vs $reference"
+            echo " Comparing: $query vs $reference"
 
             # Run FastANI and capture output
             fastANI -q "$query" -r "$reference" --output "$OUTPUT_DIR/temp_output.txt" 2>> "$ERROR_LOG"
