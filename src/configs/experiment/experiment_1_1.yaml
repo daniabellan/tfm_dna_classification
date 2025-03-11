@@ -7,15 +7,15 @@ name: "Experiment 1_1"
 
 # Detailed description of the experiment.
 description: >
-  This experiment evaluates the performance of a hybrid model on three distinct datasets:
-  - Mus musculus (mm39)
-  - E. coli K12
-  - Salmonella enterica
-  
-  Model Configuration:
-  - Signal Branch: Not used
-  - Sequence Branch: Used (CNN-based)
+  **Experiment Overview**  
+  This experiment evaluates the performance of a hybrid model on three distinct datasets: <br /> 
+  - **Mus musculus** (*mm39*) <br />
+  - **E. coli** (*K12*) <br /> 
+  - **Salmonella enterica** <br />  
 
+  **Model Configuration** <br />  
+  - **Signal Branch**: Not used <br />  
+  - **Sequence Branch**: Used (*CNN-based*) <br />  
 # =============================
 # Configuration Files
 # =============================

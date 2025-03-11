@@ -57,7 +57,7 @@ for CONFIG in "${CONFIG_FILES[@]}"; do
 
     nohup python -u "$TRAIN_SCRIPT" --config "$CONFIG_PATH" > "$LOG_FILE" 2>&1 &
 
-    echo "Experiment with $CONFIG_PATH is running. Check logs with: tail -f $LOG_FILE"
+    echo "Experiment with $CONFIG is running. Check logs with: tail -f $LOG_FILE"
 done
 
 echo "All experiments have been launched in the background."

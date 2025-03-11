@@ -3,6 +3,7 @@ import torch
 import seaborn as sns
 import tempfile
 import mlflow
+import markdown
 import mlflow.pytorch
 from mlflow.models import infer_signature
 import matplotlib.pyplot as plt
@@ -88,8 +89,15 @@ class Trainer:
         """
         Trains the model with MLflow logging and early stopping.
         """
+        # Configure MLFlow tracking 
         mlflow.set_experiment(self.experiment_name)
-        with mlflow.start_run(run_name=self.run_name):
+        
+        tags = {
+            'mlflow.note.content': markdown.markdown(self.config["description"]),
+            'mlflow.user': "Daniel Abellan Sanchez"
+        }
+
+        with mlflow.start_run(run_name=self.run_name, tags=tags):
             # Log configuration parameters
             mlflow.log_params(self.config["model"])
             mlflow.log_params(self.config["training"])
