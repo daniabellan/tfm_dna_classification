@@ -45,8 +45,14 @@ fi
 
 # Generate electric signal using Squigulator
 echo "=== Generating electric signal with Squigulator ==="
+if [ $SPECIES = "mm39" ]; then
+    FOLD_COVERAGE=1
+else
+    FOLD_COVERAGE=30
+fi
+
 squigulator "$GENOME_REF" -x dna-r9-min -o "${BASE_DIR}/blow5/reads.blow5" \
-    --seed 42 -f 30 -r 12000 --prefix=yes --bps 400 --verbose 4 -t 16
+    --seed 42 -f $FOLD_COVERAGE -r 12000 --prefix=yes --bps 400 --verbose 4 -t 16
 if [ $? -ne 0 ]; then
     echo "Error: Squigulator execution failed"
     exit 1

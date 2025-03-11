@@ -3,7 +3,7 @@
 # =============================
 
 # Number of samples per training step (batch size).
-batch_size: 32
+batch_size: 16
 
 # Initial learning rate for the optimizer.
 learning_rate: 0.0001

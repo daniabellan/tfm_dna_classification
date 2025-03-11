@@ -7,7 +7,10 @@ import os
 import argparse
 from pathlib import Path
 
-def read_sam_file(sam_file_path: str, verbose: bool = False) -> dict:
+def read_sam_file(sam_file_path: str, 
+                  max_allowed_reads:int=100_000,
+                  n_trim_reads:int=40_000,
+                  verbose: bool = True) -> dict:
     """
     Reads a SAM file and extracts read sequences into a dictionary.
     
@@ -22,12 +25,26 @@ def read_sam_file(sam_file_path: str, verbose: bool = False) -> dict:
     reads_dict = {read.query_name: {"sequence": read.query_sequence, "signal_pa": None} 
                   for read in samfile.fetch(until_eof=True)}
     
+    total_reads = len(reads_dict)
+
     if verbose:
-        print(f"Total reads in SAM file: {len(reads_dict)}")
-    
+        print(f"Total reads in SAM file: {total_reads}")
+
+    # If the number of reads is larger than X, trim to random reads
+    # This avoid RAM limitation
+    if total_reads > max_allowed_reads:
+        rng = np.random.default_rng(seed=42)  
+        selected_keys = rng.choice(list(reads_dict.keys()), size=n_trim_reads, replace=False) 
+        
+        reads_dict = {key: reads_dict[key] for key in selected_keys}  
+
+        if verbose:
+            print(f"Selected {n_trim_reads} random reads from {total_reads}")
+
+
     return reads_dict
 
-def process_pod5_file(file: Path, reads_dict: dict, verbose: bool = False) -> int:
+def process_pod5_file(file: Path, reads_dict: dict, verbose: bool = True) -> int:
     """
     Processes a POD5 file and updates the reads dictionary with signal data.
     
@@ -57,7 +74,7 @@ def process_pod5_file(file: Path, reads_dict: dict, verbose: bool = False) -> in
     
     return not_detected
 
-def process_fast5_file(file: Path, reads_dict: dict, verbose: bool = False) -> int:
+def process_fast5_file(file: Path, reads_dict: dict, verbose: bool = True) -> int:
     """
     Processes a Fast5 file and updates the reads dictionary with signal data.
     
@@ -66,33 +83,40 @@ def process_fast5_file(file: Path, reads_dict: dict, verbose: bool = False) -> i
     :param verbose: If True, prints process details.
     :return: Number of reads not found in the Fast5 file.
     """
-    not_detected = 0
-    detected = 0
     
     if verbose:
         print(f"Processing Fast5 file: {file}")
-    
-    f5 = get_fast5_file(file, mode='r')
-    
-    for read_id in f5.get_read_ids():
-        read = f5.get_read(read_id)
+
+    with get_fast5_file(file, mode='r') as f5:
+        f5_reads = f5.get_read_ids()
+
+        # Conversion to set to quick search
+        reads_keys_set = set(reads_dict)
         
-        if read_id in reads_dict:
-            raw_data = read.get_raw_data()
-            metadata = read.get_channel_info()
-            offset, range_scaling, digitisation = metadata["offset"], metadata["range"], metadata["digitisation"]
-            
-            reads_dict[read_id]["signal_pa"] = (raw_data + offset) * range_scaling / digitisation
-            detected += 1
-        else:
-            not_detected += 1
-    
+        # For loop only with detected reads
+        detected_values = [value for value in f5_reads if value in reads_keys_set]
+        
+        not_detected = len(f5_reads) - len(detected_values)
+
+        for read_idx, read_id in enumerate(detected_values):
+            if verbose and read_idx % 100 == 0:  
+                print(f"Processing read {read_idx}/{len(detected_values)}")
+
+            if read_id in reads_keys_set:
+                read = f5.get_read(read_id)
+                raw_data = read.get_raw_data()
+                metadata = read.get_channel_info()
+
+                offset, range_scaling, digitisation = metadata["offset"], metadata["range"], metadata["digitisation"]
+
+                reads_dict[read_id]["signal_pa"] = (raw_data + offset) * range_scaling / digitisation
+
     if verbose:
-        print(f"Processed reads from {file}: {detected}")
-    
+        print(f"Processed reads from {file}: {len(detected_values)} detected, {not_detected} not found.")
+
     return not_detected
 
-def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False) -> dict:
+def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = True) -> dict:
     """
     Matches reads from POD5 and Fast5 files to those in the reads dictionary.
     
@@ -124,7 +148,7 @@ def match_reads(nanopore_data_path: str, reads_dict: dict, verbose: bool = False
     
     return filtered_dict
 
-def save_dict_h5(dictionary: dict, file_path: str, verbose: bool = False):
+def save_dict_h5(dictionary: dict, file_path: str, verbose: bool = True):
     """
     Saves the processed reads dictionary into an HDF5 file.
     

@@ -7,15 +7,15 @@ name: "Experiment 1_2"
 
 # Detailed description of the experiment.
 description: >
-  This experiment evaluates the performance of a hybrid model on three distinct datasets:
-  - Mus musculus (mm39)
-  - E. coli K12
-  - Salmonella enterica
-  
-  Model Configuration:
-  - Signal Branch: Used
-  - Sequence Branch: Not used
+  **Experiment Overview**  
+  This experiment evaluates the performance of a hybrid model on three distinct datasets: <br /> 
+  - **Mus musculus** (*mm39*) <br />
+  - **E. coli** (*K12*) <br /> 
+  - **Salmonella enterica** <br />  
 
+  **Model Configuration** <br />  
+  - **Signal Branch**: Used <br />  
+  - **Sequence Branch**: Not used <br />  
 # =============================
 # Configuration Files
 # =============================
@@ -30,4 +30,4 @@ training: "src/configs/training/default_params.yaml"
 model: "src/configs/models/only_signals.yaml"
 
 # Path to the logging configuration file.
-logging: "src/configs/logging/localhost.yaml"
+logging: "src/configs/logging/remote_server.yaml"

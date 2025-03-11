@@ -12,7 +12,7 @@ CONFIG_DIR="src/configs/experiment"
 
 # List of configuration files
 CONFIG_FILES=(
-    "experiment_1_1.yaml"
+    "experiment_1_3.yaml"
 )
 
 # =============================

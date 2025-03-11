@@ -11,5 +11,6 @@ checkpoints/*
 dorado_models/*
 configs/old_experiment_configs
 logs/
+data_old/
 *.env
 new_logs/
