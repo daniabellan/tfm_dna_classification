@@ -32,7 +32,21 @@ class SimilarityChecker:
         self.sequences = []
         self.label_names_dict = {}
         for dataset in loaded_dataset.datasets:
-            self.label_names_dict[dataset.class_idx] = dataset.dataset_path.split("/")[-3]
+            real_name = dataset.dataset_path.split("/")[-3]
+            if real_name == "ecoli_k12_real":
+                label_name = "E. Coli K12"
+            elif real_name == "ecoli_O104H4":
+                label_name = "E. Coli O104H4"
+            elif real_name == "ecoli_O157H7":
+                label_name = "E. Coli O157H7"
+            elif real_name == "salmonella_enterica":
+                label_name = "Salmonella Enterica"
+            elif real_name == "mm39":
+                label_name = real_name
+            else:
+                label_name = real_name
+            
+            self.label_names_dict[dataset.class_idx] = label_name
             for signal in dataset.data:
                 self.labels.append(signal.label)
                 self.sequences.append(signal.sequence)
@@ -244,6 +258,7 @@ def plot_pca_tsne_comparison(visualization_config: dict,
     plt.tight_layout()
     plt.show()
 
+    pass
 
 
 if __name__ == "__main__":
@@ -254,6 +269,9 @@ if __name__ == "__main__":
     # Load all configurations from the training experiment file
     config = load_config(config_path)
 
+    # Modify num_samples to simplify the comparison
+    config["dataset"]["num_samples"] = 200
+    
     # Load and concatenate datasets
     full_dataset = load_dataset(config["dataset"])
     

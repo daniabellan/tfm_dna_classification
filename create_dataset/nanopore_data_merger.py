@@ -178,6 +178,8 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    reads_dict = read_sam_file(args.sam_file_path, args.verbose)
-    filtered_dict = match_reads(args.nanopore_data_path, reads_dict, args.verbose)
-    save_dict_h5(filtered_dict, args.output_h5_path, args.verbose)
+    reads_dict = read_sam_file(sam_file_path=args.sam_file_path, verbose=args.verbose)
+    filtered_dict = match_reads(nanopore_data_path=args.nanopore_data_path, 
+                                reads_dict=reads_dict, 
+                                verbose=args.verbose)
+    save_dict_h5(dictionary=filtered_dict, file_path=args.output_h5_path, verbose=args.verbose)

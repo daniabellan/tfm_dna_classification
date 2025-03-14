@@ -1,0 +1,33 @@
+# =============================
+# Experiment Metadata
+# =============================
+
+# Unique name for the experiment.
+name: "Experiment 2_2"
+
+# Detailed description of the experiment.
+description: >
+  **Experiment Overview**  
+  This experiment evaluates the performance of a hybrid model on three distinct datasets of the same specie (Escherichia coli): <br /> 
+  - **K12** (*Real*) <br />
+  - **O104 H4** (*Synthetic*) <br /> 
+  - **O157 H7** (*Synthetic*) <br /> 
+
+  **Model Configuration** <br />  
+  - **Signal Branch**: Used <br />  
+  - **Sequence Branch**: Not used <br />  
+# =============================
+# Configuration Files
+# =============================
+
+# Path to the dataset configuration file.
+dataset: "src/configs/datasets/same_species.yaml"
+
+# Path to the training parameters configuration file.
+training: "src/configs/training/default_params.yaml"
+
+# Path to the model architecture configuration file.
+model: "src/configs/models/only_signals.yaml"
+
+# Path to the logging configuration file.
+logging: "src/configs/logging/remote_server.yaml"

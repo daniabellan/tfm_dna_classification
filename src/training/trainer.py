@@ -133,6 +133,8 @@ class Trainer:
 
                 logger.info(f"Epoch {epoch+1}/{self.training_config['epochs']} completed in {epoch_time:.4f} sec.")
                 logger.info(f"Total elapsed time: {elapsed_time:.4f} sec.")
+                print(f"Epoch {epoch+1}/{self.training_config['epochs']} completed in {epoch_time:.4f} sec.")
+                print(f"Total elapsed time: {elapsed_time:.4f} sec.")
                 
                 mlflow.log_artifact(str(get_log_file()))
                 

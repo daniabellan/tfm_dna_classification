@@ -1,0 +1,34 @@
+# =============================
+# Experiment Metadata
+# =============================
+
+# Unique name for the experiment.
+name: "Experiment 3_2"
+
+# Detailed description of the experiment.
+description: >
+  **Experiment Overview**  
+  This experiment evaluates the performance of a hybrid model on three distinct datasets: <br /> 
+  - **Mus musculus** (*mm39*) <br />
+  - **E. coli** (*K12*) <br /> 
+  - **Salmonella enterica** <br />  
+
+  **Model Configuration** <br />  
+  - **Signal Branch**: Used <br />  
+  - **Sequence Branch**: Used (*BiLSTM-based*) <br />  
+
+# =============================
+# Configuration Files
+# =============================
+
+# Path to the dataset configuration file.
+dataset: "src/configs/datasets/different_species.yaml"
+
+# Path to the training parameters configuration file.
+training: "src/configs/training/default_params.yaml"
+
+# Path to the model architecture configuration file.
+model: "src/configs/models/signals_sequences_bilstm.yaml"
+
+# Path to the logging configuration file.
+logging: "src/configs/logging/remote_server.yaml"
