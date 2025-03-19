@@ -77,7 +77,7 @@ fi
 
 # Preprocess data using a Python script
 echo "=== Running preprocessing with Python ==="
-python create_dataset/nanopore_data_merger.py \
+python synthetic_dataset_functions/nanopore_data_merger.py \
     "$BASE_DIR/basecalling_output/basecalled_signal.sam" \
     "$BASE_DIR/fast5" \
     "$BASE_DIR/final_data/matched_data.h5" --verbose

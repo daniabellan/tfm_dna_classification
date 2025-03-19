@@ -1,0 +1,19 @@
+num_samples: 50
+
+kmers_size: 3
+preprocess: True
+window_size: 1500
+step_ratio: 0.5
+
+train_ratio: 0.8
+val_ratio: 0.1
+test_ratio: 0.1
+
+collator_max_signal_length: 1000
+collator_max_kmers_length: 45000
+
+dataset_paths:
+  - "/home/diz-wsl/personal_repos/tfm/data/ecoli_k12_real/final_data/matched_data.h5"
+  - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O104H4/final_data/matched_data.h5"
+  - "/home/diz-wsl/personal_repos/tfm/data/ecoli_O157H7/final_data/matched_data.h5"
+
